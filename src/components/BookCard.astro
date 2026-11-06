@@ -1,0 +1,32 @@
+---
+import Cover from './Cover.astro';
+import T from './T.astro';
+import { tags } from '../data/tags';
+import { authorSortKey, mdInline, type Book } from '../lib/book';
+
+const { book } = Astro.props as { book: Book };
+const d = book.data;
+---
+<a
+  class="card"
+  href={`/${book.id}/`}
+  data-card
+  data-url={`/${book.id}/`}
+  data-tags={d.tags.join(' ')}
+  data-added={d.added.toISOString()}
+  data-year={d.year}
+  data-author={authorSortKey(d.author)}
+>
+  <div class="card-stage"><Cover book={d} size="M" /></div>
+  <div class="card-body">
+    <h3 class="card-title">
+      {d.title_fi ? <T fi={d.title_fi} en={d.title} /> : d.title}
+    </h3>
+    <p class="card-meta">{d.author} · {d.year}</p>
+    <ul class="tag-list">
+      {d.tags.map((t) => <li class="tag"><T fi={tags[t].fi} en={tags[t].en} /></li>)}
+    </ul>
+    <p class="card-ydin i18n" lang="fi" set:html={mdInline(d.fi.ydin)} />
+    <p class="card-ydin i18n" lang="en" set:html={mdInline(d.en.ydin)} />
+  </div>
+</a>

@@ -1,0 +1,185 @@
+---
+import { existsSync } from 'node:fs';
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import BookCard from '../components/BookCard.astro';
+import T from '../components/T.astro';
+import { tags, type TagId } from '../data/tags';
+import { byNewest } from '../lib/book';
+
+const books = (await getCollection('books')).sort(byNewest);
+const usedTags = (Object.keys(tags) as TagId[]).filter((t) => books.some((b) => b.data.tags.includes(t)));
+const hasHeroImage = existsSync('public/hero.webp');
+const description = 'Tietokirjojen ydinsanomat selkeinä tiivistelminä, suomeksi ja englanniksi.';
+---
+<Base titleFi="RayDar Library" titleEn="RayDar Library" description={description} home>
+  <section class="hero" slot="hero">
+    {hasHeroImage && <img class="hero-img" src="/hero.webp" alt="" fetchpriority="high" />}
+    <div class="hero-overlay" aria-hidden="true"></div>
+    <div class="hero-content">
+      <h1 class="hero-title"><T fi="Kirjojen sanoma, ilman koko kirjaa" en="What books say, without the whole book" /></h1>
+      <p class="hero-lead"><T
+        fi="Tietokirjojen ydinsanomat selkeinä tiivistelminä, suomeksi ja englanniksi."
+        en="The core messages of non-fiction books in clear summaries, in Finnish and English."
+      /></p>
+      {books.length > 0 && (
+        <form class="search" role="search" data-search-form>
+          <label class="visually-hidden" for="search-input"><T fi="Hae kirjastosta" en="Search the library" /></label>
+          <input
+            id="search-input"
+            type="search"
+            autocomplete="off"
+            placeholder="Hae kirjoja, kirjoittajia tai aiheita"
+            data-placeholder-fi="Hae kirjoja, kirjoittajia tai aiheita"
+            data-placeholder-en="Search books, authors or topics"
+          />
+        </form>
+      )}
+    </div>
+  </section>
+
+  <div class="page">
+    {books.length === 0 ? (
+      <section class="state">
+        <h2><T fi="Kirjasto avautuu pian" en="The library opens soon" /></h2>
+        <p><T fi="Ensimmäiset tiivistelmät ovat vielä tulossa." en="The first summaries are still on their way." /></p>
+      </section>
+    ) : (
+      <>
+        <div class="controls">
+          <div class="filters" role="group" data-label-fi="Suodata aiheen mukaan" data-label-en="Filter by topic" aria-label="Suodata aiheen mukaan">
+            <button type="button" class="chip" data-tag-filter="" aria-pressed="true"><T fi="Kaikki" en="All" /></button>
+            {usedTags.map((t) => (
+              <button type="button" class="chip" data-tag-filter={t} aria-pressed="false"><T fi={tags[t].fi} en={tags[t].en} /></button>
+            ))}
+          </div>
+          <div class="controls-side">
+            <label class="sort">
+              <span class="visually-hidden"><T fi="Järjestys" en="Sort by" /></span>
+              <select data-sort>
+                <option value="added" data-text-fi="Uusimmat" data-text-en="Newest">Uusimmat</option>
+                <option value="author" data-text-fi="Kirjoittaja" data-text-en="Author">Kirjoittaja</option>
+                <option value="year" data-text-fi="Julkaisuvuosi" data-text-en="Publication year">Julkaisuvuosi</option>
+              </select>
+            </label>
+            <button type="button" class="button" data-random><T fi="Satunnainen kirja" en="Random book" /></button>
+          </div>
+        </div>
+        <p class="result-count" aria-live="polite" data-count></p>
+        <h2 class="visually-hidden"><T fi="Kirjat" en="Books" /></h2>
+        <section class="grid" data-grid>
+          {books.map((book) => <BookCard book={book} />)}
+        </section>
+        <section class="state" data-no-results hidden>
+          <h2><T fi="Ei tuloksia" en="No results" /></h2>
+          <p><T fi="Kokeile toista hakusanaa tai poista suodattimet." en="Try another search term or clear the filters." /></p>
+          <button type="button" class="button" data-clear><T fi="Tyhjennä suodattimet" en="Clear filters" /></button>
+        </section>
+      </>
+    )}
+  </div>
+
+  {books.length > 0 && (
+    <script is:inline type="module">
+      const grid = document.querySelector('[data-grid]');
+      const cards = [...grid.querySelectorAll('[data-card]')];
+      const input = document.querySelector('#search-input');
+      const sort = document.querySelector('[data-sort]');
+      const count = document.querySelector('[data-count]');
+      const noResults = document.querySelector('[data-no-results]');
+      const chips = [...document.querySelectorAll('[data-tag-filter]')];
+
+      let activeTag = '';
+      let searchHits = null; // null = no active search; otherwise a Set of page URLs
+      let searchError = false;
+      let searchRun = 0;
+      let pagefind = null;
+
+      const visibleCards = () => cards.filter((c) => !c.hidden);
+
+      function render() {
+        for (const card of cards) {
+          const tagOk = !activeTag || card.dataset.tags.split(' ').includes(activeTag);
+          const searchOk = !searchHits || searchHits.has(card.dataset.url);
+          card.hidden = !(tagOk && searchOk);
+        }
+        const n = visibleCards().length;
+        noResults.hidden = n > 0 || searchError;
+        grid.hidden = n === 0;
+        count.replaceChildren();
+        const fi = document.createElement('span');
+        const en = document.createElement('span');
+        fi.className = en.className = 'i18n';
+        fi.lang = 'fi';
+        en.lang = 'en';
+        fi.textContent = searchError ? 'Haku ei ole juuri nyt käytettävissä.' : n === 1 ? '1 kirja' : n + ' kirjaa';
+        en.textContent = searchError ? 'Search is not available right now.' : n === 1 ? '1 book' : n + ' books';
+        count.append(fi, en);
+      }
+
+      const comparators = {
+        added: (a, b) => b.dataset.added.localeCompare(a.dataset.added),
+        author: (a, b) => a.dataset.author.localeCompare(b.dataset.author, 'fi'),
+        year: (a, b) => Number(b.dataset.year) - Number(a.dataset.year),
+      };
+
+      sort.addEventListener('change', () => {
+        [...cards].sort(comparators[sort.value]).forEach((c) => grid.append(c));
+      });
+
+      function setTag(tag) {
+        activeTag = tag;
+        chips.forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.tagFilter === tag)));
+        render();
+      }
+      chips.forEach((c) => c.addEventListener('click', () => setTag(c.dataset.tagFilter)));
+
+      async function runSearch(query) {
+        const run = ++searchRun;
+        if (!query) {
+          searchHits = null;
+          searchError = false;
+          render();
+          return;
+        }
+        try {
+          pagefind ??= await import('/pagefind/pagefind.js');
+          const found = await pagefind.search(query);
+          const data = await Promise.all(found.results.map((r) => r.data()));
+          if (run !== searchRun) return;
+          searchHits = new Set(data.map((d) => d.url));
+          searchError = false;
+        } catch (e) {
+          if (run !== searchRun) return;
+          searchHits = null;
+          searchError = true;
+        }
+        render();
+      }
+
+      let timer;
+      input.addEventListener('input', () => {
+        clearTimeout(timer);
+        timer = setTimeout(() => runSearch(input.value.trim()), 200);
+      });
+      document.querySelector('[data-search-form]').addEventListener('submit', (e) => {
+        e.preventDefault();
+        clearTimeout(timer);
+        runSearch(input.value.trim());
+      });
+
+      document.querySelector('[data-clear]').addEventListener('click', () => {
+        input.value = '';
+        searchHits = null;
+        setTag('');
+      });
+
+      document.querySelector('[data-random]').addEventListener('click', () => {
+        const pool = visibleCards().length ? visibleCards() : cards;
+        location.href = pool[Math.floor(Math.random() * pool.length)].dataset.url;
+      });
+
+      render();
+    </script>
+  )}
+</Base>

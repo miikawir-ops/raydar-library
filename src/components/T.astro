@@ -1,0 +1,5 @@
+---
+// Inline FI/EN text. The inactive language is hidden by global.css.
+const { fi, en } = Astro.props as { fi: string; en: string };
+---
+<span class="i18n" lang="fi">{fi}</span><span class="i18n" lang="en">{en}</span>

@@ -1,0 +1,65 @@
+/* RayDar design tokens. Values copied from miikawir-ops/AI_valuechain (render.py),
+   the canonical family implementation. Do not change without asking Ray. */
+:root {
+  color-scheme: dark;
+
+  /* Page: hero image bottom edge -> family navy body gradient */
+  --bg-0: #000816;
+  --bg-1: #0e1628;
+  --bg-2: #101c32;
+  --bg-3: #13182a;
+  --bg-4: #0f1420;
+  --hero-placeholder: linear-gradient(135deg, #08081a 0%, #0c1a3a 30%, #1a0830 60%, #0a0818 100%);
+  --panel: rgba(255, 255, 255, 0.04);
+  --panel-hover: rgba(255, 255, 255, 0.07);
+  --highlight: linear-gradient(135deg, #1a1830, #0f1a2e);
+
+  /* Text */
+  --text-strong: #ffffff;
+  --text: #c8d4e8;
+  --text-muted: #8a9ab8;
+
+  /* Accents */
+  --accent: #85b7eb;
+  --accent-2: #afa9ec;
+  --accent-3: #7f77dd;
+  --accent-4: #534ab7;
+  --accent-deep: #3c3489;
+  --signal: #e24b4a;
+
+  /* Lines */
+  --line: rgba(133, 183, 235, 0.2);
+  --line-strong: rgba(175, 169, 236, 0.35);
+  --laser: linear-gradient(90deg, transparent 0%, transparent 10%, #534ab7 28%, #85b7eb 45%, #ffffff 50%, #85b7eb 55%, #534ab7 72%, transparent 90%, transparent 100%);
+  --glow: radial-gradient(ellipse at 50% 0%, rgba(133, 183, 235, 0.45) 0%, rgba(83, 74, 183, 0.2) 40%, transparent 75%);
+
+  /* Type */
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --text-body: 18px;
+  --leading: 1.6;
+  --measure: 70ch;
+
+  /* Space and shape */
+  --gutter: 16px;
+  --radius: 12px;
+  --radius-s: 8px;
+  --page-max: 1240px;
+  --touch: 44px;
+  --shadow-cover: 0 14px 34px rgba(0, 0, 0, 0.55);
+}
+
+/* Fallback cover colours, keyed by a book's first tag. */
+[data-cover-tag='talous'] { --cover-a: #12324f; --cover-b: #0a1a2e; --cover-line: #85b7eb; }
+[data-cover-tag='sijoittaminen'] { --cover-a: #123f3b; --cover-b: #08201f; --cover-line: #6fcfb4; }
+[data-cover-tag='liiketoiminta'] { --cover-a: #2b2f55; --cover-b: #12142c; --cover-line: #afa9ec; }
+[data-cover-tag='johtaminen'] { --cover-a: #4a2c1c; --cover-b: #21130c; --cover-line: #e8a66f; }
+[data-cover-tag='psykologia'] { --cover-a: #3c3489; --cover-b: #17123f; --cover-line: #afa9ec; }
+[data-cover-tag='paatoksenteko'] { --cover-a: #1d3a6e; --cover-b: #0c1a3a; --cover-line: #85b7eb; }
+[data-cover-tag='teknologia'] { --cover-a: #0f3e52; --cover-b: #071f2c; --cover-line: #6cc4e0; }
+[data-cover-tag='tekoaly'] { --cover-a: #40205f; --cover-b: #1a0830; --cover-line: #c79af0; }
+[data-cover-tag='tiede'] { --cover-a: #173f33; --cover-b: #0a2019; --cover-line: #8fd19e; }
+[data-cover-tag='historia'] { --cover-a: #4a3a18; --cover-b: #211a0a; --cover-line: #dcc27a; }
+[data-cover-tag='yhteiskunta'] { --cover-a: #4f2230; --cover-b: #260e16; --cover-line: #e88a9f; }
+[data-cover-tag='filosofia'] { --cover-a: #2f3548; --cover-b: #141824; --cover-line: #c8d4e8; }
+[data-cover-tag='terveys'] { --cover-a: #1a4640; --cover-b: #0b2320; --cover-line: #7fd6c2; }
+[data-cover-tag='tuottavuus'] { --cover-a: #4b3a12; --cover-b: #221a08; --cover-line: #efc35f; }

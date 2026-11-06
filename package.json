@@ -1,0 +1,22 @@
+{
+  "name": "raydar-library",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.23.4"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "check:books": "node tools/check-books.mjs",
+    "prebuild": "node tools/check-books.mjs",
+    "build": "astro build && pagefind --site dist",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "astro": "^7.4.7",
+    "marked": "^18.1.3",
+    "pagefind": "^1.6.0",
+    "yaml": "^2.9.1"
+  }
+}

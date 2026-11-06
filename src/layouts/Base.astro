@@ -1,0 +1,110 @@
+---
+import '../styles/tokens.css';
+import '../styles/global.css';
+import T from '../components/T.astro';
+import { site } from '../site.config';
+
+interface Props {
+  titleFi: string;
+  titleEn: string;
+  description?: string;
+  home?: boolean;
+  ogImage?: string;
+}
+const { titleFi, titleEn, description, home = false, ogImage } = Astro.props;
+const canonical = new URL(Astro.url.pathname, site.url).href;
+---
+<!doctype html>
+<html lang="fi" data-lang="fi" data-title-fi={titleFi} data-title-en={titleEn}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{titleFi}</title>
+    <meta name="theme-color" content="#000816" />
+    {!site.indexable && <meta name="robots" content="noindex" />}
+    {site.indexable && description && <meta name="description" content={description} />}
+    {site.indexable && <link rel="canonical" href={canonical} />}
+    {site.indexable && <meta property="og:type" content="website" />}
+    {site.indexable && <meta property="og:title" content={titleFi} />}
+    {site.indexable && <meta property="og:url" content={canonical} />}
+    {site.indexable && description && <meta property="og:description" content={description} />}
+    {site.indexable && ogImage && <meta property="og:image" content={ogImage} />}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.png" type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <script is:inline>
+      (function () {
+        var lang = 'fi';
+        try {
+          var saved = localStorage.getItem('raydar-library-lang');
+          if (saved === 'fi' || saved === 'en') lang = saved;
+        } catch (e) {}
+        document.documentElement.dataset.lang = lang;
+        document.documentElement.lang = lang;
+      })();
+    </script>
+  </head>
+  <body class={home ? 'is-home' : ''}>
+    <div class="laser" aria-hidden="true"></div>
+    <div class="laser-glow" aria-hidden="true"></div>
+    <a class="skip-link" href="#content"><T fi="Siirry sisältöön" en="Skip to content" /></a>
+    <header class="topbar">
+      <a class="wordmark" href="/" aria-label="RayDar Library">
+        <span class="wordmark-ray">Ray<span>Dar</span></span>
+        <span class="wordmark-dot" aria-hidden="true"></span>
+        <span class="wordmark-sub">Library</span>
+      </a>
+      <div class="lang-switch" role="group" aria-label="Kieli / Language">
+        <button type="button" data-lang-btn="fi" lang="fi" aria-label="Suomi">FI</button>
+        <button type="button" data-lang-btn="en" lang="en" aria-label="English">EN</button>
+      </div>
+    </header>
+    <slot name="hero" />
+    <main id="content"><slot /></main>
+    <footer class="footer">
+      <div class="footer-inner">
+        <p class="footer-note"><T fi="Tiivistelmät on tuotettu tekoälyn avulla ja voivat sisältää virheitä." en="Summaries are AI-generated and may contain errors." /></p>
+        <p class="footer-links">
+          <a href="https://raydar.fi/">raydar.fi</a>
+          <a href="https://openlibrary.org/" rel="noopener">Covers: Open Library</a>
+        </p>
+      </div>
+    </footer>
+    <script is:inline>
+      (function () {
+        var root = document.documentElement;
+        function apply(lang) {
+          root.dataset.lang = lang;
+          root.lang = lang;
+          var suffix = lang === 'en' ? 'En' : 'Fi';
+          document.title = root.dataset['title' + suffix];
+          document.querySelectorAll('[data-alt-fi]').forEach(function (el) {
+            el.alt = el.dataset['alt' + suffix];
+          });
+          document.querySelectorAll('[data-placeholder-fi]').forEach(function (el) {
+            el.placeholder = el.dataset['placeholder' + suffix];
+          });
+          document.querySelectorAll('[data-text-fi]').forEach(function (el) {
+            el.textContent = el.dataset['text' + suffix];
+          });
+          document.querySelectorAll('[data-label-fi]').forEach(function (el) {
+            el.setAttribute('aria-label', el.dataset['label' + suffix]);
+          });
+          document.querySelectorAll('[data-lang-btn]').forEach(function (el) {
+            el.setAttribute('aria-pressed', String(el.dataset.langBtn === lang));
+          });
+        }
+        document.querySelectorAll('[data-lang-btn]').forEach(function (el) {
+          el.addEventListener('click', function () {
+            var lang = el.dataset.langBtn;
+            apply(lang);
+            try {
+              localStorage.setItem('raydar-library-lang', lang);
+            } catch (e) {}
+          });
+        });
+        apply(root.dataset.lang);
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,38 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch",
+      "Bash(npm run build)",
+      "Bash(npm run dev *)",
+      "Bash(npm run preview *)",
+      "Bash(git status *)",
+      "Bash(git fetch *)",
+      "Bash(git pull *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push)",
+      "Bash(git push origin main)",
+      "Bash(gh run watch *)",
+      "Bash(gh run list *)",
+      "PowerShell(npm run build)",
+      "PowerShell(npm run dev *)",
+      "PowerShell(npm run preview *)",
+      "PowerShell(git status *)",
+      "PowerShell(git fetch *)",
+      "PowerShell(git pull *)",
+      "PowerShell(git add *)",
+      "PowerShell(git commit *)",
+      "PowerShell(git push)",
+      "PowerShell(git push origin main)",
+      "PowerShell(gh run watch *)",
+      "PowerShell(gh run list *)"
+    ],
+    "deny": [
+      "Bash(git push --force *)",
+      "Bash(git push -f *)",
+      "PowerShell(git push --force *)",
+      "PowerShell(git push -f *)"
+    ]
+  }
+}

@@ -1,0 +1,196 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import BookCard from '../components/BookCard.astro';
+import Cover from '../components/Cover.astro';
+import T from '../components/T.astro';
+import { tags } from '../data/tags';
+import { coverSrc, md, mdInline, readingMinutes, type Book } from '../lib/book';
+
+export async function getStaticPaths() {
+  const books = await getCollection('books');
+  return books.map((book) => ({
+    params: { slug: book.id },
+    props: { book, related: books.filter((b) => book.data.liittyvat.includes(b.id)) },
+  }));
+}
+
+const { book, related } = Astro.props as { book: CollectionEntry<'books'>; related: Book[] };
+const d = book.data;
+const languages = [
+  { code: 'fi', content: d.fi },
+  { code: 'en', content: d.en },
+] as const;
+
+const hasKasitteet = d.fi.kasitteet.length > 0 || d.en.kasitteet.length > 0;
+const hasSuositukset = d.fi.suositukset.length > 0 || d.en.suositukset.length > 0;
+const hasHuomio = d.fi.huomio.length > 0 || d.en.huomio.length > 0;
+const hasOmaHuomio = d.oma_huomio.trim().length > 0;
+
+const toc = [
+  { id: 'yleiskuva', fi: 'Yleiskuva', en: 'Overview', show: true },
+  { id: 'viestit', fi: 'Keskeiset viestit', en: 'Key messages', show: true },
+  { id: 'kasitteet', fi: 'Käsitteet', en: 'Concepts', show: hasKasitteet },
+  { id: 'kirjoittaja', fi: 'Kirjoittaja', en: 'The author', show: true },
+  { id: 'suositukset', fi: 'Kirjan suositukset', en: "The book's recommendations", show: hasSuositukset },
+  { id: 'huomio', fi: 'Huomio', en: 'Note', show: hasHuomio },
+  { id: 'oma-huomio', fi: 'Oma huomio', en: 'Personal note', show: hasOmaHuomio },
+  { id: 'liittyvat', fi: 'Liittyvät kirjat', en: 'Related books', show: related.length > 0 },
+  { id: 'lahteet', fi: 'Lähteet', en: 'Sources', show: true },
+].filter((item) => item.show);
+
+const varmuusEn = { korkea: 'high', kohtalainen: 'moderate', matala: 'low' }[d.varmuus];
+const titleFi = `${d.title_fi ?? d.title} | RayDar Library`;
+const titleEn = `${d.title} | RayDar Library`;
+---
+<Base titleFi={titleFi} titleEn={titleEn} description={d.fi.ydin} ogImage={coverSrc(d, 'L') ?? undefined}>
+  <div class="progress" aria-hidden="true"><span data-progress></span></div>
+  <article class="book" data-pagefind-body>
+    <header class="book-head">
+      <div class="book-cover"><Cover book={d} size="L" eager /></div>
+      <div class="book-info">
+        <h1 class="book-title">
+          {d.title_fi ? <T fi={d.title_fi} en={d.title} /> : d.title}
+        </h1>
+        {d.title_fi && <p class="book-original i18n" lang="fi">Alkuteos: {d.title}</p>}
+        <p class="book-author">{d.author} · {d.year}</p>
+        <ul class="tag-list" data-pagefind-ignore>
+          {d.tags.map((t) => <li class="tag"><T fi={tags[t].fi} en={tags[t].en} /></li>)}
+        </ul>
+        <p class="book-marks" data-pagefind-ignore>
+          <T fi={`Noin ${readingMinutes(d.fi)} min lukuaika`} en={`About ${readingMinutes(d.en)} min read`} />
+          <span aria-hidden="true"> · </span>
+          <T fi={`Varmuus: ${d.varmuus}`} en={`Confidence: ${varmuusEn}`} />
+        </p>
+      </div>
+    </header>
+
+    <div class="ydin">
+      <div class="i18n" lang="fi" set:html={md(d.fi.ydin)} />
+      <div class="i18n" lang="en" set:html={md(d.en.ydin)} />
+    </div>
+
+    <details class="toc-mobile" data-pagefind-ignore>
+      <summary><T fi="Sisällys" en="Contents" /></summary>
+      <ul>{toc.map((item) => <li><a href={`#${item.id}`}><T fi={item.fi} en={item.en} /></a></li>)}</ul>
+    </details>
+
+    <div class="book-layout">
+      <nav class="toc" data-pagefind-ignore data-label-fi="Sisällys" data-label-en="Contents" aria-label="Sisällys">
+        <p class="toc-title"><T fi="Sisällys" en="Contents" /></p>
+        <ul>{toc.map((item) => <li><a href={`#${item.id}`}><T fi={item.fi} en={item.en} /></a></li>)}</ul>
+      </nav>
+
+      <div class="book-text">
+        <section id="yleiskuva">
+          <h2><T fi="Yleiskuva" en="Overview" /></h2>
+          {languages.map(({ code, content }) => <div class="prose i18n" lang={code} set:html={md(content.yleiskuva)} />)}
+        </section>
+
+        <section id="viestit">
+          <h2><T fi="Keskeiset viestit" en="Key messages" /></h2>
+          {languages.map(({ code, content }) => (
+            <ol class="ideas i18n" lang={code}>
+              {content.ideat.map((idea, i) => (
+                <li class="idea">
+                  <span class="idea-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                  <h3 set:html={mdInline(idea.otsikko)} />
+                  <div class="prose" set:html={md(idea.selitys)} />
+                </li>
+              ))}
+            </ol>
+          ))}
+        </section>
+
+        {hasKasitteet && (
+          <section id="kasitteet">
+            <h2><T fi="Käsitteet" en="Concepts" /></h2>
+            {languages.map(({ code, content }) => (
+              <dl class="concepts i18n" lang={code}>
+                {content.kasitteet.map((k) => (
+                  <div>
+                    <dt>{k.termi}</dt>
+                    <dd set:html={md(k.selitys)} />
+                  </div>
+                ))}
+              </dl>
+            ))}
+          </section>
+        )}
+
+        <section id="kirjoittaja">
+          <h2><T fi="Kirjoittaja" en="The author" /></h2>
+          {languages.map(({ code, content }) => <div class="prose i18n" lang={code} set:html={md(content.kirjoittaja)} />)}
+        </section>
+
+        {hasSuositukset && (
+          <section id="suositukset">
+            <h2><T fi="Kirjan suositukset" en="The book's recommendations" /></h2>
+            {languages.map(({ code, content }) => (
+              <ul class="prose recommendations i18n" lang={code}>
+                {content.suositukset.map((s) => <li set:html={mdInline(s)} />)}
+              </ul>
+            ))}
+          </section>
+        )}
+
+        {hasHuomio && (
+          <section id="huomio" class="note">
+            <h2><T fi="Huomio" en="Note" /></h2>
+            {languages.map(({ code, content }) => (
+              <div class="i18n" lang={code}>
+                {content.huomio.map((h) => <div set:html={md(h)} />)}
+              </div>
+            ))}
+          </section>
+        )}
+
+        {hasOmaHuomio && (
+          <section id="oma-huomio" class="personal-note">
+            <h2><T fi="Oma huomio" en="Personal note" /></h2>
+            <div class="prose" set:html={md(d.oma_huomio)} />
+          </section>
+        )}
+
+        {related.length > 0 && (
+          <section id="liittyvat" data-pagefind-ignore>
+            <h2><T fi="Liittyvät kirjat" en="Related books" /></h2>
+            <div class="related">{related.map((b) => <BookCard book={b} />)}</div>
+          </section>
+        )}
+
+        <section id="lahteet" class="sources" data-pagefind-ignore>
+          <h2><T fi="Lähteet" en="Sources" /></h2>
+          <ul>
+            {d.lahteet.map((s) => <li><a href={s.url} rel="noopener">{s.nimi}</a></li>)}
+            {d.olid && (
+              <li><a href={`https://openlibrary.org/books/${d.olid}`} rel="noopener"><T fi="Teos Open Libraryssä" en="This book on Open Library" /></a></li>
+            )}
+          </ul>
+        </section>
+      </div>
+    </div>
+  </article>
+
+  <script is:inline>
+    (function () {
+      var bar = document.querySelector('[data-progress]');
+      var pending = false;
+      function update() {
+        pending = false;
+        var el = document.documentElement;
+        var max = el.scrollHeight - el.clientHeight;
+        bar.style.transform = 'scaleX(' + (max > 0 ? Math.min(1, el.scrollTop / max) : 0) + ')';
+      }
+      function request() {
+        if (!pending) {
+          pending = true;
+          requestAnimationFrame(update);
+        }
+      }
+      addEventListener('scroll', request, { passive: true });
+      addEventListener('resize', request);
+      update();
+    })();
+  </script>
+</Base>

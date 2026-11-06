@@ -1,0 +1,31 @@
+---
+import { coverSrc, type BookData } from '../lib/book';
+
+interface Props {
+  book: BookData;
+  size: 'M' | 'L';
+  eager?: boolean;
+}
+const { book, size, eager = false } = Astro.props;
+const src = coverSrc(book, size);
+---
+<div class="cover" data-cover-tag={book.tags[0]}>
+  <div class="cover-fallback" aria-hidden="true">
+    <span class="cover-fallback-title">{book.title}</span>
+    <span class="cover-fallback-rule"></span>
+    <span class="cover-fallback-author">{book.author}</span>
+  </div>
+  {src && (
+    <img
+      class="cover-img"
+      src={src}
+      alt={`Kirjan ${book.title} kansi`}
+      data-alt-fi={`Kirjan ${book.title} kansi`}
+      data-alt-en={`Cover of ${book.title}`}
+      loading={eager ? 'eager' : 'lazy'}
+      decoding="async"
+      onerror="this.remove()"
+      onload="if(this.naturalWidth<2)this.remove()"
+    />
+  )}
+</div>
