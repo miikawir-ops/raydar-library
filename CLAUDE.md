@@ -251,6 +251,7 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
    - `loading="lazy"`
    - kiinteä kuvasuhde `aspect-ratio: 2 / 3`, jotta asettelu ei hypi
    - `onerror` vaihtaa varakanteen
+   - `onload` vaihtaa varakanteen, jos `naturalWidth` on alle 2: Open Library palauttaa tuntemattomasta ID:stä `200`-vastauksen ja 1×1-GIF:n, joten `onerror` ei yksin riitä
    - `alt` = "Kirjan {title} kansi" / "Cover of {title}"
 8. **Lähdeviitteet:** kirjasivulla linkki teoksen Open Library -sivulle (jos `olid` on tiedossa) ja alatunnisteessa linkki "Covers: Open Library".
 9. **Varakansi:** värit johdetaan ensimmäisestä tagista, ja otsikko ja kirjoittaja ladotaan typografisesti RayDar-tyyliin. Sen pitää näyttää tarkoitukselliselta, ei virhetilalta.
@@ -396,6 +397,7 @@ Tarkista ero originiin (`git status`, `git fetch`).
 
 ### Domain-käyttöönotto
 
+- **Järjestys:** lisää domain ensin GitHubissa (Settings → Pages → Custom domain) ja tee DNS-muutos vasta sen jälkeen. GitHubin ohjeen mukaan Actions-julkaisussa `CNAME`-tiedosto ohitetaan, joten `public/CNAME` ei yksin ota domainia käyttöön.
 - **DNS:** Zoner, CNAME `library` → `miikawir-ops.github.io`.
 - **Testaa ennen käyttöönottoa vain kertakäyttöisiä polkuja** (esim. `/probe-123.html`), ei `/`:tä tai oikeita sivuja. GitHubin CDN välimuistittaa käyttöönottoa edeltävän 404:n tuntemattomaksi ajaksi.
 
