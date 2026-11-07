@@ -97,7 +97,8 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
     linear-gradient(90deg, rgba(0, 8, 22, 0.82) 0%, rgba(0, 8, 22, 0.5) 55%, rgba(0, 8, 22, 0.1) 100%);
 }
 .hero-content { position: relative; width: 100%; max-width: var(--page-max); margin: 0 auto; padding: 0 var(--gutter); }
-.hero-title { font-size: clamp(30px, 8vw, 52px); font-weight: 600; letter-spacing: -0.02em; max-width: 18ch; }
+.hero-title { font-size: clamp(30px, 8vw, 52px); font-weight: 600; letter-spacing: -0.02em; }
+.hero-subtitle { margin-top: 8px; font-size: clamp(20px, 3.5vw, 26px); font-weight: 500; line-height: 1.25; color: var(--accent); }
 .hero-lead { margin-top: 12px; max-width: 46ch; color: var(--text); font-size: 17px; }
 .search { margin-top: 20px; max-width: 520px; }
 .search input {
