@@ -21,7 +21,7 @@ Muuten etene loppuun asti ilman välikysymyksiä.
 
 1. **Tunnista teos.** Tarkista, onko kirja jo `src/content/books/`-kansiossa. Vertaa nimeä, kirjoittajaa ja tiedostonimeä.
    - Jos kirja löytyy, kysy päivitetäänkö se vai ohitetaanko.
-2. **Hae ja avaa lähteet** (2–12 kpl CLAUDE.md:n Lähteet-osion mukaan). Tarkista:
+2. **Hae ja avaa lähteet** (2–15 kpl CLAUDE.md:n Lähteet-osion mukaan). Tarkista:
    - perustiedot
    - suomennos ja sen nimi
    - kirjoittajan tausta
