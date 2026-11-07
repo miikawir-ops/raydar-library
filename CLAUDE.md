@@ -183,7 +183,14 @@ Jos kirjaa ei tunnisteta tai nimellä löytyy useita teoksia, kysy.
   - kirjoittajan ammatillinen tausta
   - kirjan pääväitteet
   - jokainen mainittu esimerkki tai tutkimus
-- **Hyväksyttävät lähteet:** kustantaja, kirjastot, Wikipedia, laatumedian arviot, tieteelliset arviot ja kirjoittajan oma sivusto tai haastattelut.
+- **Hyväksyttävät lähteet:**
+  - kustantajien ja yliopistojen sivut sekä kirjastot
+  - Wikipedia, myös käsite- ja tutkimuskohtaiset artikkelit (esim. planning fallacy, peak-end rule, reference class forecasting)
+  - laatumedian arviot ja tieteelliset arviot
+  - alkuperäiset tutkimusartikkelit ja niiden abstraktit
+  - kirjoittajan oma sivusto, haastattelut, luennot ja puheet (esim. Nobel-luento)
+- **Opiskelijaoppaat** (LitCharts, SparkNotes yms.) kelpaavat yksittäisen faktan tarkistukseen, mutta eivät `lahteet`-kentän päälähteiksi. Niiden lukujakoa ei seurata.
+- **Kun keskeinen esimerkki ei varmennu ensimmäisestä lähteestä,** hae sille oma lähde ennen kuin jätät sen pois.
 - **`lahteet`-kenttään** kirjataan vain lähteet, jotka tässä työssä oikeasti avattiin. URL:eja ei koskaan kirjoiteta muistista.
 - **Lähteet näytetään kirjasivulla.** Näin lukija ja Ray voivat tarkistaa sisällön.
 
