@@ -141,7 +141,7 @@ oma_huomio: ""
 | `ydin` | Kirjan ydinsanoma niin, että sen ymmärtää ilman muuta tekstiä. Näkyy myös kortissa. | 1–3 lausetta |
 | `yleiskuva` | Mistä kirja kertoo: mihin kysymykseen tai ongelmaan se vastaa, mikä on sen pääajatus, miten kirja rakentaa sen (aineisto, esimerkit, eteneminen) ja mihin johtopäätökseen se päätyy. Lukijan pitää tämän jälkeen ymmärtää kirjan kokonaisuus. | 250–500 sanaa |
 | `ideat` | Kirjan keskeiset viestit. `otsikko` tiivistää viestin. `selitys` kertoo, mitä kirja tällä tarkoittaa, miten se sen perustelee tai havainnollistaa (kirjan omat keskeiset esimerkit, kun ne on varmennettu) ja miten viesti liittyy kokonaisuuteen. | 6–12 kpl, selitys 80–200 sanaa |
-| `kasitteet` | Kirjan omat tai sille keskeiset käsitteet määritelmineen, kuten kirja ne määrittelee. Vain jos kirja todella esittelee niitä. | 0–8 kpl, 1–3 lausetta |
+| `kasitteet` | Kirjan omat tai sille keskeiset käsitteet määritelmineen, kuten kirja ne määrittelee. Vain jos kirja todella esittelee niitä. `termi` kirjoitetaan perusmuodossa, jotta Pagefind löytää sen perusmuotoisella haulla. | 0–8 kpl, 1–3 lausetta |
 | `kirjoittaja` | Kuka hän on, mikä on hänen alansa ja asemansa ja mistä hänet tunnetaan. | 50–100 sanaa |
 | `suositukset` | Valinnainen. Kirjan omat ohjeet tai johtopäätökset lukijalle, jos kirja niitä antaa. Ei omia sovelluksia. | 0–6 kohtaa |
 | `huomio` | Valinnainen. Vain jos jokin kirjan keskeinen väite on myöhemmin laajasti kumottu tai kiistetty niin, että sen oppiminen faktana johtaisi harhaan (esim. tutkimus, joka ei ole toistunut). Ei arvostelua, makuasioita eikä yleistä kritiikkiä. | 0–2 lyhyttä kohtaa |
