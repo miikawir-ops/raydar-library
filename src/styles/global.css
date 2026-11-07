@@ -73,7 +73,7 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
   -webkit-text-fill-color: transparent;
 }
 
-.lang-switch { display: inline-flex; border: 1px solid var(--line-strong); border-radius: 20px; overflow: hidden; background: rgba(0, 8, 22, 0.45); }
+.lang-switch { display: inline-flex; border: 1px solid var(--line-strong); border-radius: 20px; overflow: hidden; background: rgba(0, 8, 22, 0.88); }
 .lang-switch button {
   min-width: var(--touch); min-height: var(--touch); padding: 0 8px;
   font-size: 13px; font-weight: 500; letter-spacing: 0.04em;
@@ -90,11 +90,11 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
   overflow: hidden;
 }
 .hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 55% center; }
+/* On phones the text spans the full width over the lamp, so the overlay is even across it.
+   The stops keep the top bar readable and leave a lighter band between it and the heading. */
 .hero-overlay {
   position: absolute; inset: 0;
-  background:
-    linear-gradient(180deg, rgba(0, 8, 22, 0) 45%, var(--bg-0) 100%),
-    linear-gradient(90deg, rgba(0, 8, 22, 0.82) 0%, rgba(0, 8, 22, 0.5) 55%, rgba(0, 8, 22, 0.1) 100%);
+  background: linear-gradient(180deg, rgba(0, 8, 22, 0.8) 0, rgba(0, 8, 22, 0.8) 62px, rgba(0, 8, 22, 0.3) 92px, rgba(0, 8, 22, 0.76) 130px, rgba(0, 8, 22, 0.78) 70%, var(--bg-0) 100%);
 }
 .hero-content { position: relative; width: 100%; max-width: var(--page-max); margin: 0 auto; padding: 0 var(--gutter); }
 .hero-title { font-size: clamp(30px, 8vw, 52px); font-weight: 600; letter-spacing: -0.02em; }
@@ -274,6 +274,11 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
 
 @media (min-width: 720px) {
   .hero { min-height: 55vh; padding-bottom: 40px; }
+  .hero-overlay {
+    background:
+      linear-gradient(180deg, rgba(0, 8, 22, 0) 45%, var(--bg-0) 100%),
+      linear-gradient(90deg, rgba(0, 8, 22, 0.82) 0%, rgba(0, 8, 22, 0.5) 55%, rgba(0, 8, 22, 0.1) 100%);
+  }
   .controls { flex-direction: row; justify-content: space-between; align-items: flex-start; }
   .controls-side { flex: none; flex-wrap: nowrap; }
 
