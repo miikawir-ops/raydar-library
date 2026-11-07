@@ -29,7 +29,7 @@ Muuten etene loppuun asti ilman välikysymyksiä.
 3. **Arvioi varmuus.**
    - `matala` → pysähdy ja kysy.
    - `kohtalainen` → käytä suppeampaa laajuutta.
-4. **Hae kansi.** Open Library Search API → `cover_id` ja `olid`. Jos haku epäonnistuu tai osuma on epävarma, jätä kentät pois.
+4. **Hae kansi.** Open Library Search API WebFetchillä, ei curlilla → `cover_id` ja `olid`. Jos haku epäonnistuu tai osuma on epävarma, jätä kentät pois.
 5. **Kirjoita tiedosto** suomeksi ja englanniksi CLAUDE.md:n mukaan.
    - `oma_huomio` tyhjäksi.
    - `liittyvat`: vain kirjaston olemassa olevia kirjoja, jos yhteys on selvä.
@@ -41,7 +41,7 @@ Muuten etene loppuun asti ilman välikysymyksiä.
 
 Kun kaikki kirjat on käsitelty:
 
-1. Aja `gh run watch`.
+1. Hae ajon tunniste: `gh run list --branch main --limit 1 --json databaseId --jq ".[0].databaseId"`. Aja sitten `gh run watch <tunniste> --exit-status`.
 2. Raportoi lyhyesti, enintään 3 riviä per kirja:
    - otsikko ja varmuus
    - mahdolliset varoitukset tai poikkeamat

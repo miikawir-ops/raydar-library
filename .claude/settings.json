@@ -13,8 +13,11 @@
       "Bash(git commit *)",
       "Bash(git push)",
       "Bash(git push origin main)",
+      "Bash(git log *)",
       "Bash(gh run watch *)",
       "Bash(gh run list *)",
+      "Bash(gh run view *)",
+      "Bash(node tools/check-books.mjs)",
       "PowerShell(npm run build)",
       "PowerShell(npm run dev *)",
       "PowerShell(npm run preview *)",
@@ -25,8 +28,11 @@
       "PowerShell(git commit *)",
       "PowerShell(git push)",
       "PowerShell(git push origin main)",
+      "PowerShell(git log *)",
       "PowerShell(gh run watch *)",
-      "PowerShell(gh run list *)"
+      "PowerShell(gh run list *)",
+      "PowerShell(gh run view *)",
+      "PowerShell(node tools/check-books.mjs)"
     ],
     "deny": [
       "Bash(git push --force *)",
