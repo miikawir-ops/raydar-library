@@ -190,6 +190,7 @@ Jos kirjaa ei tunnisteta tai nimellä löytyy useita teoksia, kysy.
   - alkuperäiset tutkimusartikkelit ja niiden abstraktit
   - kirjoittajan oma sivusto, haastattelut, luennot ja puheet (esim. Nobel-luento)
 - **Opiskelijaoppaat** (LitCharts, SparkNotes yms.) kelpaavat yksittäisen faktan tarkistukseen, mutta eivät `lahteet`-kentän päälähteiksi. Niiden lukujakoa ei seurata.
+- **Tarkat luvut ja laskelmat** vaativat muun lähteen kuin opiskelijaoppaan. Jos luku varmentuu vain oppaasta, poista se ja kerro asia laadullisesti.
 - **Kun keskeinen esimerkki ei varmennu ensimmäisestä lähteestä,** hae sille oma lähde ennen kuin jätät sen pois.
 - **`lahteet`-kenttään** kirjataan vain lähteet, jotka tässä työssä oikeasti avattiin. URL:eja ei koskaan kirjoiteta muistista.
 - **Lähteet näytetään kirjasivulla.** Näin lukija ja Ray voivat tarkistaa sisällön.
