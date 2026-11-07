@@ -81,6 +81,7 @@ for (const file of files) {
 
   const sources = Array.isArray(book.lahteet) ? book.lahteet : [];
   if (sources.length < 2) error(`lahteet needs at least 2 sources, has ${sources.length}`);
+  if (sources.length > 12) error(`lahteet allows at most 12 sources, has ${sources.length}`);
 
   const scope = SCOPE[book.varmuus];
   const totals = {};

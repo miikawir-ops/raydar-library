@@ -30,7 +30,7 @@ const books = defineCollection({
     added: z.coerce.date(),
     updated: z.coerce.date().optional(),
     varmuus: z.enum(['korkea', 'kohtalainen', 'matala']),
-    lahteet: z.array(z.object({ nimi: nonEmpty, url: z.string().url() })).min(2).max(6),
+    lahteet: z.array(z.object({ nimi: nonEmpty, url: z.string().url() })).min(2).max(12),
     liittyvat: z.array(z.string()).max(4).default([]),
     fi: language,
     en: language,

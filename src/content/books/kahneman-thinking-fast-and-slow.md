@@ -23,6 +23,16 @@ lahteet:
     url: "https://www.nybooks.com/articles/2011/12/22/how-dispel-your-illusions/"
   - nimi: "Schimmack, Heene ja Kesavan: Reconstruction of a Train Wreck, Replicability-Index 2017"
     url: "https://replicationindex.com/2017/02/02/reconstruction-of-a-train-wreck-how-priming-research-went-of-the-rails/"
+  - nimi: "Wikipedia: Representativeness heuristic"
+    url: "https://en.wikipedia.org/wiki/Representativeness_heuristic"
+  - nimi: "Wikipedia: Pre-mortem"
+    url: "https://en.wikipedia.org/wiki/Pre-mortem"
+  - nimi: "Kahneman ja Klein: Conditions for Intuitive Expertise, American Psychologist 2009 (PubMed-tiivistelmä)"
+    url: "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=19739881&rettype=abstract&retmode=text"
+  - nimi: "David Howden: Thinking, Fast and Slow -arvio, The Quarterly Journal of Austrian Economics 2012"
+    url: "https://cdn.mises.org/qjae15_3_5.pdf"
+  - nimi: "Finna: Ajattelu, nopeasti ja hitaasti (Terra Cognita, suom. Kimmo Pietiläinen)"
+    url: "https://www.finna.fi/Record/3amk.131307"
 liittyvat: []
 fi:
   ydin: |

@@ -102,7 +102,7 @@ tags: [psykologia, paatoksenteko]     # 1–3 kpl, vain src/data/tags.ts:n lista
 added: 2026-11-06
 updated: 2026-11-06                   # valinnainen, viimeisin sisältömuutos
 varmuus: korkea                       # korkea | kohtalainen | matala
-lahteet:                              # 2–6 kpl, vain tässä työssä oikeasti avatut lähteet
+lahteet:                              # 2–12 kpl, vain tässä työssä oikeasti avatut lähteet
   - nimi: ""
     url: ""
 liittyvat: []                         # 0–4 kirjaston olemassa olevan kirjan slugia
@@ -340,7 +340,7 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
 - FI tai EN puuttuu tai jokin pakollinen osio on tyhjä
 - tagi ei ole sallittujen listalla
 - `liittyvat` viittaa kirjaan, jota ei ole
-- `lahteet`-kentässä on alle 2 lähdettä
+- `lahteet`-kentässä on alle 2 tai yli 12 lähdettä
 - tiedostonimi on väärää muotoa
 
 **Varoitus (build jatkuu), kun:**
