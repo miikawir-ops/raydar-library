@@ -58,6 +58,7 @@ src/data/tags.ts            # sallitut tagit + FI/EN-nimet
 src/styles/tokens.css       # RayDar-designtokenit (värit, fontit, välit)
 src/site.config.ts          # mm. indexable: false/true
 tools/check-books.mjs       # sisällön tarkistus, ajetaan ennen buildia
+tools/toccheck.mjs          # sisällysluettelon aktiivisen kohdan tarkistus (npm run check:toc)
 public/hero.webp            # etusivun hero-kuva (Ray toimittaa)
 public/edge.webp            # reunafiguuri, kirjahylly 338 × 1024 (Ray toimittaa)
 public/CNAME                # library.raydar.fi
@@ -391,6 +392,11 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
 
 - **Kuvakaappaukset:** jokaisesta ulkoasumuutoksesta kuvakaappaukset työpöydällä (1440 px) ja mobiilissa (390 px) ennen mergeä.
 - **Testisivut:** etusivu, pitkä kirjasivu ja kirja ilman kantta (varakansi).
+- **Sisällysluettelo:** ulkoasumuutoksissa ajetaan `npm run check:toc` ennen mergeä.
+  - Aja ensin `npm run build` ja sitten `npm run preview` toisessa terminaalissa.
+  - Tarkistus vierittää kirjasivuja alas, ylös ja hypäten (1440 ja 390 px) ja vertaa sisällysluettelon aktiivista kohtaa vierityskohtaan.
+  - Se tarvitsee Playwrightin Chromiumin kerran koneelle: `npx playwright install chromium`.
+  - Tarkistus ei kuulu julkaisuajoon.
 - **Onnistunut build todistaa toimivuuden,** ei sitä, näyttääkö sivu Rayn mielestä oikealta.
 
 ## Sisällön tarkistustyökalu
