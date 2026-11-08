@@ -9,9 +9,14 @@ interface Props {
   titleEn: string;
   description?: string;
   home?: boolean;
+  book?: boolean;
   ogImage?: string;
 }
-const { titleFi, titleEn, description, home = false, ogImage } = Astro.props;
+const { titleFi, titleEn, description, home = false, book = false, ogImage } = Astro.props;
+// Light pools down the page: brass and moonlight alternate, 520 px apart from the top, so every
+// screenful shows at least one of each. 64 pools cover about 33 000 px (the longest page, a
+// mobile book page, was 22 083 px); pools past the end of a shorter page are clipped.
+const pools = Array.from({ length: 64 }, (_, i) => ({ kind: i % 2 === 0 ? 'brass' : 'moon', side: i % 4 < 2 ? 'left' : 'right', top: 100 + i * 520 }));
 const canonical = new URL(Astro.url.pathname, site.url).href;
 ---
 <!doctype html>
@@ -20,7 +25,7 @@ const canonical = new URL(Astro.url.pathname, site.url).href;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{titleFi}</title>
-    <meta name="theme-color" content="#0b1a30" />
+    <meta name="theme-color" content="#0d2040" />
     {!site.indexable && <meta name="robots" content="noindex" />}
     {site.indexable && description && <meta name="description" content={description} />}
     {site.indexable && <link rel="canonical" href={canonical} />}
@@ -44,12 +49,17 @@ const canonical = new URL(Astro.url.pathname, site.url).href;
       })();
     </script>
   </head>
-  <body class={home ? 'is-home' : ''}>
+  <body class:list={[{ 'is-home': home, 'is-book': book }]}>
     <div class="ambience" aria-hidden="true">
       <div class="amb-edges"></div>
-      <div class="amb-lights"></div>
+      <div class="amb-pools">
+        {pools.map((p) => <div class={`amb-pool ${p.kind} ${p.side}`} style={`top:${p.top}px`} data-anim></div>)}
+      </div>
       <div class="amb-stars"></div>
+      <div class="amb-twinkle t1"></div>
+      <div class="amb-twinkle t2"></div>
       <div class="amb-grain"></div>
+      <div class="amb-lantern"></div>
     </div>
     <div class="laser" aria-hidden="true"></div>
     <div class="laser-glow" aria-hidden="true"></div>
@@ -125,6 +135,51 @@ const canonical = new URL(Astro.url.pathname, site.url).href;
             });
           }, { rootMargin: '0px 0px -6% 0px' });
           document.querySelectorAll('.card, .book-text > section').forEach(function (el) { io.observe(el); });
+        }
+
+        // Slow background motion. Off with reduced motion or --motion: 0. Animations only run
+        // while their element is near the viewport (class in-view), so nothing works off screen.
+        var motion = parseFloat(getComputedStyle(root).getPropertyValue('--motion')) || 0;
+        if (reduce || motion <= 0 || !('IntersectionObserver' in window)) return;
+        root.classList.add('motion-on');
+        var aio = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) { entry.target.classList.toggle('in-view', entry.isIntersecting); });
+        }, { rootMargin: '200px 0px' });
+        document.querySelectorAll('[data-anim]').forEach(function (el) { aio.observe(el); });
+
+        // Cursor lantern: a soft warm light that follows a mouse pointer with a gentle lag,
+        // in the background layer only. Home page only, and only for fine pointers.
+        var lantern = document.querySelector('.amb-lantern');
+        if (lantern && document.body.classList.contains('is-home') && window.matchMedia('(pointer: fine)').matches) {
+          var tx = 0, ty = 0, x = 0, y = 0, frame = 0, shown = false;
+          var step = function () {
+            x += (tx - x) * 0.07;
+            y += (ty - y) * 0.07;
+            lantern.style.transform = 'translate3d(' + (x - 280) + 'px,' + (y - 280) + 'px,0)';
+            frame = Math.abs(tx - x) + Math.abs(ty - y) > 0.5 ? requestAnimationFrame(step) : 0;
+          };
+          addEventListener('pointermove', function (e) {
+            if (e.pointerType !== 'mouse') return;
+            tx = e.clientX;
+            ty = e.clientY;
+            if (!shown) { x = tx; y = ty; shown = true; lantern.classList.add('on'); }
+            if (!frame) frame = requestAnimationFrame(step);
+          }, { passive: true });
+          document.documentElement.addEventListener('mouseleave', function () { lantern.classList.remove('on'); shown = false; });
+        }
+
+        // Hero parallax: the image moves a little slower than the page while the hero is visible.
+        var heroImg = document.querySelector('.hero-img');
+        if (heroImg) {
+          var hero = heroImg.closest('.hero');
+          var pending = false;
+          var update = function () {
+            pending = false;
+            var sy = window.scrollY;
+            if (sy > hero.offsetHeight + 200) return;
+            heroImg.style.transform = 'translate3d(0,' + (sy * 0.25 * motion).toFixed(1) + 'px,0)';
+          };
+          addEventListener('scroll', function () { if (!pending) { pending = true; requestAnimationFrame(update); } }, { passive: true });
         }
       })();
     </script>

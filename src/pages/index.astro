@@ -14,8 +14,13 @@ const description = 'Tietokirjojen ydinsanomat selkeinä tiivistelminä, suomeks
 ---
 <Base titleFi="RayDar Library" titleEn="RayDar Library" description={description} home>
   <section class:list={['hero', { 'has-image': hasHeroImage }]} slot="hero">
-    {hasHeroImage && <img class="hero-img" src="/hero.webp" alt="" fetchpriority="high" />}
+    {hasHeroImage && <div class="hero-media"><img class="hero-img" src="/hero.webp" alt="" fetchpriority="high" /></div>}
     <div class="hero-overlay" aria-hidden="true"></div>
+    {hasHeroImage && (
+      <div class="hero-motes" aria-hidden="true" data-anim>
+        <span></span><span></span><span></span><span></span><span></span><span></span>
+      </div>
+    )}
     <div class="hero-content">
       <div class="hero-text">
       <h1 class="hero-title" lang="en">Rime of the Ancient Mariner</h1>
@@ -23,6 +28,10 @@ const description = 'Tietokirjojen ydinsanomat selkeinä tiivistelminä, suomeks
       <p class="hero-lead"><T
         fi="Tietokirjojen ydinsanomat selkeinä tiivistelminä, suomeksi ja englanniksi."
         en="The core messages of non-fiction books in clear summaries, in Finnish and English."
+      /></p>
+      <p class="hero-note"><T
+        fi="Tiivistelmät ovat johdatuksia teoksiin. Ne tavoittavat ydinsanoman, mutta kirja itse antaa paljon enemmän. Lämmin suositus: lue koko kirja."
+        en="These summaries are introductions. They capture the core message, but the book itself offers far more. A warm recommendation: read the whole book."
       /></p>
       {books.length > 0 && (
         <form class="search" role="search" data-search-form>
@@ -41,6 +50,7 @@ const description = 'Tietokirjojen ydinsanomat selkeinä tiivistelminä, suomeks
     </div>
   </section>
 
+  {hasHeroImage && <div class="lamp-spill" aria-hidden="true" data-anim></div>}
   <div class="page">
     {books.length === 0 ? (
       <section class="state">
@@ -49,6 +59,13 @@ const description = 'Tietokirjojen ydinsanomat selkeinä tiivistelminä, suomeks
       </section>
     ) : (
       <>
+        <header class="collection-head">
+          <h2 class="eyebrow"><T fi="Kokoelma" en="Collection" /></h2>
+          <p class="collection-count"><T
+            fi={books.length === 1 ? '1 kirja' : `${books.length} kirjaa`}
+            en={books.length === 1 ? '1 book' : `${books.length} books`}
+          /></p>
+        </header>
         <div class="controls">
           <div class="filters" role="group" data-label-fi="Suodata aiheen mukaan" data-label-en="Filter by topic" aria-label="Suodata aiheen mukaan">
             <button type="button" class="chip" data-tag-filter="" aria-pressed="true"><T fi="Kaikki" en="All" /></button>
@@ -69,7 +86,6 @@ const description = 'Tietokirjojen ydinsanomat selkeinä tiivistelminä, suomeks
           </div>
         </div>
         <p class="result-count" aria-live="polite" data-count></p>
-        <h2 class="visually-hidden"><T fi="Kirjat" en="Books" /></h2>
         <section class="grid" data-grid>
           {books.map((book) => <BookCard book={book} />)}
         </section>
@@ -115,8 +131,10 @@ const description = 'Tietokirjojen ydinsanomat selkeinä tiivistelminä, suomeks
         fi.className = en.className = 'i18n';
         fi.lang = 'fi';
         en.lang = 'en';
-        fi.textContent = searchError ? 'Haku ei ole juuri nyt käytettävissä.' : n === 1 ? '1 kirja' : n + ' kirjaa';
-        en.textContent = searchError ? 'Search is not available right now.' : n === 1 ? '1 book' : n + ' books';
+        // The collection heading already shows the total, so the count appears only when filtered.
+        const filtered = Boolean(activeTag || searchHits);
+        fi.textContent = searchError ? 'Haku ei ole juuri nyt käytettävissä.' : !filtered ? '' : n === 1 ? '1 kirja' : n + ' kirjaa';
+        en.textContent = searchError ? 'Search is not available right now.' : !filtered ? '' : n === 1 ? '1 book' : n + ' books';
         count.append(fi, en);
       }
 

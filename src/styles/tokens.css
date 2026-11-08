@@ -7,9 +7,9 @@
   /* Surfaces: deep navy derived from the hero image's navy (rgb 4, 15, 30).
      0 = page background, 1 = surface (cards, reading column, controls),
      2 = raised (key-message cards, core-message box, dialogs). */
-  --surface-0: #0b1a30;
-  --surface-1: #112440;
-  --surface-2: #182f50;
+  --surface-0: #0d2040;
+  --surface-1: #13294b;
+  --surface-2: #1a335a;
   --hero-placeholder: linear-gradient(135deg, #08081a 0%, #0c1a3a 30%, #1a0830 60%, #0a0818 100%);
   --hero-max: 1920px;
 
@@ -17,8 +17,14 @@
      with --ambience (0 = off, 1 = full). Colours come from the hero image only:
      brass from the lamp light, moonlight from the window glass. */
   --ambience: 0.7;
-  --amb-brass: rgb(228 164 92 / calc(var(--ambience) * 0.11));
-  --amb-moon: rgb(61 127 192 / calc(var(--ambience) * 0.16));
+  --amb-brass: rgb(228 164 92 / calc(var(--ambience) * 0.14));
+  --amb-moon: rgb(61 127 192 / calc(var(--ambience) * 0.2));
+  --amb-lamp-spill: rgb(228 164 92 / calc(var(--ambience) * 0.24));
+  --amb-lantern: rgb(228 164 92 / calc(var(--ambience) * 0.09));
+  --amb-mote: rgb(255 214 160 / calc(var(--ambience) * 0.9));
+  /* Slow background motion (drifting light pools, twinkling stars, dust in the lamp light,
+     cursor lantern, hero parallax). 0 = still, 1 = full. Always off with reduced motion. */
+  --motion: 0.6;
   --amb-stars: calc(var(--ambience) * 0.5);
   --amb-grain: calc(var(--ambience) * 0.05);
   --amb-edges: calc(var(--ambience) * 0.4);
