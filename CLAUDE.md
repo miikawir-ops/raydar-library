@@ -59,6 +59,7 @@ src/styles/tokens.css       # RayDar-designtokenit (värit, fontit, välit)
 src/site.config.ts          # mm. indexable: false/true
 tools/check-books.mjs       # sisällön tarkistus, ajetaan ennen buildia
 public/hero.webp            # etusivun hero-kuva (Ray toimittaa)
+public/edge.webp            # reunafiguuri, kirjahylly 338 × 1024 (Ray toimittaa)
 public/CNAME                # library.raydar.fi
 jono.md                     # lukujono: kirjat, joista halutaan tiivistelmä
 .claude/commands/kirja.md   # /kirja: uusi kirja (tai useampi ;-erotettuna)
@@ -295,6 +296,13 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
   - grain-tekstuuri
   - reunoilla näkyvä hyvin pieni sumea hero-kuva (`public/hero-blur.webp`, 64 px, CSS-blur ei käytössä)
   - **kursorilyhty:** pehmeä lämmin valo seuraa hiirtä viiveellä, vain etusivulla ja vain `pointer: fine`
+  - **reunafiguurit:** `public/edge.webp` (kirjahylly) vasemmassa reunassa ja peilikuvana (`scaleX(-1)`) oikeassa.
+    - Kiinteä taustakerros (`position: fixed`, `pointer-events: none`), korkeus 100vh + 80 px parallaksin liikevaraa varten.
+    - Näkyy vain, kun näkymä on vähintään 1400 px. Silloin sisältösarakkeen (`--page-max` 1240 px) ulkopuolelle jää vähintään 80 px. Kapeammalla figuuri olisi vain kapea suikale.
+    - Leveys on enintään sisältösarakkeen ulkopuolinen tila, ja kuvan sisäreuna haipuu läpinäkyväksi (mask). Figuuri ei siis koskaan ulotu sisältösarakkeen tai tekstin alle.
+    - Peittävyys on `--amb-figures` (`--ambience`-muuttujan alla).
+    - Etusivulla figuurit haipuvat hero-alueella (`--hero-cut`, skripti), jotta hero-kuva ei kilpaile niiden kanssa. Tämä seuraa sisällön paikkaa eikä ole liikettä, joten se toimii myös reduced-motionilla.
+    - Parallaksi on enintään 60 px × `--motion` koko sivun matkalla, ja reduced-motion poistaa sen.
   
   Kaikki ovat sisällön alla, ja lukupalstan umpinainen pinta peittää ne.
 - **Liike** säädetään muuttujasta `--motion` (0–1, oletus 0,6; 0 poistaa liikkeen). Liike on sallittu, kun se on:
@@ -374,7 +382,7 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
 - **Kielivalinta FI/EN** koko sivulle. Valinta muistetaan localStoragessa, ja jokainen luku ja kirjoitus on try/catchissa. Oletuskieli on suomi.
 - **Liike:** animaatiot ovat hillittyjä, ja `prefers-reduced-motion` kunnioitetaan.
 - **Alatunniste:** linkki raydar.fi:hin, "Covers: Open Library" ja maininta: "Tiivistelmät on tuotettu tekoälyn avulla ja voivat sisältää virheitä." / "Summaries are AI-generated and may contain errors."
-- **Suorituskyky:** Lighthouse vähintään 90 kaikissa kategorioissa mobiilissa, ja hero-kuva alle 400 kt (WebP). SEO-tavoite 90 koskee vain tilaa `indexable: true`. Hero-kuvaa ei ladata laiskasti, koska se näkyy heti.
+- **Suorituskyky:** Lighthouse vähintään 90 kaikissa kategorioissa mobiilissa, ja hero-kuva alle 400 kt (WebP). SEO-tavoite 90 koskee vain tilaa `indexable: true`. Hero-kuvaa ei ladata laiskasti, koska se näkyy heti. Paikallinen Lighthouse-mittaus vaihtelee paljon koneen kuormasta riippuen (erityisesti TBT; katso `environment.benchmarkIndex`). Aja mobiilimittaus vähintään kolme kertaa ja vertaa samalla tavalla mitattuun mainiin (live-sivu) ennen kuin päättelet regression yhdestä ajosta.
 - **Indeksointi:**
   - `src/site.config.ts` → `indexable: false` lisää vain noindex-metan. `robots.txt` sallii indeksoinnin, koska muuten hakukone ei näkisi noindexiä. Ray päättää, milloin asetus käännetään.
   - Kun `indexable: true`, noindex poistuu ja käytössä ovat lisäksi sitemap, meta description `ydin`-kentästä ja Open Graph -tagit.
