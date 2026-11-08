@@ -34,6 +34,7 @@ Muuten etene loppuun asti ilman välikysymyksiä.
    - `oma_huomio` tyhjäksi.
    - `liittyvat`: vain kirjaston olemassa olevia kirjoja, jos yhteys on selvä.
 6. **Laadun tarkistus** CLAUDE.md:n kuudella kysymyksellä. Korjaa, mitä löytyy.
+   - Jos varmuus on `korkea` ja tiivistelmä jää alle noin 60 %:iin ohjeellisesta laajuudesta tai yli puolet selityksistä alle 80 sanan, hae lisää lähteitä CLAUDE.md:n Pituus-osion mukaan ennen tallennusta. Raportoi, mitä yritettiin.
 7. **Aja `npm run build`.** Korjaa virheet. Kirjaa varoitukset raporttia varten.
 8. **Commit ja push:** `git add` kirjan tiedosto → `git commit -m "content: add <title>"` → `git push`.
 

@@ -133,6 +133,12 @@ oma_huomio: ""
 - **Alla olevat määrät ovat ohjeellisia.** Niistä saa poiketa, kun sanoma sitä vaatii.
 - **Lyhentäminen ei ole tavoite.** Jos olennainen idea, perustelu tai esimerkki jäisi pois tiiviyden takia, se kirjoitetaan mukaan.
 - **Täytettä ei kirjoiteta.** Ei yleisiä lauseita, toistoa eikä johdantoja, jotka eivät kerro mitään kirjasta.
+- **Liian lyhyt korkean varmuuden tiivistelmä.** Jos varmuus on `korkea` ja tiivistelmä jää alle noin 60 %:iin ohjeellisesta laajuudesta tai yli puolet ideoiden selityksistä jää alle 80 sanan, hae lisää lähteitä ennen tallennusta:
+  - laatumedian arviot (Guardian, NYT, FT, Economist, LRB)
+  - kirjoittajan luennot, TED-puheet ja haastattelut
+  - tieteelliset arviot
+
+  Jos lähde ei aukea, kokeile toista lähdettä samasta aiheesta. Raportoi, mitä yritettiin ja mikä aukesi.
 
 ### Osiot (per kieli, varmuus `korkea`, yhteensä tyypillisesti noin 1500–3000 sanaa)
 
