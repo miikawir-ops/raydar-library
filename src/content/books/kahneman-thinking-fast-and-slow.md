@@ -8,7 +8,7 @@ cover_id: 13290711
 olid: "OL38090969M"
 tags: [psykologia, paatoksenteko]
 added: 2026-11-06
-updated: 2026-11-07
+updated: 2026-11-08
 varmuus: korkea
 lahteet:
   - nimi: "Wikipedia: Thinking, Fast and Slow"
@@ -39,8 +39,8 @@ lahteet:
     url: "https://en.wikipedia.org/wiki/Reference_class_forecasting"
   - nimi: "Wikipedia: Planning fallacy"
     url: "https://en.wikipedia.org/wiki/Planning_fallacy"
-  - nimi: "Gary Klein: Performing a Project Premortem, Harvard Business Review 2007"
-    url: "https://hbr.org/2007/09/performing-a-project-premortem"
+  - nimi: "Kahneman ja Klein: Strategic Decisions: When Can You Trust Your Gut?, McKinsey Quarterly 2010 (haastattelu)"
+    url: "https://karriere.mckinsey.de/capabilities/strategy-and-corporate-finance/our-insights/strategic-decisions-when-can-you-trust-your-gut"
 liittyvat: []
 fi:
   ydin: |
@@ -101,7 +101,7 @@ fi:
         Kirja nojaa myös yhdysvaltalaisen psykologin Paul Meehlin tuloksiin, joiden mukaan yksinkertaisiin tilastollisiin pisteytyksiin perustuvat ennusteet olivat yleensä tarkempia kuin asiantuntija-arviot. Kahnemanin uudessa järjestelmässä haastattelijat esittivät vakiokysymyksiä, vastaukset pisteytettiin ja pisteet syötettiin kaavoihin, ja tulokset paranivat selvästi.
     - otsikko: "Asiantuntijan intuitioon voi luottaa vain tietyin ehdoin"
       selitys: |
-        Kahneman selvitti intuition rajoja yhdessä Gary Kleinin kanssa. Klein edusti luonnollisen päätöksenteon tutkimusta (naturalistic decision making), joka korostaa kokeneiden ammattilaisten intuition voimaa. Kahneman edusti heuristiikkojen ja harhojen tutkimusta, joka on tuonut esiin intuition virheet. Suuntauksia pidetään usein vastakkaisina, mutta yhteinen lähtökohta oli, että ammatillinen intuitio on joskus erinomainen ja joskus virheellinen.
+        Kahneman selvitti intuition rajoja yhdessä Gary Kleinin kanssa. Klein edusti luonnollisen päätöksenteon tutkimusta (naturalistic decision making), joka korostaa kokeneiden ammattilaisten intuition voimaa, ja oli tutkinut intuitiota kovan paineen ympäristöissä, kuten palontorjunnassa ja tehohoidossa. Kahneman edusti heuristiikkojen ja harhojen tutkimusta, joka on tuonut esiin intuition virheet. Suuntauksia pidetään usein vastakkaisina, mutta yhteinen lähtökohta oli, että ammatillinen intuitio on joskus erinomainen ja joskus virheellinen.
 
         Yhteinen johtopäätös oli kaksi ehtoa. Ympäristön täytyy olla riittävän säännönmukainen, jotta se on ennustettavissa, ja ihmisellä täytyy olla ollut tilaisuus oppia nämä säännönmukaisuudet. Intuitiivisen arvion laatua ei siis voi päätellä siitä, kuinka varma arvioija on, vaan siitä, millaisessa ympäristössä ja millaisen oppimisen kautta intuitio on syntynyt.
 
@@ -153,6 +153,8 @@ fi:
       selitys: "Poikkeuksellista tulosta seuraa keskimäärin tavallisempi, koska ääritulokseen on vaikuttanut myös sattuma. Ilmiö tulkitaan helposti virheellisesti jonkin teon vaikutukseksi."
     - termi: "Ulkopuolinen näkökulma (outside view)"
       selitys: "Ennuste, joka perustuu samankaltaisten tapausten toteutuneisiin tuloksiin eikä käsillä olevan hankkeen omiin yksityiskohtiin."
+    - termi: "Viiteryhmäennustaminen (reference class forecasting)"
+      selitys: "Ennustusmenetelmä, jossa lähtökohtana ovat samankaltaisten hankkeiden toteutuneet tulokset. Se on ulkopuolisen näkökulman järjestelmällinen sovellus."
     - termi: "Prospektiteoria (prospect theory)"
       selitys: "Kahnemanin ja Tverskyn teoria riskipäätöksistä. Valinnat arvioidaan voittoina ja tappioina suhteessa viitepisteeseen, tappiot painavat voittoja enemmän ja todennäköisyydet painottuvat vääristyneesti."
     - termi: "Tappioiden karttaminen (loss aversion)"
@@ -229,7 +231,7 @@ en:
         The book also draws on the work of American psychologist Paul Meehl, who found that predictions based on simple statistical scoring were generally more accurate than expert judgment. In Kahneman's new system, interviewers asked standard questions, the answers were scored and the scores went into formulas, and the results improved markedly.
     - otsikko: "Expert intuition can be trusted only under certain conditions"
       selitys: |
-        Kahneman explored the limits of intuition together with Gary Klein. Klein represented naturalistic decision making, which emphasises the strength of experienced professionals' intuition. Kahneman represented the heuristics and biases approach, which has exposed intuition's errors. The two are often seen as opposed, but their shared starting point was that professional intuition is sometimes marvellous and sometimes flawed.
+        Kahneman explored the limits of intuition together with Gary Klein. Klein represented naturalistic decision making, which emphasises the strength of experienced professionals' intuition, and had studied intuition in high-pressure settings such as firefighting and intensive care. Kahneman represented the heuristics and biases approach, which has exposed intuition's errors. The two are often seen as opposed, but their shared starting point was that professional intuition is sometimes marvellous and sometimes flawed.
 
         Their shared conclusion was two conditions. The environment must be regular enough to be predictable, and the person must have had the chance to learn those regularities. The quality of an intuitive judgment therefore cannot be inferred from how confident the judge is, but from the environment in which, and the learning through which, the intuition was formed.
 
@@ -281,6 +283,8 @@ en:
       selitys: "An extreme result tends to be followed by a more ordinary one, because chance contributed to the extreme result. It is easily mistaken for the effect of some action."
     - termi: "Outside view"
       selitys: "A forecast based on the actual results of similar cases rather than on the details of the project at hand."
+    - termi: "Reference class forecasting"
+      selitys: "A forecasting method that starts from the actual results of similar projects. It is a systematic application of the outside view."
     - termi: "Prospect theory"
       selitys: "Kahneman and Tversky's theory of risky choice. Options are assessed as gains and losses relative to a reference point, losses weigh more than gains, and probabilities are weighted in a distorted way."
     - termi: "Loss aversion"
