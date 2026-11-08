@@ -59,6 +59,7 @@ src/styles/tokens.css       # RayDar-designtokenit (värit, fontit, välit)
 src/site.config.ts          # mm. indexable: false/true
 tools/check-books.mjs       # sisällön tarkistus, ajetaan ennen buildia
 public/hero.webp            # etusivun hero-kuva (Ray toimittaa)
+public/edge.webp            # reunafiguuri, kirjahylly 338 × 1024 (Ray toimittaa)
 public/CNAME                # library.raydar.fi
 jono.md                     # lukujono: kirjat, joista halutaan tiivistelmä
 .claude/commands/kirja.md   # /kirja: uusi kirja (tai useampi ;-erotettuna)
@@ -295,6 +296,13 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
   - grain-tekstuuri
   - reunoilla näkyvä hyvin pieni sumea hero-kuva (`public/hero-blur.webp`, 64 px, CSS-blur ei käytössä)
   - **kursorilyhty:** pehmeä lämmin valo seuraa hiirtä viiveellä, vain etusivulla ja vain `pointer: fine`
+  - **reunafiguurit:** `public/edge.webp` (kirjahylly) vasemmassa reunassa ja peilikuvana (`scaleX(-1)`) oikeassa.
+    - Kiinteä taustakerros (`position: fixed`, `pointer-events: none`), korkeus 100vh + 80 px parallaksin liikevaraa varten.
+    - Näkyy vain, kun näkymä on vähintään 1400 px. Silloin sisältösarakkeen (`--page-max` 1240 px) ulkopuolelle jää vähintään 80 px. Kapeammalla figuuri olisi vain kapea suikale.
+    - Leveys on enintään sisältösarakkeen ulkopuolinen tila, ja kuvan sisäreuna haipuu läpinäkyväksi (mask). Figuuri ei siis koskaan ulotu sisältösarakkeen tai tekstin alle.
+    - Peittävyys on `--amb-figures` (`--ambience`-muuttujan alla).
+    - Etusivulla figuurit haipuvat hero-alueella (`--hero-cut`, skripti), jotta hero-kuva ei kilpaile niiden kanssa. Tämä seuraa sisällön paikkaa eikä ole liikettä, joten se toimii myös reduced-motionilla.
+    - Parallaksi on enintään 60 px × `--motion` koko sivun matkalla, ja reduced-motion poistaa sen.
   
   Kaikki ovat sisällön alla, ja lukupalstan umpinainen pinta peittää ne.
 - **Liike** säädetään muuttujasta `--motion` (0–1, oletus 0,6; 0 poistaa liikkeen). Liike on sallittu, kun se on:
@@ -318,15 +326,17 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
 ### Etusivu
 
 - **Hero-alue:**
-  - `public/hero.webp` täysleveänä, noin 50–60 % näytön korkeudesta (mobiilissa noin 45 %).
-  - Kuvan päällä sivun nimi, lyhyt kuvaus ja hakukenttä vasemmassa reunassa, jossa kuvassa on rauhallinen alue.
-  - Kuva liukuu alaosassa gradientilla tummaan navyyn, josta korttiruudukko jatkuu saumattomasti.
+  - `public/hero.webp` täysleveänä, työpöydällä (≥ 720 px) vähintään 67vh ja mobiilissa noin 45 % näytön korkeudesta.
+  - Kuvan päällä sivun nimi, alaotsikko, yksi kuvauskappale ja hakukenttä vasemmassa reunassa, jossa kuvassa on rauhallinen alue.
+  - **Peittokerros työpöydällä** on vaakasuuntainen gradientti vain tekstin takana: tumma vasemmalla (noin 0,8 noin 30 %:iin asti), ja se haipuu kuvan pääaiheiden kohdalla (38–60 %). Oikea puoli näkyy lähes täydellä kirkkaudella. Mobiilissa teksti on koko leveydeltä kuvan päällä, joten peittokerros on tasainen. Jos tekstisarake tai hero-kuva muuttuu, mittaa tekstin kontrasti uudelleen myös 1920 px:llä, koska siellä tekstisarake ulottuu lähimmäs vaaleaa aluetta.
+  - Kuva liukuu alaosassa gradientilla tummaan navyyn, josta korttiruudukko jatkuu saumattomasti. Työpöydällä liukuma alkaa vasta aivan alhaalta (alin noin 12 %).
   - `object-fit: cover`. Mobiilissa painopiste noin `object-position: 55% center`, jotta lamppu ja kirja näkyvät. Tarkista kuvakaappauksesta.
   - Työpöydällä (≥ 720 px) kuva on kiinnitetty vasempaan reunaan (`object-position: 0% center`), ja tekstisarakkeen leveys rajataan niin, ettei teksti osu kuvan pääaiheisiin (armillaaripallo, lamppu, kirja). Otsikko saa rivittyä kahdelle riville. Jos hero-kuva vaihtuu, mittaa aiheiden sijainti uudelleen.
   - Törmäyskielto koskee työpöytää (≥ 720 px). Mobiilissa teksti on kuvan päällä koko leveydeltä, ja peittokerros hoitaa luettavuuden.
   - Hero-alueen maksimileveys on `--hero-max` (1920 px, keskitetty), joten suuret näytöt käyttäytyvät kuten 1920 px. Sitä leveämmillä näytöillä hero-alueen reunat haipuvat sivun taustaan.
   - Kuvan alareuna ja peittokerros haipuvat läpinäkyviksi, joten sivun tausta ja ympäristövalo näkyvät rajan läpi, eikä saumaa synny. Tarkista sauma kuvakaappauksesta, jos tausta tai hero-kuva vaihtuu.
-  - Kuvauksen jatkona on johdatusteksti: "Tiivistelmät ovat johdatuksia teoksiin. Ne tavoittavat ydinsanoman, mutta kirja itse antaa paljon enemmän. Lämmin suositus: lue koko kirja." / "These summaries are introductions. They capture the core message, but the book itself offers far more. A warm recommendation: read the whole book."
+  - Kuvaus on yksi kappale: "Tietokirjojen ydinsanomat suomeksi ja englanniksi – johdatuksia, jotka eivät korvaa kirjaa. Lämmin suositus: lue koko kirja." / "The core messages of non-fiction books in Finnish and English – introductions, not replacements. A warm recommendation: read the whole book."
+  - Pölyhiukkaset ovat laatikossa, jolla on hero-kuvan oma cover-geometria, joten niiden prosenttisijainnit ovat kuvan koordinaatteja ja ne pysyvät lampun valossa kaikilla hero-koon arvoilla.
 - **Kokoelman väliotsikko** ruudukon yläpuolella: messinkinen yläotsikko "Kokoelma" / "Collection" ja kirjamäärä. Tulosmäärä näytetään erikseen vain, kun haku tai suodatin on päällä.
 - **Korttiruudukko,** jossa jokaisella kortilla on kansi, otsikko, kirjoittaja, vuosi, tagit ja `ydin`.
 - **Hillitty hover-efekti:** pieni nosto ja korostusväri, ei pomppimista.
@@ -372,7 +382,7 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
 - **Kielivalinta FI/EN** koko sivulle. Valinta muistetaan localStoragessa, ja jokainen luku ja kirjoitus on try/catchissa. Oletuskieli on suomi.
 - **Liike:** animaatiot ovat hillittyjä, ja `prefers-reduced-motion` kunnioitetaan.
 - **Alatunniste:** linkki raydar.fi:hin, "Covers: Open Library" ja maininta: "Tiivistelmät on tuotettu tekoälyn avulla ja voivat sisältää virheitä." / "Summaries are AI-generated and may contain errors."
-- **Suorituskyky:** Lighthouse vähintään 90 kaikissa kategorioissa mobiilissa, ja hero-kuva alle 400 kt (WebP). SEO-tavoite 90 koskee vain tilaa `indexable: true`. Hero-kuvaa ei ladata laiskasti, koska se näkyy heti.
+- **Suorituskyky:** Lighthouse vähintään 90 kaikissa kategorioissa mobiilissa, ja hero-kuva alle 400 kt (WebP). SEO-tavoite 90 koskee vain tilaa `indexable: true`. Hero-kuvaa ei ladata laiskasti, koska se näkyy heti. Paikallinen Lighthouse-mittaus vaihtelee paljon koneen kuormasta riippuen (erityisesti TBT; katso `environment.benchmarkIndex`). Aja mobiilimittaus vähintään kolme kertaa ja vertaa samalla tavalla mitattuun mainiin (live-sivu) ennen kuin päättelet regression yhdestä ajosta.
 - **Indeksointi:**
   - `src/site.config.ts` → `indexable: false` lisää vain noindex-metan. `robots.txt` sallii indeksoinnin, koska muuten hakukone ei näkisi noindexiä. Ray päättää, milloin asetus käännetään.
   - Kun `indexable: true`, noindex poistuu ja käytössä ovat lisäksi sitemap, meta description `ydin`-kentästä ja Open Graph -tagit.

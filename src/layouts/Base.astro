@@ -56,6 +56,8 @@ const canonical = new URL(Astro.url.pathname, site.url).href;
   <body class:list={[{ 'is-home': home, 'is-book': book }]}>
     <div class="ambience" aria-hidden="true">
       <div class="amb-edges"></div>
+      <div class="amb-figure left"></div>
+      <div class="amb-figure right"></div>
       <div class="amb-pools">
         {pools.map((p) => <div class={`amb-pool-track ${p.pos}`}><div class={`amb-pool ${p.kind}`}></div></div>)}
       </div>
@@ -141,6 +143,26 @@ const canonical = new URL(Astro.url.pathname, site.url).href;
           document.querySelectorAll('.card, .book-text > section').forEach(function (el) { io.observe(el); });
         }
 
+        // Edge figures fade out over the home hero, so the hero image has no competition. This
+        // tracks where the hero is (not motion), so it also runs with reduced motion.
+        // Only where the figures are shown (same breakpoint as the CSS), so narrow screens skip the layout reads.
+        var figures = window.matchMedia('(min-width: 1400px)').matches ? document.querySelectorAll('.amb-figure') : [];
+        var heroEl = document.querySelector('.hero');
+        if (figures.length && heroEl) {
+          var cutPending = false;
+          var cut = function () {
+            cutPending = false;
+            var heroBottom = heroEl.getBoundingClientRect().bottom;
+            figures.forEach(function (f) {
+              var c = Math.max(0, heroBottom - f.getBoundingClientRect().top);
+              f.style.setProperty('--hero-cut', c.toFixed(0) + 'px');
+            });
+          };
+          addEventListener('scroll', function () { if (!cutPending) { cutPending = true; requestAnimationFrame(cut); } }, { passive: true });
+          addEventListener('resize', cut);
+          cut();
+        }
+
         // Slow background motion. Off with reduced motion or --motion: 0. Animations only run
         // while their element is near the viewport (class in-view), so nothing works off screen.
         var motion = parseFloat(getComputedStyle(root).getPropertyValue('--motion')) || 0;
@@ -195,6 +217,21 @@ const canonical = new URL(Astro.url.pathname, site.url).href;
         };
         addEventListener('scroll', function () { if (!poolPending) { poolPending = true; requestAnimationFrame(movePools); } }, { passive: true });
         movePools();
+
+        // Edge figures: a gentle parallax, at most 60 px x --motion over the whole page. The figure
+        // is 80 px taller than the screen, so its ends never come into view.
+        if (figures.length) {
+          var figPending = false;
+          var moveFigures = function () {
+            figPending = false;
+            var max = document.documentElement.scrollHeight - innerHeight;
+            var y = max > 0 ? -(window.scrollY / max) * 60 * motion : 0;
+            figures.forEach(function (f) { f.style.transform = 'translate3d(0,' + y.toFixed(1) + 'px,0)'; });
+            if (heroEl) cut();
+          };
+          addEventListener('scroll', function () { if (!figPending) { figPending = true; requestAnimationFrame(moveFigures); } }, { passive: true });
+          moveFigures();
+        }
 
         // Hero parallax: the image moves a little slower than the page while the hero is visible.
         var heroImg = document.querySelector('.hero-img');

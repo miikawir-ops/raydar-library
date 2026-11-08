@@ -28,6 +28,8 @@
   --amb-stars: calc(var(--ambience) * 0.5);
   --amb-grain: calc(var(--ambience) * 0.05);
   --amb-edges: calc(var(--ambience) * 0.4);
+  /* Edge figures (public/edge.webp, bookcases in the side margins on wide screens). */
+  --amb-figures: calc(var(--ambience) * 1);
   --amb-cover-glow: calc(var(--ambience) * 0.5);
 
   /* Text */

@@ -61,6 +61,29 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
 .amb-pool { width: 100%; height: 100%; border-radius: 50%; }
 .amb-pool.brass { background: radial-gradient(closest-side, var(--amb-brass), transparent); }
 .amb-pool.moon { background: radial-gradient(closest-side, var(--amb-moon), transparent); }
+/* Edge figures: the bookcase image (public/edge.webp) in the left margin and mirrored in the right,
+   only on screens wide enough to leave a real margin outside the content column (>= 80 px each side,
+   so >= 1400 px). Each is clamped to the margin width and its inner side fades out, so it never
+   reaches under the content column or text. --hero-cut (script) hides it over the home hero. */
+.amb-figure { display: none; }
+@media (min-width: 1400px) {
+  .amb-figure {
+    display: block; position: fixed; top: -10px; height: calc(100vh + 80px);
+    width: min(calc((100vh + 80px) * 338 / 1024), calc((100% - var(--page-max)) / 2));
+    opacity: var(--amb-figures); pointer-events: none;
+    -webkit-mask-image: linear-gradient(180deg, transparent var(--hero-cut, 0px), #000 calc(var(--hero-cut, 0px) + 240px));
+    mask-image: linear-gradient(180deg, transparent var(--hero-cut, 0px), #000 calc(var(--hero-cut, 0px) + 240px));
+  }
+  .amb-figure.left { left: 0; }
+  .amb-figure.right { right: 0; }
+  .amb-figure::before {
+    content: ''; position: absolute; inset: 0;
+    background: url('/edge.webp') left center / auto 100% no-repeat;
+    -webkit-mask-image: linear-gradient(90deg, #000 30%, transparent 100%);
+    mask-image: linear-gradient(90deg, #000 30%, transparent 100%);
+  }
+  .amb-figure.right::before { transform: scaleX(-1); }
+}
 .amb-twinkle { position: fixed; inset: 0; opacity: var(--amb-stars); }
 /* Stars stay in the side margins outside the content column, so a star never sits behind text
    (a single bright star pixel under small text breaks its contrast). Narrow screens have no margins,
@@ -163,19 +186,25 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
 .hero-title { font-size: clamp(30px, 8vw, 52px); font-weight: 600; letter-spacing: -0.02em; }
 .hero-subtitle { margin-top: 8px; font-size: clamp(20px, 3.5vw, 26px); font-weight: 500; line-height: 1.25; color: var(--accent); }
 .hero-lead { margin-top: 12px; max-width: 46ch; color: var(--text); font-size: 17px; }
-.hero-note { margin-top: 10px; max-width: 46ch; color: var(--text); font-size: 15px; line-height: 1.5; }
-/* Dust in the lamp light (desktop only; on phones the text covers the lamp). Animated only with motion. */
-.hero-motes { position: absolute; inset: 0; pointer-events: none; display: none; }
+/* Dust in the lamp light (desktop only; on phones the text covers the lamp). Animated only with motion.
+   The box has the image's own cover geometry (aspect ratio of hero.webp, at least the hero's size,
+   pinned left and centred like the image), so the percentages below are image coordinates and the
+   motes stay on the lamp at any hero size. */
+.hero-motes {
+  position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+  aspect-ratio: 2048 / 768; min-width: 100%; min-height: 100%;
+  pointer-events: none; display: none;
+}
 .hero-motes span {
   position: absolute; width: 3px; height: 3px; border-radius: 50%;
   background: var(--amb-mote); box-shadow: 0 0 6px 1px var(--amb-mote); opacity: 0;
 }
-.hero-motes span:nth-child(1) { left: 53%; top: 52%; }
-.hero-motes span:nth-child(2) { left: 57%; top: 45%; }
-.hero-motes span:nth-child(3) { left: 60%; top: 58%; }
-.hero-motes span:nth-child(4) { left: 55%; top: 63%; }
-.hero-motes span:nth-child(5) { left: 58.5%; top: 40%; }
-.hero-motes span:nth-child(6) { left: 51.5%; top: 47%; }
+.hero-motes span:nth-child(1) { left: 52.5%; top: 53%; }
+.hero-motes span:nth-child(2) { left: 57.5%; top: 51%; }
+.hero-motes span:nth-child(3) { left: 54%; top: 60%; }
+.hero-motes span:nth-child(4) { left: 58%; top: 64%; }
+.hero-motes span:nth-child(5) { left: 55.8%; top: 68%; }
+.hero-motes span:nth-child(6) { left: 51.5%; top: 62%; }
 .search { margin-top: 20px; max-width: 520px; }
 .search input {
   width: 100%; min-height: 50px; padding: 0 18px;
@@ -427,20 +456,27 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
 .footer-links a { display: inline-flex; align-items: center; min-height: var(--touch); }
 
 @media (min-width: 720px) {
-  .hero { min-height: 55vh; padding-bottom: 40px; }
+  .hero { min-height: 67vh; padding-bottom: 48px; }
   /* Keep the text left of the hero's main subjects (armillary sphere, lamp, book).
      Their left edge is at x = 770 of the 2048 x 768 image. With object-fit: cover and the image
      pinned left, that edge lands at max(37.6 % of the hero width, 1.0026 x hero height). Using
-     55vh / 400px as the height can only underestimate it, so the text stays clear even when the
+     67vh / 400px as the height can only underestimate it, so the text stays clear even when the
      hero grows. cqi units refer to the hero, which stops growing at --hero-max. */
   .hero-img { object-position: 0% center; }
   .hero-text {
     container-type: inline-size;
-    max-width: calc(max(37.6cqi, max(55vh, 400px) * 1.0026) - max(var(--gutter), (100cqi - var(--page-max)) / 2 + var(--gutter)) - 24px);
+    max-width: calc(max(37.6cqi, max(67vh, 400px) * 1.0026) - max(var(--gutter), (100cqi - var(--page-max)) / 2 + var(--gutter)) - 24px);
   }
   .hero-title { font-size: clamp(30px, 12cqi, 52px); text-wrap: balance; }
+  /* Shade only behind the text on the left; the image's subjects on the right stay at nearly full
+     brightness. The text column ends where the subjects begin (about 37.6 % of the hero or more). */
   .hero-overlay {
-    background: linear-gradient(90deg, rgba(0, 8, 22, 0.82) 0%, rgba(0, 8, 22, 0.5) 55%, rgba(0, 8, 22, 0.1) 100%);
+    background: linear-gradient(90deg, rgba(0, 8, 22, 0.86) 0%, rgba(0, 8, 22, 0.8) 30%, rgba(0, 8, 22, 0.6) 38%, rgba(0, 8, 22, 0.2) 48%, rgba(0, 8, 22, 0) 60%);
+  }
+  /* The fade into the page starts only near the very bottom. */
+  .hero-media, .hero-overlay {
+    -webkit-mask-image: linear-gradient(180deg, #000 88%, transparent 100%);
+    mask-image: linear-gradient(180deg, #000 88%, transparent 100%);
   }
   .controls { flex-direction: row; justify-content: space-between; align-items: flex-start; }
   .controls-side { flex: none; flex-wrap: nowrap; }
