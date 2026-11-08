@@ -738,3 +738,27 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
 @media (prefers-reduced-motion: reduce) {
   .amb-figure::after { animation: none !important; }
 }
+
+/* Back to the collection (book page, top and end). Sits on the dark frame, never on the paper. */
+.back-nav { position: relative; z-index: 1; }
+.back-nav-top { margin-bottom: 16px; }
+.back-nav-end { margin-top: 36px; }
+.back-link {
+  display: inline-flex; align-items: center; min-height: var(--touch); padding: 0 18px;
+  font-size: 15px; font-weight: 500; text-decoration: none; color: var(--brass);
+  /* Near-opaque, so a bright cover glow behind it (phones) cannot lower the text contrast. */
+  background: rgb(13 32 64 / 0.9);
+  border: 1px solid rgb(var(--brass-rgb) / 0.7); border-radius: calc(var(--touch) / 2);
+  transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+}
+.back-link:hover { color: var(--text-strong); background: linear-gradient(rgb(var(--brass-rgb) / 0.18), rgb(var(--brass-rgb) / 0.18)), rgb(13 32 64 / 0.9); border-color: var(--brass); }
+.back-link:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
+
+/* The wordmark is the link home: on hover "Library" turns brass and the dot glows. */
+.wordmark-sub, .wordmark-dot { transition: color 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease; }
+.wordmark:hover .wordmark-sub, .wordmark:focus-visible .wordmark-sub { background: none; -webkit-text-fill-color: var(--brass); color: var(--brass); }
+.wordmark:hover .wordmark-dot, .wordmark:focus-visible .wordmark-dot { box-shadow: 0 0 0 3px rgb(226 75 74 / 0.25), 0 0 10px 2px rgb(226 75 74 / 0.6); }
+.wordmark:focus-visible { outline: 2px solid var(--brass); outline-offset: 4px; border-radius: 6px; }
+@media (prefers-reduced-motion: reduce) {
+  .back-link, .wordmark-sub, .wordmark-dot { transition: none; }
+}

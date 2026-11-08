@@ -56,6 +56,11 @@ const titleEn = `${d.title} | RayDar Library`;
     <!-- The small M cover keeps the glow from becoming the largest contentful paint: the L cover
          loads through two redirects, and a blurred glow needs no detail. -->
     <div class="book-glow-wrap" data-anim aria-hidden="true"><CoverGlow book={d} size="M" class="book-glow" /></div>
+    <!-- Back to the collection: a plain link to the home page; the script below turns it into
+         history.back() when the reader came from the home page, so filters and scroll position return. -->
+    <p class="back-nav back-nav-top" data-pagefind-ignore>
+      <a class="back-link" href="/" data-back><T fi="← Kokoelma" en="← Collection" /></a>
+    </p>
     <header class="book-head">
       <div class="book-cover"><Cover book={d} size="L" eager /></div>
       <div class="book-info">
@@ -201,6 +206,9 @@ const titleEn = `${d.title} | RayDar Library`;
         </section>
       </div>
     </div>
+    <p class="back-nav back-nav-end" data-pagefind-ignore>
+      <a class="back-link" href="/" data-back><T fi="← Takaisin kokoelmaan" en="← Back to the collection" /></a>
+    </p>
   </article>
 
   <script is:inline>
@@ -249,6 +257,24 @@ const titleEn = `${d.title} | RayDar Library`;
       // Covers and fonts can move sections after the first paint, and the fade-in slides each
       // section 10 px into place after it has been scrolled to.
       addEventListener('load', request);
+
+      // Smart back: when the previous page was this site's home page, go back in history instead,
+      // so the home page returns with its filters, search and scroll position. Otherwise (or
+      // without JavaScript) the links simply open the home page.
+      var cameFromHome = false;
+      try {
+        var ref = document.referrer ? new URL(document.referrer) : null;
+        cameFromHome = !!ref && ref.origin === location.origin && ref.pathname === '/' && history.length > 1;
+      } catch (e) {}
+      if (cameFromHome) {
+        document.querySelectorAll('[data-back]').forEach(function (a) {
+          a.addEventListener('click', function (e) {
+            if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+            e.preventDefault();
+            history.back();
+          });
+        });
+      }
       document.addEventListener('transitionend', function (e) {
         if (e.propertyName === 'transform' && e.target.matches && e.target.matches('.book-text > section')) request();
       });
