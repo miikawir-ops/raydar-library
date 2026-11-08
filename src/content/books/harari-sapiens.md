@@ -7,7 +7,8 @@ cover_id: 8634250
 olid: "OL26234146M"
 tags: [historia, yhteiskunta]
 added: 2026-11-08
-varmuus: korkea
+updated: 2026-11-08
+varmuus: kohtalainen
 lahteet:
   - nimi: "Wikipedia: Sapiens: A Brief History of Humankind"
     url: "https://en.wikipedia.org/wiki/Sapiens:_A_Brief_History_of_Humankind"
