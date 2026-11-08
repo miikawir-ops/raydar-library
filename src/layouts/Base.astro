@@ -20,7 +20,7 @@ const canonical = new URL(Astro.url.pathname, site.url).href;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{titleFi}</title>
-    <meta name="theme-color" content="#000816" />
+    <meta name="theme-color" content="#0b1a30" />
     {!site.indexable && <meta name="robots" content="noindex" />}
     {site.indexable && description && <meta name="description" content={description} />}
     {site.indexable && <link rel="canonical" href={canonical} />}
@@ -45,6 +45,12 @@ const canonical = new URL(Astro.url.pathname, site.url).href;
     </script>
   </head>
   <body class={home ? 'is-home' : ''}>
+    <div class="ambience" aria-hidden="true">
+      <div class="amb-edges"></div>
+      <div class="amb-lights"></div>
+      <div class="amb-stars"></div>
+      <div class="amb-grain"></div>
+    </div>
     <div class="laser" aria-hidden="true"></div>
     <div class="laser-glow" aria-hidden="true"></div>
     <a class="skip-link" href="#content"><T fi="Siirry sisältöön" en="Skip to content" /></a>
@@ -104,6 +110,22 @@ const canonical = new URL(Astro.url.pathname, site.url).href;
           });
         });
         apply(root.dataset.lang);
+
+        // Short fade-in for cards and sections as they scroll into view. Skipped entirely
+        // when the reader prefers reduced motion, so nothing is ever hidden for them.
+        var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (!reduce && 'IntersectionObserver' in window) {
+          root.classList.add('reveal-ready');
+          var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                io.unobserve(entry.target);
+              }
+            });
+          }, { rootMargin: '0px 0px -6% 0px' });
+          document.querySelectorAll('.card, .book-text > section').forEach(function (el) { io.observe(el); });
+        }
       })();
     </script>
   </body>

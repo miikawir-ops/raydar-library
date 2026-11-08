@@ -276,7 +276,11 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
 - **Ei geneeristä template-ilmettä:**
   - ei oletus-Bootstrapia tai Tailwind-demon näköisyyttä
   - ei emojeja käyttöliittymässä
-  - ei koristeellisia efektejä, jotka eivät palvele lukemista
+  - efektit tukevat tunnelmaa ja rakennetta eivätkä koskaan häiritse lukemista: ei efektejä leipätekstin takana
+- **Konsepti "yökirjasto jatkuu":** hero-kuvan valonlähteet (lampun messinki, ikkunan kuunvalo, tähdet) jatkuvat koko sivun läpi hienovaraisena ympäristövalona. Värit vain hero-kuvan paletista: navy, kuunsininen ja messinki. Ei violetteja tai neon-läikkiä, ei lasiefektiä joka paikassa eikä gradienttitekstiä leipätekstissä.
+- **Pintatasot** (`tokens.css`): `--surface-0` tausta, `--surface-1` pinta (kortit, lukupalsta, kontrollit) ja `--surface-2` korotettu (keskeisten viestien kortit, `ydin`, tilalaatikot). Kaikki ovat syvää navya, eivät harmaata eivätkä lähes mustaa.
+- **Ympäristövalo** säädetään yhdestä muuttujasta `--ambience` (0–1, oletus 0,7). Kerroksia on neljä: toistuvat messinki- ja kuunvalogradientit, harva staattinen tähtipöly, grain-tekstuuri ja reunoilla näkyvä hyvin pieni sumea hero-kuva (`public/hero-blur.webp`, 64 px, CSS-blur ei käytössä). Kaikki ovat sisällön alla, ja lukupalstan umpinainen pinta peittää ne.
+- **Kansihehku:** kortissa ja kirjasivun otsikkoalueella kannen takana on sama kansikuva sumeana ja matalalla peittävyydellä, ja ilman kantta hehku tulee tagin väristä. Kirjasivulla hehku on kannen ympärillä ja haipuu ennen otsikkosaraketta, jotta tekstin kontrasti säilyy. Hehkussa käytetään M-kokoista kantta, jottei hidas L-kansi nouse kirjasivun LCP-elementiksi.
 
 ### Typografia ja luettavuus
 
@@ -294,7 +298,10 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
   - Kuvan päällä sivun nimi, lyhyt kuvaus ja hakukenttä vasemmassa reunassa, jossa kuvassa on rauhallinen alue.
   - Kuva liukuu alaosassa gradientilla tummaan navyyn, josta korttiruudukko jatkuu saumattomasti.
   - `object-fit: cover`. Mobiilissa painopiste noin `object-position: 55% center`, jotta lamppu ja kirja näkyvät. Tarkista kuvakaappauksesta.
-  - Kuvan alareunan väri on noin `#000816`. Gradientin ja sivun navy-taustan yläpään pitää kohdata se ilman näkyvää saumaa.
+  - Työpöydällä (≥ 720 px) kuva on kiinnitetty vasempaan reunaan (`object-position: 0% center`), ja tekstisarakkeen leveys rajataan niin, ettei teksti osu kuvan pääaiheisiin (armillaaripallo, lamppu, kirja). Otsikko saa rivittyä kahdelle riville. Jos hero-kuva vaihtuu, mittaa aiheiden sijainti uudelleen.
+  - Törmäyskielto koskee työpöytää (≥ 720 px). Mobiilissa teksti on kuvan päällä koko leveydeltä, ja peittokerros hoitaa luettavuuden.
+  - Hero-alueen maksimileveys on `--hero-max` (1920 px, keskitetty), joten suuret näytöt käyttäytyvät kuten 1920 px. Sitä leveämmillä näytöillä hero-alueen reunat haipuvat sivun taustaan.
+  - Kuvan alareuna ja peittokerros haipuvat läpinäkyviksi, joten sivun tausta ja ympäristövalo näkyvät rajan läpi, eikä saumaa synny. Tarkista sauma kuvakaappauksesta, jos tausta tai hero-kuva vaihtuu.
 - **Korttiruudukko,** jossa jokaisella kortilla on kansi, otsikko, kirjoittaja, vuosi, tagit ja `ydin`.
 - **Hillitty hover-efekti:** pieni nosto ja korostusväri, ei pomppimista.
 - **Toiminnot:** haku (Pagefind), tagisuodatus, järjestys (uusimmat / kirjoittaja / julkaisuvuosi) ja "satunnainen kirja".
@@ -317,7 +324,14 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
 ### Yleistä
 
 - **Designtokenit vain `src/styles/tokens.css`:ssä.** Niitä ei muuteta kysymättä.
-- **Tausta:** sivun tausta on tumma navy-gradientti. Kuvaa käytetään vain etusivun hero-alueella, ei kirjasivuilla eikä koko sivun taustana, koska pitkä teksti tarvitsee rauhallisen pohjan.
+- **Korostusvärit:** sininen (`--accent`) on pääkorostus: linkit, alaotsikko ja muut korostukset. Messinki (`--brass`, hero-kuvan lampun sävy) on toissijainen. Sitä käytetään vain seuraavissa:
+  - korttien hover- ja focus-tila sekä korttien yläreunan ohut viiva
+  - aktiivinen suodatinchip
+  - sisällysluettelon aktiivinen kohta
+  - keskeisten viestien numerot
+  - `ydin`-laatikon vasen reunus
+- **Tausta:** sivun tausta on syvä navy (`--surface-0`) ja ympäristövalo. Hero-kuva näkyy vain etusivun hero-alueella. Muualla siitä on vain pieni sumea versio reunoilla, ja lukupalsta on aina umpinaisella pinnalla.
+- **Liike vierittäessä:** kortit ja kirjasivun osiot saavat lyhyen fade-inin. Jatkuvia animaatioita ei ole, ja `prefers-reduced-motion` poistaa kaiken liikkeen.
 - **Mobiili ensin:** 16 px reunat, ei vaakavieritystä, kosketuskohteet vähintään 44 px.
 - **Kielivalinta FI/EN** koko sivulle. Valinta muistetaan localStoragessa, ja jokainen luku ja kirjoitus on try/catchissa. Oletuskieli on suomi.
 - **Liike:** animaatiot ovat hillittyjä, ja `prefers-reduced-motion` kunnioitetaan.

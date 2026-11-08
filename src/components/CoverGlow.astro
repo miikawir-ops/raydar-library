@@ -1,0 +1,26 @@
+---
+// Soft glow behind a cover: the same cover image, blurred, so each book gets its own colour.
+// The tag-coloured gradient underneath stands in when there is no image or it fails to load.
+import { coverSrc, type BookData } from '../lib/book';
+
+interface Props {
+  book: BookData;
+  size: 'M' | 'L';
+  class?: string;
+  eager?: boolean;
+}
+const { book, size, class: className, eager = false } = Astro.props;
+const src = coverSrc(book, size);
+---
+<div class:list={['cover-glow', className]} data-cover-tag={book.tags[0]} aria-hidden="true">
+  {src && (
+    <img
+      src={src}
+      alt=""
+      loading={eager ? 'eager' : 'lazy'}
+      decoding="async"
+      onerror="this.remove()"
+      onload="if(this.naturalWidth<2)this.remove()"
+    />
+  )}
+</div>
