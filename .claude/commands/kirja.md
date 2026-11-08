@@ -41,7 +41,7 @@ Muuten etene loppuun asti ilman välikysymyksiä.
 
 Kun kaikki kirjat on käsitelty:
 
-1. Hae ajon tunniste: `gh run list --branch main --limit 1 --json databaseId --jq ".[0].databaseId"`. Aja sitten `gh run watch <tunniste> --exit-status`.
+1. Hae pushatun commitin tunniste: `git log -1 --format=%H`. Hae sen ajo: `gh run list --branch main --commit <commit> --limit 1 --json databaseId --jq ".[0].databaseId"`. Jos tulos on tyhjä, ajo ei ole vielä rekisteröitynyt: odota hetki ja hae uudelleen. Pelkkä `--limit 1` ilman `--commit`-rajausta voi palauttaa edellisen commitin ajon. Aja sitten `gh run watch <tunniste> --exit-status`.
 2. Raportoi lyhyesti, enintään 3 riviä per kirja:
    - otsikko ja varmuus
    - mahdolliset varoitukset tai poikkeamat

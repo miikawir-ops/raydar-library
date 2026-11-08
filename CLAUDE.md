@@ -416,7 +416,7 @@ Tarkista ero originiin (`git status`, `git fetch`).
 - **Commit-viestit** muodossa `type: what changed`. Esimerkit: `content: add Thinking, Fast and Slow`, `content: update <title>`, `feat: tag filter`, `fix: cover fallback`.
 - **Commit-hashit, polut ja luvut** raportoidaan vain komentojen tulosteesta, ei koskaan muistista.
 - **Historiaa ei kirjoiteta uudelleen** eikä force-pushata kysymättä.
-- **Seuraa deployta:** hae ajon tunniste `gh run list` -komennolla, aja `gh run watch <tunniste> --exit-status` ja kerro, menikö julkaisu läpi.
+- **Seuraa deployta:** hae ajon tunniste `gh run list --commit <commit>` -komennolla pushatun commitin perusteella, aja `gh run watch <tunniste> --exit-status` ja kerro, menikö julkaisu läpi. Pelkkä `--limit 1` voi palauttaa edellisen commitin ajon, jos uusi ajo ei ole vielä rekisteröitynyt.
 
 ### Domain-käyttöönotto
 

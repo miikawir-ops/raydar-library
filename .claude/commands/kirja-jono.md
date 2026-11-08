@@ -18,7 +18,7 @@ Lue `jono.md`. Jokainen `- `-alkuinen rivi on yksi kirja (nimi ja mahdollisesti 
 
 ## Raportti
 
-1. Hae ajon tunniste: `gh run list --branch main --limit 1 --json databaseId --jq ".[0].databaseId"`. Aja sitten `gh run watch <tunniste> --exit-status`.
+1. Hae pushatun commitin tunniste: `git log -1 --format=%H`. Hae sen ajo: `gh run list --branch main --commit <commit> --limit 1 --json databaseId --jq ".[0].databaseId"`. Jos tulos on tyhjä, ajo ei ole vielä rekisteröitynyt: odota hetki ja hae uudelleen. Pelkkä `--limit 1` ilman `--commit`-rajausta voi palauttaa edellisen commitin ajon. Aja sitten `gh run watch <tunniste> --exit-status`.
 2. Raportoi lyhyesti:
    - lisätyt kirjat ja niiden live-osoitteet
    - jonoon jääneet kirjat syineen
