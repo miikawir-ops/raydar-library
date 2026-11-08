@@ -1,5 +1,6 @@
 ---
 import Cover from './Cover.astro';
+import CoverGlow from './CoverGlow.astro';
 import T from './T.astro';
 import { tags } from '../data/tags';
 import { authorSortKey, mdInline, type Book } from '../lib/book';
@@ -17,7 +18,7 @@ const d = book.data;
   data-year={d.year}
   data-author={authorSortKey(d.author)}
 >
-  <div class="card-stage"><Cover book={d} size="M" /></div>
+  <div class="card-stage"><CoverGlow book={d} size="M" /><Cover book={d} size="M" /></div>
   <div class="card-body">
     <h3 class="card-title">
       {d.title_fi ? <T fi={d.title_fi} en={d.title} /> : d.title}

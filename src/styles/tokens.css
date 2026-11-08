@@ -1,18 +1,28 @@
 /* RayDar design tokens. Values copied from miikawir-ops/AI_valuechain (render.py),
-   the canonical family implementation. Do not change without asking Ray. */
+   the canonical family implementation, and from public/hero.webp for the
+   night-library palette. Do not change without asking Ray. */
 :root {
   color-scheme: dark;
 
-  /* Page: hero image bottom edge -> family navy body gradient */
-  --bg-0: #000816;
-  --bg-1: #0e1628;
-  --bg-2: #101c32;
-  --bg-3: #13182a;
-  --bg-4: #0f1420;
+  /* Surfaces: deep navy derived from the hero image's navy (rgb 4, 15, 30).
+     0 = page background, 1 = surface (cards, reading column, controls),
+     2 = raised (key-message cards, core-message box, dialogs). */
+  --surface-0: #0b1a30;
+  --surface-1: #112440;
+  --surface-2: #182f50;
   --hero-placeholder: linear-gradient(135deg, #08081a 0%, #0c1a3a 30%, #1a0830 60%, #0a0818 100%);
-  --panel: rgba(255, 255, 255, 0.04);
-  --panel-hover: rgba(255, 255, 255, 0.07);
-  --highlight: linear-gradient(135deg, #1a1830, #0f1a2e);
+  --hero-max: 1920px;
+
+  /* Ambient light, the "night library continues" concept. Every ambient effect scales
+     with --ambience (0 = off, 1 = full). Colours come from the hero image only:
+     brass from the lamp light, moonlight from the window glass. */
+  --ambience: 0.7;
+  --amb-brass: rgb(228 164 92 / calc(var(--ambience) * 0.11));
+  --amb-moon: rgb(61 127 192 / calc(var(--ambience) * 0.16));
+  --amb-stars: calc(var(--ambience) * 0.5);
+  --amb-grain: calc(var(--ambience) * 0.05);
+  --amb-edges: calc(var(--ambience) * 0.4);
+  --amb-cover-glow: calc(var(--ambience) * 0.5);
 
   /* Text */
   --text-strong: #ffffff;
@@ -27,7 +37,8 @@
   --accent-deep: #3c3489;
   --signal: #e24b4a;
   /* Brass, sampled from the lamp light in public/hero.webp. Secondary accent only:
-     card hover and focus, and the active filter chip. Blue stays the main accent. */
+     card hover and focus, the active filter chip, the active contents item, key-message
+     numbers and the core-message edge. Blue stays the main accent. */
   --brass: #e4a45c;
   --brass-soft: rgba(228, 164, 92, 0.16);
 
@@ -52,7 +63,7 @@
   --shadow-cover: 0 14px 34px rgba(0, 0, 0, 0.55);
 }
 
-/* Fallback cover colours, keyed by a book's first tag. */
+/* Fallback cover colours, keyed by a book's first tag. --cover-line also tints the cover glow. */
 [data-cover-tag='talous'] { --cover-a: #12324f; --cover-b: #0a1a2e; --cover-line: #85b7eb; }
 [data-cover-tag='sijoittaminen'] { --cover-a: #123f3b; --cover-b: #08201f; --cover-line: #6fcfb4; }
 [data-cover-tag='liiketoiminta'] { --cover-a: #2b2f55; --cover-b: #12142c; --cover-line: #afa9ec; }

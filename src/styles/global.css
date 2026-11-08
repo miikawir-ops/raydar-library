@@ -2,7 +2,7 @@
 
 html {
   -webkit-text-size-adjust: 100%;
-  background: var(--bg-0);
+  background: var(--surface-0);
 }
 
 body {
@@ -10,19 +10,16 @@ body {
   font-size: var(--text-body);
   line-height: var(--leading);
   color: var(--text);
-  background: var(--bg-0);
+  background: var(--surface-0);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   position: relative;
+  isolation: isolate;
   overflow-x: clip;
 }
 
-main {
-  flex: 1;
-  /* Starts at the hero's bottom colour, so the join has no visible seam. */
-  background: linear-gradient(180deg, var(--bg-0) 0, var(--bg-1) 520px, var(--bg-2) 1400px, var(--bg-3) 75%, var(--bg-4) 100%);
-}
+main { flex: 1; position: relative; z-index: 1; }
 
 img { max-width: 100%; display: block; }
 ul, ol { list-style: none; }
@@ -44,9 +41,40 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
 
 .skip-link {
   position: absolute; top: -60px; left: var(--gutter); z-index: 50;
-  background: var(--bg-2); padding: 10px 16px; border-radius: var(--radius-s);
+  background: var(--surface-2); padding: 10px 16px; border-radius: var(--radius-s);
 }
 .skip-link:focus { top: 10px; }
+
+/* Ambient light: "the night library continues". Everything here sits behind the content,
+   scales with --ambience, and is covered by solid surfaces wherever body text is read. */
+.ambience { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.amb-lights {
+  position: absolute; inset: 0;
+  /* One tile = a brass lamp glow high on the left, moonlight lower on the right.
+     The tile repeats, so the mood alternates all the way down long pages. */
+  background-image:
+    radial-gradient(ellipse 780px 500px at 6% 640px, var(--amb-brass), transparent 70%),
+    radial-gradient(ellipse 860px 540px at 96% 1640px, var(--amb-moon), transparent 70%);
+  background-size: 100% 2240px;
+  background-repeat: repeat-y;
+}
+.amb-edges {
+  position: fixed; inset: 0;
+  background: url('/hero-blur.webp') center / cover no-repeat;
+  opacity: var(--amb-edges);
+  -webkit-mask-image: radial-gradient(ellipse 72% 78% at 50% 50%, transparent 50%, #000 100%);
+  mask-image: radial-gradient(ellipse 72% 78% at 50% 50%, transparent 50%, #000 100%);
+}
+.amb-stars {
+  position: fixed; inset: 0;
+  opacity: var(--amb-stars);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='560' height='560'%3E%3Cg fill='%23dbe6ff'%3E%3Ccircle cx='38' cy='62' r='.8' opacity='.7'/%3E%3Ccircle cx='151' cy='23' r='.6' opacity='.5'/%3E%3Ccircle cx='247' cy='118' r='1' opacity='.8'/%3E%3Ccircle cx='402' cy='47' r='.7' opacity='.6'/%3E%3Ccircle cx='511' cy='160' r='.6' opacity='.5'/%3E%3Ccircle cx='89' cy='233' r='.7' opacity='.6'/%3E%3Ccircle cx='330' cy='261' r='.6' opacity='.45'/%3E%3Ccircle cx='468' cy='318' r='.9' opacity='.75'/%3E%3Ccircle cx='190' cy='371' r='.6' opacity='.5'/%3E%3Ccircle cx='24' cy='433' r='.8' opacity='.6'/%3E%3Ccircle cx='298' cy='452' r='.7' opacity='.55'/%3E%3Ccircle cx='421' cy='517' r='.6' opacity='.5'/%3E%3Ccircle cx='129' cy='529' r='.9' opacity='.7'/%3E%3C/g%3E%3C/svg%3E");
+}
+.amb-grain {
+  position: fixed; inset: 0;
+  opacity: var(--amb-grain);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
 
 /* RayDar top line */
 .laser { position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--laser); opacity: 0.9; z-index: 5; }
@@ -84,17 +112,26 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
 
 /* Hero */
 .hero {
-  position: relative; display: flex; align-items: flex-end;
+  position: relative; z-index: 1; display: flex; align-items: flex-end;
+  width: 100%; max-width: var(--hero-max); margin: 0 auto;
   min-height: 45vh; padding: 88px 0 32px;
   background: var(--hero-placeholder);
   overflow: hidden;
+  container-type: inline-size;
 }
+.hero.has-image { background: none; }
 .hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 55% center; }
+/* The image and its overlay fade out at the bottom, so the page background (with its ambient
+   light) shows through and the join has no seam by construction. */
+.hero-img, .hero-overlay {
+  -webkit-mask-image: linear-gradient(180deg, #000 72%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 72%, transparent 100%);
+}
 /* On phones the text spans the full width over the lamp, so the overlay is even across it.
    The stops keep the top bar readable and leave a lighter band between it and the heading. */
 .hero-overlay {
   position: absolute; inset: 0;
-  background: linear-gradient(180deg, rgba(0, 8, 22, 0.8) 0, rgba(0, 8, 22, 0.8) 62px, rgba(0, 8, 22, 0.3) 92px, rgba(0, 8, 22, 0.76) 130px, rgba(0, 8, 22, 0.78) 70%, var(--bg-0) 100%);
+  background: linear-gradient(180deg, rgba(0, 8, 22, 0.8) 0, rgba(0, 8, 22, 0.8) 62px, rgba(0, 8, 22, 0.3) 92px, rgba(0, 8, 22, 0.76) 130px, rgba(0, 8, 22, 0.78) 100%);
 }
 .hero-content { position: relative; width: 100%; max-width: var(--page-max); margin: 0 auto; padding: 0 var(--gutter); }
 .hero-title { font-size: clamp(30px, 8vw, 52px); font-weight: 600; letter-spacing: -0.02em; }
@@ -121,7 +158,7 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
 .chip, .button, .sort select {
   min-height: var(--touch); padding: 0 16px;
   font-size: 15px;
-  background: var(--panel);
+  background: var(--surface-1);
   border: 1px solid var(--line); border-radius: 22px;
   color: var(--text); cursor: pointer;
   transition: border-color 0.15s, color 0.15s, background-color 0.15s;
@@ -129,8 +166,8 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
 .button { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
 .chip:hover, .button:hover, .sort select:hover { border-color: var(--accent); color: var(--text-strong); }
 .chip[aria-pressed='true'] { background: var(--brass-soft); border-color: var(--brass); color: var(--text-strong); }
-.sort select { background-color: var(--bg-2); padding-right: 12px; }
-.sort select option { background: var(--bg-2); color: var(--text); }
+.sort select { background-color: var(--surface-1); padding-right: 12px; }
+.sort select option { background: var(--surface-1); color: var(--text); }
 
 .result-count { font-size: 14px; color: var(--text-muted); margin-bottom: 16px; min-height: 22px; }
 
@@ -138,18 +175,37 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 20px; }
 
 .card {
+  position: relative; overflow: hidden;
   display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 14px;
   padding: 14px;
   text-decoration: none; color: var(--text);
-  background: var(--panel);
+  background: var(--surface-1);
   border: 1px solid var(--line); border-radius: var(--radius);
-  transition: transform 0.18s ease, border-color 0.18s ease, background-color 0.18s ease;
+  transition: transform 0.18s ease, border-color 0.18s ease;
 }
-.card:hover { transform: translateY(-2px); border-color: var(--brass); background: var(--panel-hover); color: var(--text); }
+/* A thin brass line along the top edge, fading out to the right. */
+.card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; z-index: 2;
+  background: linear-gradient(90deg, var(--brass), transparent 75%);
+}
+.card:hover { transform: translateY(-2px); border-color: var(--brass); color: var(--text); }
 .card:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; border-color: var(--brass); }
+.card-stage { position: relative; isolation: isolate; }
 .card-title { font-size: 19px; font-weight: 600; }
 .card-meta { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
 .card-ydin { font-size: 15px; line-height: 1.5; margin-top: 10px; grid-column: 1 / -1; }
+
+/* Cover glow: the cover itself, blurred, or the tag colour when there is no cover image. */
+.cover-glow {
+  position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  opacity: var(--amb-cover-glow);
+  background: radial-gradient(closest-side, var(--cover-line), transparent);
+  transition: opacity 0.25s ease;
+}
+.cover-glow img { width: 100%; height: 100%; object-fit: cover; filter: blur(10px) saturate(1.2); }
+/* Phones: the cover sits next to the text, so the glow stays tight around it. */
+.card-stage .cover-glow { inset: 8px; }
+.card:hover .cover-glow, .card:focus-visible .cover-glow { opacity: min(1, calc(var(--amb-cover-glow) * 1.8)); }
 
 .tag-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 .tag {
@@ -188,7 +244,7 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
 .state {
   max-width: 560px; margin: 32px auto; padding: 48px 24px;
   text-align: center;
-  background: var(--highlight);
+  background: var(--surface-2);
   border: 1px solid var(--line-strong); border-radius: var(--radius);
 }
 .state h1, .state h2 { font-size: 26px; font-weight: 600; margin-bottom: 8px; }
@@ -202,32 +258,56 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
   transform: scaleX(0); transform-origin: left;
 }
 
-.book { width: 100%; max-width: 1100px; margin: 0 auto; padding: 16px var(--gutter) 64px; }
+.book { position: relative; width: 100%; max-width: 1100px; margin: 0 auto; padding: 16px var(--gutter) 64px; }
+/* The cover glow sits behind the cover in the title area only, centred on the cover and fading
+   into the navy before it reaches the title column, so the heading text keeps its contrast.
+   --gx/--gy = cover centre in the glow box; the glow fades out between --core and --fade. */
+.cover-glow.book-glow {
+  --gx: 112px; --gy: 152px; --core: 20px; --fade: 120px;
+  inset: auto; top: -80px; left: -60px; width: calc(100% + 120px); max-width: 900px; height: 520px; z-index: 0;
+  background: radial-gradient(circle at var(--gx) var(--gy), var(--cover-line), transparent var(--fade));
+  -webkit-mask-image: radial-gradient(circle at var(--gx) var(--gy), #000 var(--core), transparent var(--fade));
+  mask-image: radial-gradient(circle at var(--gx) var(--gy), #000 var(--core), transparent var(--fade));
+}
+.cover-glow.book-glow img { filter: blur(40px) brightness(0.8) saturate(1.3); }
+.book-head, .ydin, .toc-mobile, .book-layout { position: relative; z-index: 1; }
 .book-head { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 16px; align-items: start; }
 .book-title { font-size: clamp(25px, 6vw, 42px); font-weight: 600; letter-spacing: -0.015em; }
-.book-original { font-size: 15px; color: var(--text-muted); margin-top: 6px; }
+/* The title area sits near the cover glow, so its small lines use the body text colour, not muted. */
+.book-original { font-size: 15px; color: var(--text); margin-top: 6px; }
 .book-author { font-size: 17px; margin-top: 8px; }
-.book-marks { font-size: 13px; color: var(--text-muted); margin-top: 10px; }
+.book-marks { font-size: 13px; color: var(--text); margin-top: 10px; }
 
 .ydin {
   margin-top: 24px; padding: 18px 20px;
   font-size: 19px; line-height: 1.5; color: var(--text-strong);
-  background: var(--highlight);
-  border: 1px solid var(--line-strong); border-radius: var(--radius);
+  background: var(--surface-2);
+  border: 1px solid var(--line); border-left: 3px solid var(--brass); border-radius: var(--radius);
+  box-shadow: 0 0 48px -8px rgb(228 164 92 / calc(var(--ambience) * 0.22));
 }
 
-.toc-mobile { margin-top: 16px; border: 1px solid var(--line); border-radius: var(--radius-s); background: var(--panel); }
+.toc-mobile { margin-top: 16px; border: 1px solid var(--line); border-radius: var(--radius-s); background: var(--surface-1); }
 .toc-mobile summary { min-height: var(--touch); display: flex; align-items: center; padding: 0 16px; cursor: pointer; font-weight: 500; color: var(--text-strong); }
 .toc-mobile ul { padding: 0 16px 8px; }
 .toc-mobile a, .toc a { display: flex; align-items: center; min-height: var(--touch); font-size: 15px; text-decoration: none; color: var(--text); }
 .toc-mobile a:hover, .toc a:hover { color: var(--accent); }
+.toc a { padding-left: 12px; box-shadow: inset 2px 0 0 transparent; }
+.toc a[aria-current='true'], .toc-mobile a[aria-current='true'] { color: var(--brass); }
+.toc a[aria-current='true'] { box-shadow: inset 2px 0 0 var(--brass); }
 
 .toc { display: none; }
-.toc-title { font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; }
+.toc-title { font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; padding-left: 12px; }
 
 .book-layout { display: block; }
-.book-text { min-width: 0; }
-.book-text > section { margin-top: 48px; scroll-margin-top: 20px; max-width: var(--measure); }
+/* The reading column is a calm, solid surface: no effect ever shows behind body text. */
+.book-text {
+  min-width: 0;
+  margin: 24px calc(-1 * var(--gutter)) 0;
+  padding: 4px var(--gutter) 32px;
+  background: var(--surface-1);
+  border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+}
+.book-text > section { margin-top: 40px; scroll-margin-top: 20px; max-width: var(--measure); }
 .book-text h2 { font-size: 27px; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 16px; }
 
 .prose p + p, .prose ul, .prose ol, .prose p + ul { margin-top: 1em; }
@@ -238,11 +318,10 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
 .ideas { display: grid; gap: 16px; }
 .idea {
   position: relative; padding: 18px 18px 20px;
-  background: var(--panel);
-  border: 1px solid var(--line); border-left: 3px solid var(--accent-3);
-  border-radius: var(--radius-s);
+  background: var(--surface-2);
+  border: 1px solid var(--line); border-radius: var(--radius-s);
 }
-.idea-num { display: block; font-size: 13px; font-weight: 600; letter-spacing: 0.1em; color: var(--accent-2); font-variant-numeric: tabular-nums; margin-bottom: 4px; }
+.idea-num { display: block; font-size: 34px; font-weight: 600; line-height: 1; letter-spacing: -0.01em; color: var(--brass); font-variant-numeric: tabular-nums; margin-bottom: 10px; }
 .idea h3 { font-size: 20px; font-weight: 600; margin-bottom: 10px; }
 
 .concepts { display: grid; gap: 16px; }
@@ -255,7 +334,7 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
 .note h2 { font-size: 16px; color: var(--text); margin-bottom: 6px; }
 .note .i18n > div + div { margin-top: 8px; }
 
-.personal-note { padding: 18px 20px; background: var(--panel); border: 1px solid var(--line-strong); border-radius: var(--radius-s); }
+.personal-note { padding: 18px 20px; background: var(--surface-2); border: 1px solid var(--line-strong); border-radius: var(--radius-s); }
 
 .related { display: grid; gap: 16px; }
 
@@ -264,7 +343,7 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
 .sources a { display: inline-block; padding: 10px 0; overflow-wrap: anywhere; }
 
 /* Footer */
-.footer { border-top: 1px solid var(--line); background: var(--bg-4); }
+.footer { position: relative; z-index: 1; border-top: 1px solid var(--line); background: var(--surface-0); }
 .footer-inner {
   max-width: var(--page-max); margin: 0 auto; padding: 20px var(--gutter);
   display: flex; flex-direction: column; gap: 8px;
@@ -277,35 +356,34 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
   .hero { min-height: 55vh; padding-bottom: 40px; }
   /* Keep the text left of the hero's main subjects (armillary sphere, lamp, book).
      Their left edge is at x = 770 of the 2048 x 768 image. With object-fit: cover and the image
-     pinned left, that edge lands at max(37.6vw, 1.0026 x hero height). Using 55vh / 400px as the
-     height can only underestimate it, so the text stays clear even when the hero grows. */
+     pinned left, that edge lands at max(37.6 % of the hero width, 1.0026 x hero height). Using
+     55vh / 400px as the height can only underestimate it, so the text stays clear even when the
+     hero grows. cqi units refer to the hero, which stops growing at --hero-max. */
   .hero-img { object-position: 0% center; }
   .hero-text {
     container-type: inline-size;
-    max-width: calc(max(37.6vw, max(55vh, 400px) * 1.0026) - max(var(--gutter), (100vw - var(--page-max)) / 2 + var(--gutter)) - 24px);
+    max-width: calc(max(37.6cqi, max(55vh, 400px) * 1.0026) - max(var(--gutter), (100cqi - var(--page-max)) / 2 + var(--gutter)) - 24px);
   }
   .hero-title { font-size: clamp(30px, 12cqi, 52px); text-wrap: balance; }
   .hero-overlay {
-    background:
-      linear-gradient(180deg, rgba(0, 8, 22, 0) 45%, var(--bg-0) 100%),
-      linear-gradient(90deg, rgba(0, 8, 22, 0.82) 0%, rgba(0, 8, 22, 0.5) 55%, rgba(0, 8, 22, 0.1) 100%);
+    background: linear-gradient(90deg, rgba(0, 8, 22, 0.82) 0%, rgba(0, 8, 22, 0.5) 55%, rgba(0, 8, 22, 0.1) 100%);
   }
   .controls { flex-direction: row; justify-content: space-between; align-items: flex-start; }
   .controls-side { flex: none; flex-wrap: nowrap; }
 
-  .card { display: flex; flex-direction: column; padding: 0; overflow: hidden; gap: 0; }
-  .card-stage {
-    display: flex; justify-content: center; padding: 24px 0 20px;
-    background: radial-gradient(ellipse at 50% 40%, rgba(83, 74, 183, 0.22), transparent 70%);
-    border-bottom: 1px solid var(--line);
-  }
+  .card { display: flex; flex-direction: column; padding: 0; gap: 0; }
+  .card-stage { display: flex; justify-content: center; padding: 24px 0 20px; border-bottom: 1px solid var(--line); }
   .card-stage .cover { width: 148px; }
+  .card-stage .cover-glow { inset: 14px 20%; }
+  .card-stage .cover-glow img { filter: blur(18px) saturate(1.2); }
+  .cover-glow.book-glow { --gx: 186px; --gy: 269px; --core: 40px; --fade: 205px; }
   .card-body { padding: 16px 18px 20px; }
 
   .book { padding-top: 24px; }
   .book-head { grid-template-columns: 220px minmax(0, 1fr); gap: 32px; align-items: end; }
   .book-author { font-size: 19px; }
   .ydin { font-size: 21px; padding: 24px 28px; margin-top: 32px; }
+  .book-text { margin: 32px 0 0; padding: 8px 40px 44px; border: 1px solid var(--line); border-radius: 16px; }
   .idea { padding: 22px 26px 24px; }
   .related { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .footer-inner { flex-direction: row; justify-content: space-between; align-items: center; }
@@ -313,15 +391,29 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
 
 @media (min-width: 1020px) {
   .toc-mobile { display: none; }
-  .book-layout { display: grid; grid-template-columns: 196px minmax(0, 1fr); gap: 56px; align-items: start; }
-  .toc { display: block; position: sticky; top: 24px; margin-top: 48px; }
+  .book-layout { display: grid; grid-template-columns: 196px minmax(0, 1fr); gap: 40px; align-items: start; }
+  .toc { display: block; position: sticky; top: 24px; margin-top: 64px; }
   .toc a { min-height: 36px; }
+}
+
+/* Wider than the hero's maximum: fade its sides into the page so the edges have no hard line. */
+@media (min-width: 1921px) {
+  .hero {
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
   html { scroll-behavior: smooth; }
+  .reveal-ready .card, .reveal-ready .book-text > section {
+    transition: opacity 0.5s ease, transform 0.5s ease, border-color 0.18s ease;
+  }
+  .reveal-ready .card:not(.is-visible), .reveal-ready .book-text > section:not(.is-visible) {
+    opacity: 0; transform: translateY(10px);
+  }
 }
 @media (prefers-reduced-motion: reduce) {
-  .card, .chip, .button, .sort select { transition: none; }
+  .card, .chip, .button, .sort select, .cover-glow { transition: none; }
   .card:hover { transform: none; }
 }

@@ -13,7 +13,7 @@ const hasHeroImage = existsSync('public/hero.webp');
 const description = 'Tietokirjojen ydinsanomat selkeinä tiivistelminä, suomeksi ja englanniksi.';
 ---
 <Base titleFi="RayDar Library" titleEn="RayDar Library" description={description} home>
-  <section class="hero" slot="hero">
+  <section class:list={['hero', { 'has-image': hasHeroImage }]} slot="hero">
     {hasHeroImage && <img class="hero-img" src="/hero.webp" alt="" fetchpriority="high" />}
     <div class="hero-overlay" aria-hidden="true"></div>
     <div class="hero-content">
