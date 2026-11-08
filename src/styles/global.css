@@ -61,6 +61,29 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
 .amb-pool { width: 100%; height: 100%; border-radius: 50%; }
 .amb-pool.brass { background: radial-gradient(closest-side, var(--amb-brass), transparent); }
 .amb-pool.moon { background: radial-gradient(closest-side, var(--amb-moon), transparent); }
+/* Edge figures: the bookcase image (public/edge.webp) in the left margin and mirrored in the right,
+   only on screens wide enough to leave a real margin outside the content column (>= 80 px each side,
+   so >= 1400 px). Each is clamped to the margin width and its inner side fades out, so it never
+   reaches under the content column or text. --hero-cut (script) hides it over the home hero. */
+.amb-figure { display: none; }
+@media (min-width: 1400px) {
+  .amb-figure {
+    display: block; position: fixed; top: -10px; height: calc(100vh + 80px);
+    width: min(calc((100vh + 80px) * 338 / 1024), calc((100% - var(--page-max)) / 2));
+    opacity: var(--amb-figures); pointer-events: none;
+    -webkit-mask-image: linear-gradient(180deg, transparent var(--hero-cut, 0px), #000 calc(var(--hero-cut, 0px) + 240px));
+    mask-image: linear-gradient(180deg, transparent var(--hero-cut, 0px), #000 calc(var(--hero-cut, 0px) + 240px));
+  }
+  .amb-figure.left { left: 0; }
+  .amb-figure.right { right: 0; }
+  .amb-figure::before {
+    content: ''; position: absolute; inset: 0;
+    background: url('/edge.webp') left center / auto 100% no-repeat;
+    -webkit-mask-image: linear-gradient(90deg, #000 30%, transparent 100%);
+    mask-image: linear-gradient(90deg, #000 30%, transparent 100%);
+  }
+  .amb-figure.right::before { transform: scaleX(-1); }
+}
 .amb-twinkle { position: fixed; inset: 0; opacity: var(--amb-stars); }
 /* Stars stay in the side margins outside the content column, so a star never sits behind text
    (a single bright star pixel under small text breaks its contrast). Narrow screens have no margins,
