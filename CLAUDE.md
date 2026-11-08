@@ -54,7 +54,7 @@ Tämä on julkinen sivu. Virhe tiivistelmässä on väärää tietoa sivulla, jo
 ```
 src/content/books/*.md      # yksi kirja = yksi tiedosto, kaikki sisältö frontmatterissa
 src/content.config.ts       # Zod-skeema (rakenteen totuuden lähde)
-src/data/tags.ts            # sallitut tagit + FI/EN-nimet
+src/data/tags.ts            # sallitut tagit, FI/EN-nimet ja tagin väri (hue)
 src/styles/tokens.css       # RayDar-designtokenit (värit, fontit, välit)
 src/site.config.ts          # mm. indexable: false/true
 tools/check-books.mjs       # sisällön tarkistus, ajetaan ennen buildia
@@ -240,24 +240,29 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
 
 - Vain `src/data/tags.ts`:n listalta, 1–3 per kirja.
 - Uutta tagia ei lisätä omin päin: ehdota sitä Raylle.
-- Aloituslista (id → FI / EN):
+- Jokaisella tagilla on väri (`hue` `tags.ts`:ssä) hero-paletista. Uudelle tagille valitaan väri samalla logiikalla:
+  - messinki: raha ja työ
+  - viini: ihmiset ajassa
+  - smaragdi: mieli ja elämä
+  - kuunsininen: järki ja koneet
+- Aloituslista (id → FI / EN / väri):
 
-| id | FI | EN |
-|---|---|---|
-| `talous` | Talous | Economics |
-| `sijoittaminen` | Sijoittaminen | Investing |
-| `liiketoiminta` | Liiketoiminta | Business |
-| `johtaminen` | Johtaminen | Leadership |
-| `psykologia` | Psykologia | Psychology |
-| `paatoksenteko` | Päätöksenteko | Decision-making |
-| `teknologia` | Teknologia | Technology |
-| `tekoaly` | Tekoäly | AI |
-| `tiede` | Tiede | Science |
-| `historia` | Historia | History |
-| `yhteiskunta` | Yhteiskunta | Society |
-| `filosofia` | Filosofia | Philosophy |
-| `terveys` | Terveys | Health |
-| `tuottavuus` | Tuottavuus | Productivity |
+| id | FI | EN | väri |
+|---|---|---|---|
+| `talous` | Talous | Economics | messinki |
+| `sijoittaminen` | Sijoittaminen | Investing | messinki |
+| `liiketoiminta` | Liiketoiminta | Business | messinki |
+| `johtaminen` | Johtaminen | Leadership | viini |
+| `psykologia` | Psykologia | Psychology | smaragdi |
+| `paatoksenteko` | Päätöksenteko | Decision-making | kuunsininen |
+| `teknologia` | Teknologia | Technology | kuunsininen |
+| `tekoaly` | Tekoäly | AI | kuunsininen |
+| `tiede` | Tiede | Science | kuunsininen |
+| `historia` | Historia | History | viini |
+| `yhteiskunta` | Yhteiskunta | Society | viini |
+| `filosofia` | Filosofia | Philosophy | smaragdi |
+| `terveys` | Terveys | Health | smaragdi |
+| `tuottavuus` | Tuottavuus | Productivity | messinki |
 
 ## Kansikuvat
 
@@ -288,7 +293,20 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
   - ei oletus-Bootstrapia tai Tailwind-demon näköisyyttä
   - ei emojeja käyttöliittymässä
   - efektit tukevat tunnelmaa ja rakennetta eivätkä koskaan häiritse lukemista: ei efektejä leipätekstin takana
-- **Konsepti "yökirjasto jatkuu":** hero-kuvan valonlähteet (lampun messinki, ikkunan kuunvalo, tähdet) jatkuvat koko sivun läpi hienovaraisena ympäristövalona. Värit vain hero-kuvan paletista: navy, kuunsininen ja messinki. Ei violetteja tai neon-läikkiä, ei lasiefektiä joka paikassa eikä gradienttitekstiä leipätekstissä.
+- **Konsepti "yökirjasto jatkuu":** hero-kuvan valonlähteet (lampun messinki, ikkunan kuunvalo, tähdet) jatkuvat koko sivun läpi hienovaraisena ympäristövalona. Värit vain hero-kuvan paletista: navy, kuunsininen ja messinki sekä toissijaisina syvä smaragdi (huopa ja muratti) ja viininpunainen nahka (nojatuoli ja kirjanselät). Ei violetteja tai neon-läikkiä, ei lasiefektiä joka paikassa eikä gradienttitekstiä leipätekstissä.
+- **Paletti** (`tokens.css`): jokaisella toissijaisella värillä on kolme sävyä:
+  - `--emerald`/`--wine` viivoihin ja sävytyksiin
+  - `-text`-sävy tekstiin tummalla pinnalla
+  - `-ink`-sävy tekstiin paperilla
+
+  Smaragdi on otettu huovasta (noin `#17272c`) ja viini nojatuolin nahasta (noin `#5f1c07`). Viiniä on siirretty kohti viininpunaista, jottei se sekoitu messinkiin. Kaikki text- ja ink-sävyt on mitattu vähintään 4,5:1 omaa pintaansa vasten.
+- **Tagin väri** (`[data-hue]`, kirjan ensimmäinen tagi) näkyy seuraavissa:
+  - tagichipit, joissa jokainen tagi on omalla värillään
+  - korttien yläreunan viiva
+  - kirjasivun otsikkoalueen taustasävytys, jotta vaaleatkin kannet saavat värin
+  - keskeisten viestien numerot
+  - käsitteiden termit
+  - osio-otsikoiden lyhyt alaviiva
 - **Pintatasot** (`tokens.css`): `--surface-0` tausta, `--surface-1` pinta (kortit, lukupalsta, kontrollit) ja `--surface-2` korotettu (keskeisten viestien kortit, `ydin`, tilalaatikot). Kaikki ovat syvää, hieman kylläistä navya, eivät harmaata eivätkä lähes mustaa.
 - **Ympäristövalo** säädetään yhdestä muuttujasta `--ambience` (0–1, oletus 0,7). Kaikki valoefektit skaalautuvat sen mukaan. Kerrokset:
   - **valolammikot:** yksi kiinteä taustakerros (`position: fixed`, `pointer-events: none`), jossa on neljä lammikkoa: messinki vasemmalla ylhäällä ja oikealla alhaalla, kuunsininen oikealla ja vasemmalla alempana. Jokaisessa näkymässä näkyy siis aina vähintään yksi kumpaakin sivun pituudesta riippumatta. Lammikot ajelehtivat hitaasti (CSS) ja siirtyvät hieman vierityksen mukana (rAF, rajattu siniliike, vain `transform`), joten ne eivät koskaan poistu näkymästä.
@@ -297,7 +315,14 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
   - grain-tekstuuri
   - reunoilla näkyvä hyvin pieni sumea hero-kuva (`public/hero-blur.webp`, 64 px, CSS-blur ei käytössä)
   - **kursorilyhty:** pehmeä lämmin valo seuraa hiirtä viiveellä, vain etusivulla ja vain `pointer: fine`
-  - **reunafiguurit:** `public/edge.webp` (kirjahylly) vasemmassa reunassa ja peilikuvana (`scaleX(-1)`) oikeassa.
+  - **reunafiguurit:** `public/edge.webp` vasemmassa reunassa ja peilikuvana (`scaleX(-1)`) oikeassa.
+    - **Rajaus:** näkyvissä on kaiverrettu pilari ja sen seinälamppu, ei hyllyjä.
+      - Kuvan koordinaatit (338 × 1024): hyllyt x 0–135, pilari x 136–232, taivas x 232–338, lamppu (189, 645), sumu y > 900.
+      - Lamppu on hieman keskikorkeuden alapuolella, ja alareunan sumu haipuu.
+      - Kapealla marginaalilla pilarin ulkoreunasta rajataan, ei sisäreunasta. Sisäreunan maski alkaa vasta pilarin jälkeen eikä koskaan peitä pilaria.
+      - Kuvan kaari on hyllyjen yläpuolella, joten hyllyttömässä rajauksessa siitä näkyy vain oikea pää ja muratti.
+      - Jos kuva vaihtuu, mittaa koordinaatit uudelleen.
+    - **Lampun valo:** lämmin hehku, joka heijastuu heikosti sisältösarakkeen reunaan, ja hyvin hienovarainen värähtely `--motion`-muuttujan alla. Kirjasivulla värähtely pysähtyy otsikkoalueen jälkeen (`amb-still`), ja reduced-motion poistaa sen.
     - Kiinteä taustakerros (`position: fixed`, `pointer-events: none`), korkeus 100vh + 80 px parallaksin liikevaraa varten.
     - Näkyy vain, kun näkymä on vähintään 1400 px. Silloin sisältösarakkeen (`--page-max` 1240 px) ulkopuolelle jää vähintään 80 px. Kapeammalla figuuri olisi vain kapea suikale.
     - Leveys on enintään sisältösarakkeen ulkopuolinen tila, ja kuvan sisäreuna haipuu läpinäkyväksi (mask). Figuuri ei siis koskaan ulotu sisältösarakkeen tai tekstin alle.
@@ -370,11 +395,12 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
 
 - **Designtokenit vain `src/styles/tokens.css`:ssä.** Niitä ei muuteta kysymättä.
 - **Korostusvärit:** sininen (`--accent`) on pääkorostus: linkit, alaotsikko ja muut korostukset. Messinki (`--brass`, hero-kuvan lampun sävy) on toissijainen. Sitä käytetään vain seuraavissa:
-  - korttien hover- ja focus-tila sekä korttien yläreunan ohut viiva
+  - korttien hover- ja focus-tila
   - aktiivinen suodatinchip
   - sisällysluettelon aktiivinen kohta
-  - keskeisten viestien numerot
-  - `ydin`-laatikon vasen reunus
+  - `ydin`-laatikon kehys, sisäviiva ja kulmatähdet
+  - osioiden välinen koristejakaja (ohut viiva ja pieni tähti)
+  - käsitekorttien numerot
   - kokoelman yläotsikko "Kokoelma"
   - "Lue koko kirja" -rivi `ydin`-laatikon alla sekä "Lue koko kirja" -osion yläreunus ja linkit
 - **Tausta:** sivun tausta on syvä navy (`--surface-0`) ja ympäristövalo. Hero-kuva näkyy vain etusivun hero-alueella. Muualla siitä on vain pieni sumea versio reunoilla, ja lukupalsta on aina umpinaisella pinnalla.
@@ -468,6 +494,10 @@ Tarkista ero originiin (`git status`, `git fetch`).
 - **Commit-viestit** muodossa `type: what changed`. Esimerkit: `content: add Thinking, Fast and Slow`, `content: update <title>`, `feat: tag filter`, `fix: cover fallback`.
 - **Commit-hashit, polut ja luvut** raportoidaan vain komentojen tulosteesta, ei koskaan muistista.
 - **Historiaa ei kirjoiteta uudelleen** eikä force-pushata kysymättä.
+- **Julkaisu ohitetaan, kun pushissa muuttuvat vain nämä:** `CLAUDE.md`, `tools/**`, `jono.md` tai `.claude/**` (`paths-ignore` workflowssa).
+  - Huomaa, että myös `tools/check-books.mjs` (prebuild) kuuluu tähän: sen muutos tulee voimaan vasta seuraavassa julkaisussa.
+  - Tällaisesta pushista ei ole ajoa, jota seurata.
+  - Julkaisun voi käynnistää käsin (`workflow_dispatch`).
 - **Seuraa deployta:** hae ajon tunniste `gh run list --commit <commit>` -komennolla pushatun commitin perusteella, aja `gh run watch <tunniste> --exit-status` ja kerro, menikö julkaisu läpi. Pelkkä `--limit 1` voi palauttaa edellisen commitin ajon, jos uusi ajo ei ole vielä rekisteröitynyt.
 
 ### Domain-käyttöönotto
