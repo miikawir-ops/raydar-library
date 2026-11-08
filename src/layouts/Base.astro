@@ -9,9 +9,18 @@ interface Props {
   titleEn: string;
   description?: string;
   home?: boolean;
+  book?: boolean;
   ogImage?: string;
 }
-const { titleFi, titleEn, description, home = false, ogImage } = Astro.props;
+const { titleFi, titleEn, description, home = false, book = false, ogImage } = Astro.props;
+// Four light pools in one fixed layer, so every screenful shows brass and moonlight
+// whatever the page length. Each pool's wrapper takes the scroll offset (script), the pool itself drifts (CSS).
+const pools = [
+  { kind: 'brass', pos: 'p1' },
+  { kind: 'moon', pos: 'p2' },
+  { kind: 'moon', pos: 'p3' },
+  { kind: 'brass', pos: 'p4' },
+];
 const canonical = new URL(Astro.url.pathname, site.url).href;
 ---
 <!doctype html>
@@ -20,7 +29,7 @@ const canonical = new URL(Astro.url.pathname, site.url).href;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{titleFi}</title>
-    <meta name="theme-color" content="#0b1a30" />
+    <meta name="theme-color" content="#0d2040" />
     {!site.indexable && <meta name="robots" content="noindex" />}
     {site.indexable && description && <meta name="description" content={description} />}
     {site.indexable && <link rel="canonical" href={canonical} />}
@@ -44,12 +53,17 @@ const canonical = new URL(Astro.url.pathname, site.url).href;
       })();
     </script>
   </head>
-  <body class={home ? 'is-home' : ''}>
+  <body class:list={[{ 'is-home': home, 'is-book': book }]}>
     <div class="ambience" aria-hidden="true">
       <div class="amb-edges"></div>
-      <div class="amb-lights"></div>
+      <div class="amb-pools">
+        {pools.map((p) => <div class={`amb-pool-track ${p.pos}`}><div class={`amb-pool ${p.kind}`}></div></div>)}
+      </div>
       <div class="amb-stars"></div>
+      <div class="amb-twinkle t1"></div>
+      <div class="amb-twinkle t2"></div>
       <div class="amb-grain"></div>
+      <div class="amb-lantern"></div>
     </div>
     <div class="laser" aria-hidden="true"></div>
     <div class="laser-glow" aria-hidden="true"></div>
@@ -125,6 +139,75 @@ const canonical = new URL(Astro.url.pathname, site.url).href;
             });
           }, { rootMargin: '0px 0px -6% 0px' });
           document.querySelectorAll('.card, .book-text > section').forEach(function (el) { io.observe(el); });
+        }
+
+        // Slow background motion. Off with reduced motion or --motion: 0. Animations only run
+        // while their element is near the viewport (class in-view), so nothing works off screen.
+        var motion = parseFloat(getComputedStyle(root).getPropertyValue('--motion')) || 0;
+        if (reduce || motion <= 0 || !('IntersectionObserver' in window)) return;
+        root.classList.add('motion-on');
+        var aio = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) { entry.target.classList.toggle('in-view', entry.isIntersecting); });
+        }, { rootMargin: '200px 0px' });
+        document.querySelectorAll('[data-anim]').forEach(function (el) { aio.observe(el); });
+
+        // Cursor lantern: a soft warm light that follows a mouse pointer with a gentle lag,
+        // in the background layer only. Home page only, and only for fine pointers.
+        var lantern = document.querySelector('.amb-lantern');
+        if (lantern && document.body.classList.contains('is-home') && window.matchMedia('(pointer: fine)').matches) {
+          var tx = 0, ty = 0, x = 0, y = 0, frame = 0, shown = false;
+          var step = function () {
+            x += (tx - x) * 0.07;
+            y += (ty - y) * 0.07;
+            lantern.style.transform = 'translate3d(' + (x - 280) + 'px,' + (y - 280) + 'px,0)';
+            frame = Math.abs(tx - x) + Math.abs(ty - y) > 0.5 ? requestAnimationFrame(step) : 0;
+          };
+          addEventListener('pointermove', function (e) {
+            if (e.pointerType !== 'mouse') return;
+            tx = e.clientX;
+            ty = e.clientY;
+            if (!shown) { x = tx; y = ty; shown = true; lantern.classList.add('on'); }
+            if (!frame) frame = requestAnimationFrame(step);
+          }, { passive: true });
+          document.documentElement.addEventListener('mouseleave', function () { lantern.classList.remove('on'); shown = false; });
+        }
+
+        // Light pools follow scrolling a little: each wrapper moves on a slow, bounded sine of the
+        // scroll position, so the pools never leave the screen. On book pages the pools (offset and
+        // drift) stop once the title area has scrolled away, so the reading column stays calm.
+        var tracks = document.querySelectorAll('.amb-pool-track');
+        var isBook = document.body.classList.contains('is-book');
+        var bookHead = isBook ? document.querySelector('.book-head') : null;
+        var poolPending = false;
+        var phases = [0, 1.7, 3.1, 4.6];
+        var movePools = function () {
+          poolPending = false;
+          var sy = window.scrollY;
+          if (bookHead) {
+            var still = sy > bookHead.offsetTop + bookHead.offsetHeight;
+            root.classList.toggle('amb-still', still);
+            if (still) return;
+          }
+          tracks.forEach(function (t, i) {
+            var y = Math.sin(sy / 700 + phases[i]) * 70 * motion;
+            t.style.transform = 'translate3d(0,' + y.toFixed(1) + 'px,0)';
+          });
+        };
+        addEventListener('scroll', function () { if (!poolPending) { poolPending = true; requestAnimationFrame(movePools); } }, { passive: true });
+        movePools();
+
+        // Hero parallax: the image moves a little slower than the page while the hero is visible.
+        var heroImg = document.querySelector('.hero-img');
+        if (heroImg) {
+          var hero = heroImg.closest('.hero');
+          var pending = false;
+          var update = function () {
+            pending = false;
+            var sy = window.scrollY;
+            if (sy > hero.offsetHeight + 200) return;
+            heroImg.style.transform = 'translate3d(0,' + (sy * 0.25 * motion).toFixed(1) + 'px,0)';
+          };
+          addEventListener('scroll', function () { if (!pending) { pending = true; requestAnimationFrame(update); } }, { passive: true });
         }
       })();
     </script>

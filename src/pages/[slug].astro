@@ -37,19 +37,25 @@ const toc = [
   { id: 'huomio', fi: 'Huomio', en: 'Note', show: hasHuomio },
   { id: 'oma-huomio', fi: 'Oma huomio', en: 'Personal note', show: hasOmaHuomio },
   { id: 'liittyvat', fi: 'Liittyvät kirjat', en: 'Related books', show: related.length > 0 },
+  { id: 'lue-koko-kirja', fi: 'Lue koko kirja', en: 'Read the full book', show: true },
   { id: 'lahteet', fi: 'Lähteet', en: 'Sources', show: true },
 ].filter((item) => item.show);
+
+// Library search on Finna by title and author. Punctuation is dropped from the query; the
+// search form was checked to return the right book first for every book in the library.
+const finnaQuery = `${(d.title_fi ?? d.title).replace(/[:,]/g, '')} ${d.author}`;
+const finnaUrl = `https://www.finna.fi/Search/Results?lookfor=${encodeURIComponent(finnaQuery)}&type=AllFields`;
 
 const varmuusEn = { korkea: 'high', kohtalainen: 'moderate', matala: 'low' }[d.varmuus];
 const titleFi = `${d.title_fi ?? d.title} | RayDar Library`;
 const titleEn = `${d.title} | RayDar Library`;
 ---
-<Base titleFi={titleFi} titleEn={titleEn} description={d.fi.ydin} ogImage={coverSrc(d, 'L') ?? undefined}>
+<Base titleFi={titleFi} titleEn={titleEn} description={d.fi.ydin} ogImage={coverSrc(d, 'L') ?? undefined} book>
   <div class="progress" aria-hidden="true"><span data-progress></span></div>
   <article class="book" data-pagefind-body>
     <!-- The small M cover keeps the glow from becoming the largest contentful paint: the L cover
          loads through two redirects, and a blurred glow needs no detail. -->
-    <CoverGlow book={d} size="M" class="book-glow" />
+    <div class="book-glow-wrap" data-anim aria-hidden="true"><CoverGlow book={d} size="M" class="book-glow" /></div>
     <header class="book-head">
       <div class="book-cover"><Cover book={d} size="L" eager /></div>
       <div class="book-info">
@@ -73,6 +79,9 @@ const titleEn = `${d.title} | RayDar Library`;
       <div class="i18n" lang="fi" set:html={md(d.fi.ydin)} />
       <div class="i18n" lang="en" set:html={md(d.en.ydin)} />
     </div>
+    <p class="read-full-hint" data-pagefind-ignore>
+      <a href="#lue-koko-kirja"><T fi="Johdatus teokseen, ei korvaa kirjaa. Lue koko kirja ↓" en="An introduction, not a replacement. Read the full book ↓" /></a>
+    </p>
 
     <details class="toc-mobile" data-pagefind-ignore>
       <summary><T fi="Sisällys" en="Contents" /></summary>
@@ -162,6 +171,24 @@ const titleEn = `${d.title} | RayDar Library`;
             <div class="related">{related.map((b) => <BookCard book={b} />)}</div>
           </section>
         )}
+
+        <section id="lue-koko-kirja" class="read-full" data-pagefind-ignore>
+          <div class="read-full-cover"><Cover book={d} size="M" /></div>
+          <div class="read-full-body">
+            <h2><T fi="Lue koko kirja" en="Read the full book" /></h2>
+            <p class="i18n" lang="fi">Tämä tiivistelmä on johdatus teokseen. Kirjan varsinainen arvo on sen perusteluissa, esimerkeissä ja kirjoittajan omassa äänessä, joita tiivistelmä ei voi korvata. Suosittelemme lämpimästi lukemaan koko kirjan.</p>
+            <p class="i18n" lang="en">This summary is an introduction. The real value of the book lies in its arguments, examples and the author's own voice, which no summary can replace. We warmly recommend reading the whole book.</p>
+            <dl class="read-full-meta">
+              <div><dt><T fi="Kirjoittaja" en="Author" /></dt><dd>{d.author}</dd></div>
+              <div><dt><T fi="Alkuteos" en="Original title" /></dt><dd lang="en">{d.title} ({d.year})</dd></div>
+              {d.title_fi && <div><dt><T fi="Suomennos" en="Finnish translation" /></dt><dd lang="fi">{d.title_fi}</dd></div>}
+            </dl>
+            <ul class="read-full-links">
+              <li><a href={finnaUrl} rel="noopener"><T fi="Etsi kirjastoista (Finna)" en="Find in Finnish libraries (Finna)" /></a></li>
+              {d.olid && <li><a href={`https://openlibrary.org/books/${d.olid}`} rel="noopener">Open Library</a></li>}
+            </ul>
+          </div>
+        </section>
 
         <section id="lahteet" class="sources" data-pagefind-ignore>
           <h2><T fi="Lähteet" en="Sources" /></h2>

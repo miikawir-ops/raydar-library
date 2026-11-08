@@ -19,7 +19,9 @@ body {
   overflow-x: clip;
 }
 
-main { flex: 1; position: relative; z-index: 1; }
+/* Clip here, not only on body: body clip propagates to the viewport, which still reports the
+   lamp spill and cover glow as page width (and widens full-page screenshots). */
+main { flex: 1; position: relative; z-index: 1; overflow-x: clip; }
 
 img { max-width: 100%; display: block; }
 ul, ol { list-style: none; }
@@ -48,16 +50,38 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
 /* Ambient light: "the night library continues". Everything here sits behind the content,
    scales with --ambience, and is covered by solid surfaces wherever body text is read. */
 .ambience { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
-.amb-lights {
-  position: absolute; inset: 0;
-  /* One tile = a brass lamp glow high on the left, moonlight lower on the right.
-     The tile repeats, so the mood alternates all the way down long pages. */
-  background-image:
-    radial-gradient(ellipse 780px 500px at 6% 640px, var(--amb-brass), transparent 70%),
-    radial-gradient(ellipse 860px 540px at 96% 1640px, var(--amb-moon), transparent 70%);
-  background-size: 100% 2240px;
-  background-repeat: repeat-y;
+/* Light pools: one fixed layer with four pools (brass top left and bottom right, moonlight right
+   and lower left), so every screenful shows at least one of each on any page length. */
+.amb-pools { position: fixed; inset: 0; overflow: hidden; pointer-events: none; }
+.amb-pool-track { position: absolute; width: 820px; height: 580px; }
+.amb-pool-track.p1 { left: -280px; top: -140px; }
+.amb-pool-track.p2 { right: -280px; top: calc(38% - 290px); }
+.amb-pool-track.p3 { left: -300px; top: calc(70% - 290px); }
+.amb-pool-track.p4 { right: -300px; top: calc(100% - 300px); }
+.amb-pool { width: 100%; height: 100%; border-radius: 50%; }
+.amb-pool.brass { background: radial-gradient(closest-side, var(--amb-brass), transparent); }
+.amb-pool.moon { background: radial-gradient(closest-side, var(--amb-moon), transparent); }
+.amb-twinkle { position: fixed; inset: 0; opacity: var(--amb-stars); }
+/* Stars stay in the side margins outside the content column, so a star never sits behind text
+   (a single bright star pixel under small text breaks its contrast). Narrow screens have no margins,
+   so they show no star layer. */
+.amb-stars, .amb-twinkle {
+  -webkit-mask-image: linear-gradient(90deg, #000 calc(50% - 660px), transparent calc(50% - 620px), transparent calc(50% + 620px), #000 calc(50% + 660px));
+  mask-image: linear-gradient(90deg, #000 calc(50% - 660px), transparent calc(50% - 620px), transparent calc(50% + 620px), #000 calc(50% + 660px));
 }
+.amb-twinkle.t1 {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='700' height='640'%3E%3Cg fill='%23f1f5ff'%3E%3Ccircle cx='96' cy='140' r='1.1'/%3E%3Ccircle cx='372' cy='88' r='1'/%3E%3Ccircle cx='610' cy='212' r='1.2'/%3E%3Ccircle cx='238' cy='402' r='1'/%3E%3Ccircle cx='521' cy='566' r='1.1'/%3E%3C/g%3E%3C/svg%3E");
+}
+.amb-twinkle.t2 {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='760' height='700'%3E%3Cg fill='%23ffe9c9'%3E%3Ccircle cx='180' cy='60' r='1'/%3E%3Ccircle cx='455' cy='300' r='1.2'/%3E%3Ccircle cx='705' cy='420' r='1'/%3E%3Ccircle cx='60' cy='520' r='1.1'/%3E%3Ccircle cx='330' cy='640' r='1'/%3E%3C/g%3E%3C/svg%3E");
+}
+/* Cursor lantern: positioned by script with a transform; background layer only. */
+.amb-lantern {
+  position: fixed; left: 0; top: 0; width: 560px; height: 560px; border-radius: 50%;
+  background: radial-gradient(closest-side, var(--amb-lantern), transparent);
+  opacity: 0; transition: opacity 0.8s ease;
+}
+.amb-lantern.on { opacity: 1; }
 .amb-edges {
   position: fixed; inset: 0;
   background: url('/hero-blur.webp') center / cover no-repeat;
@@ -120,10 +144,12 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
   container-type: inline-size;
 }
 .hero.has-image { background: none; }
+.hero-media { position: absolute; inset: 0; overflow: hidden; }
 .hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 55% center; }
 /* The image and its overlay fade out at the bottom, so the page background (with its ambient
-   light) shows through and the join has no seam by construction. */
-.hero-img, .hero-overlay {
+   light) shows through and the join has no seam by construction. The fade sits on the image's
+   wrapper, so the parallax movement of the image never moves the fade. */
+.hero-media, .hero-overlay {
   -webkit-mask-image: linear-gradient(180deg, #000 72%, transparent 100%);
   mask-image: linear-gradient(180deg, #000 72%, transparent 100%);
 }
@@ -131,12 +157,25 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
    The stops keep the top bar readable and leave a lighter band between it and the heading. */
 .hero-overlay {
   position: absolute; inset: 0;
-  background: linear-gradient(180deg, rgba(0, 8, 22, 0.8) 0, rgba(0, 8, 22, 0.8) 62px, rgba(0, 8, 22, 0.3) 92px, rgba(0, 8, 22, 0.76) 130px, rgba(0, 8, 22, 0.78) 100%);
+  background: linear-gradient(180deg, rgba(0, 8, 22, 0.8) 0, rgba(0, 8, 22, 0.8) 62px, rgba(0, 8, 22, 0.66) 92px, rgba(0, 8, 22, 0.78) 130px, rgba(0, 8, 22, 0.78) 100%);
 }
 .hero-content { position: relative; width: 100%; max-width: var(--page-max); margin: 0 auto; padding: 0 var(--gutter); }
 .hero-title { font-size: clamp(30px, 8vw, 52px); font-weight: 600; letter-spacing: -0.02em; }
 .hero-subtitle { margin-top: 8px; font-size: clamp(20px, 3.5vw, 26px); font-weight: 500; line-height: 1.25; color: var(--accent); }
 .hero-lead { margin-top: 12px; max-width: 46ch; color: var(--text); font-size: 17px; }
+.hero-note { margin-top: 10px; max-width: 46ch; color: var(--text); font-size: 15px; line-height: 1.5; }
+/* Dust in the lamp light (desktop only; on phones the text covers the lamp). Animated only with motion. */
+.hero-motes { position: absolute; inset: 0; pointer-events: none; display: none; }
+.hero-motes span {
+  position: absolute; width: 3px; height: 3px; border-radius: 50%;
+  background: var(--amb-mote); box-shadow: 0 0 6px 1px var(--amb-mote); opacity: 0;
+}
+.hero-motes span:nth-child(1) { left: 53%; top: 52%; }
+.hero-motes span:nth-child(2) { left: 57%; top: 45%; }
+.hero-motes span:nth-child(3) { left: 60%; top: 58%; }
+.hero-motes span:nth-child(4) { left: 55%; top: 63%; }
+.hero-motes span:nth-child(5) { left: 58.5%; top: 40%; }
+.hero-motes span:nth-child(6) { left: 51.5%; top: 47%; }
 .search { margin-top: 20px; max-width: 520px; }
 .search input {
   width: 100%; min-height: 50px; padding: 0 18px;
@@ -150,6 +189,20 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
 
 /* Page and controls */
 .page { width: 100%; max-width: var(--page-max); margin: 0 auto; padding: 8px var(--gutter) 64px; }
+/* The lamp's light spilling onto the page just below the hero, roughly under the lamp. */
+.lamp-spill {
+  position: absolute; z-index: -1; top: 0; left: calc(55% - 420px); width: 840px; height: 520px;
+  border-radius: 50%; pointer-events: none;
+  background: radial-gradient(closest-side, var(--amb-lamp-spill), transparent);
+}
+
+.collection-head { display: flex; align-items: baseline; gap: 12px; margin: 12px 0 16px; }
+.collection-head::after {
+  content: ''; flex: 1; height: 1px; align-self: center;
+  background: linear-gradient(90deg, rgba(228, 164, 92, 0.45), transparent);
+}
+.eyebrow { font-size: 13px; font-weight: 600; line-height: 1.4; letter-spacing: 0.16em; text-transform: uppercase; color: var(--brass); }
+.collection-count { font-size: 14px; color: var(--text); }
 
 .controls { display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px; }
 .filters { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -270,7 +323,12 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
   mask-image: radial-gradient(circle at var(--gx) var(--gy), #000 var(--core), transparent var(--fade));
 }
 .cover-glow.book-glow img { filter: blur(40px) brightness(0.8) saturate(1.3); }
-.book-head, .ydin, .toc-mobile, .book-layout { position: relative; z-index: 1; }
+/* Wrapper for the title-area glow: the only part of a book page that moves (a slow breathing). */
+.book-glow-wrap { position: absolute; top: 0; left: 0; right: 0; height: 640px; z-index: 0; pointer-events: none; }
+.book-head, .ydin, .read-full-hint, .toc-mobile, .book-layout { position: relative; z-index: 1; }
+.read-full-hint { margin-top: 6px; font-size: 15px; }
+.read-full-hint a { display: inline-flex; align-items: center; min-height: var(--touch); color: var(--brass); }
+.read-full-hint a:hover { color: var(--text-strong); }
 .book-head { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 16px; align-items: start; }
 .book-title { font-size: clamp(25px, 6vw, 42px); font-weight: 600; letter-spacing: -0.015em; }
 /* The title area sits near the cover glow, so its small lines use the body text colour, not muted. */
@@ -338,6 +396,22 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
 
 .related { display: grid; gap: 16px; }
 
+/* "Read the full book": an invitation to the book itself, with a small cover and library links. */
+.read-full {
+  display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 16px; align-items: start;
+  padding: 22px 18px;
+  background: var(--surface-2);
+  border: 1px solid var(--line); border-top: 2px solid var(--brass); border-radius: var(--radius-s);
+}
+.book-text .read-full h2 { margin-bottom: 10px; }
+.read-full-meta { margin-top: 14px; display: grid; gap: 4px; font-size: 15px; }
+.read-full-meta div { display: flex; flex-wrap: wrap; gap: 0 10px; }
+.read-full-meta dt { color: var(--text); min-width: 8.5em; }
+.read-full-meta dd { color: var(--text-strong); }
+.read-full-links { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 0 22px; font-size: 15px; }
+.read-full-links a { display: inline-flex; align-items: center; min-height: var(--touch); color: var(--brass); font-weight: 500; }
+.read-full-links a:hover { color: var(--text-strong); }
+
 .sources { font-size: 15px; }
 .sources li + li { margin-top: 4px; }
 .sources a { display: inline-block; padding: 10px 0; overflow-wrap: anywhere; }
@@ -378,6 +452,8 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
   .card-stage .cover-glow img { filter: blur(18px) saturate(1.2); }
   .cover-glow.book-glow { --gx: 186px; --gy: 269px; --core: 40px; --fade: 205px; }
   .card-body { padding: 16px 18px 20px; }
+  .hero-motes { display: block; }
+  .read-full { grid-template-columns: 110px minmax(0, 1fr); gap: 26px; padding: 28px 30px; }
 
   .book { padding-top: 24px; }
   .book-head { grid-template-columns: 220px minmax(0, 1fr); gap: 32px; align-items: end; }
@@ -416,4 +492,60 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
 @media (prefers-reduced-motion: reduce) {
   .card, .chip, .button, .sort select, .cover-glow { transition: none; }
   .card:hover { transform: none; }
+}
+
+/* Slow background motion. The motion-on class is set by script only when motion is allowed
+   (no reduced motion, --motion > 0). Animations use only transform and opacity, scale with
+   --motion, and run only while their element is near the viewport (in-view). */
+@keyframes amb-drift {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); opacity: 1; }
+  50% {
+    transform: translate3d(calc(var(--motion) * 80px), calc(var(--motion) * -50px), 0) scale(calc(1 + var(--motion) * 0.16));
+    opacity: calc(1 - var(--motion) * 0.4);
+  }
+}
+@keyframes amb-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(calc(1 + var(--motion) * 0.08)); opacity: calc(1 - var(--motion) * 0.35); }
+}
+@keyframes amb-breathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: calc(1 - var(--motion) * 0.4); }
+}
+@keyframes amb-twinkle {
+  0%, 100% { opacity: calc(var(--amb-stars) * (1 - var(--motion))); }
+  50% { opacity: var(--amb-stars); }
+}
+@keyframes amb-mote {
+  0% { transform: translate3d(0, 0, 0); opacity: 0; }
+  25% { opacity: 0.9; }
+  75% { opacity: 0.6; }
+  100% { transform: translate3d(calc(var(--motion) * 26px), calc(var(--motion) * -70px), 0); opacity: 0; }
+}
+.motion-on .amb-pool { animation: amb-drift 28s ease-in-out infinite; }
+.motion-on .p1 .amb-pool { animation-duration: 34s; animation-delay: -9s; }
+.motion-on .p2 .amb-pool { animation-duration: 23s; animation-delay: -15s; animation-direction: reverse; }
+.motion-on .p3 .amb-pool { animation-duration: 31s; animation-delay: -4s; }
+.motion-on .p4 .amb-pool { animation-duration: 26s; animation-delay: -12s; animation-direction: reverse; }
+.motion-on .amb-twinkle.t1 { animation: amb-twinkle 7s ease-in-out infinite; }
+.motion-on .amb-twinkle.t2 { animation: amb-twinkle 11s ease-in-out -4s infinite; }
+.motion-on .lamp-spill { animation: amb-pulse 26s ease-in-out infinite; animation-play-state: paused; }
+.motion-on .lamp-spill.in-view { animation-play-state: running; }
+.motion-on .hero-motes span { animation: amb-mote 16s ease-in-out infinite; animation-play-state: paused; }
+.motion-on .hero-motes span:nth-child(2) { animation-duration: 21s; animation-delay: -6s; }
+.motion-on .hero-motes span:nth-child(3) { animation-duration: 18s; animation-delay: -11s; }
+.motion-on .hero-motes span:nth-child(4) { animation-duration: 24s; animation-delay: -3s; }
+.motion-on .hero-motes span:nth-child(5) { animation-duration: 19s; animation-delay: -14s; }
+.motion-on .hero-motes span:nth-child(6) { animation-duration: 22s; animation-delay: -8s; }
+.motion-on .hero-motes.in-view span { animation-play-state: running; }
+.motion-on .book-glow-wrap { animation: amb-breathe 24s ease-in-out infinite; animation-play-state: paused; }
+.motion-on .book-glow-wrap.in-view { animation-play-state: running; }
+/* Book pages: motion only in the title area. Past it (amb-still, set by script) the pools pause
+   where they are; the twinkling never runs on book pages. */
+.motion-on.amb-still .amb-pool { animation-play-state: paused; }
+.motion-on .is-book .amb-twinkle.t1,
+.motion-on .is-book .amb-twinkle.t2 { animation: none; }
+@media (prefers-reduced-motion: reduce) {
+  .amb-pool, .amb-twinkle, .lamp-spill, .hero-motes span, .book-glow-wrap { animation: none !important; }
+  .amb-lantern { display: none; }
 }
