@@ -7,6 +7,7 @@ cover_id: 7884018
 olid: "OL18642726M"
 tags: [historia, yhteiskunta, tiede]
 added: 2026-11-08
+updated: 2026-11-08
 varmuus: korkea
 lahteet:
   - nimi: "Wikipedia: Guns, Germs, and Steel"
@@ -38,7 +39,7 @@ fi:
       selitys: |
         Kirjan perusväite on, että ihmisryhmien väliset erot vallassa ja teknologiassa ovat peräisin ensisijaisesti ympäristön eroista. Kun kulttuuriset tai perinnölliset erot ovat suosineet euraasialaisia, kuten kirjoitustaito tai vastustuskyky tauteja vastaan, Diamondin mukaan nekin syntyivät maantieteen vaikutuksesta eivätkä olleet euraasialaisten perimässä.
 
-        Diamond torjuu nimenomaisesti selitykset, joiden mukaan Euraasian valta-asema johtuisi älyllisestä, moraalisesta tai perinnöllisestä ylemmyydestä. Kirjaan perustuvassa dokumentissa hän toteaa, että alkuperäiset metsästäjä-keräilijät olivat yhtä älykkäitä kuin eurooppalaista syntyperää olevat ihmiset. Eroja selittävät lähtökohdat ja sattuma, eivät ihmiset itse.
+        Diamond torjuu nimenomaisesti selitykset, joiden mukaan Euraasian valta-asema johtuisi älyllisestä, moraalisesta tai perinnöllisestä ylemmyydestä. Kirjaan perustuva dokumentti korostaa samaa: alkuperäiset metsästäjä-keräilijät olivat yhtä älykkäitä kuin eurooppalaista syntyperää olevat ihmiset. Eroja selittävät lähtökohdat ja sattuma, eivät ihmiset itse.
     - otsikko: "Kaikki alkoi kesytettävistä kasveista"
       selitys: |
         Ensimmäinen askel sivilisaatioon oli siirtyminen liikkuvasta metsästäjä-keräilijän elämästä paikalleen asettuneeseen maanviljelyyn. Kirjan mukaan siihen tarvittiin hiilihydraattipitoisia kasveja, jotka säilyvät varastossa, varastointiin riittävän kuiva ilmasto ja eläimiä, jotka soveltuivat kesytettäviksi.
@@ -68,7 +69,7 @@ fi:
       selitys: |
         Kirjan kuuluisin kohtaus on Cajamarca vuonna 1532, jossa Francisco Pizarron joukot kohtasivat inkojen hallitsijan Atahualpan. Kirjaan perustuvan dokumentin mukaan 168 espanjalaista valloittajaa voitti noin 80 000 sotilaan inka-armeijan.
 
-        Diamond käyttää tapausta näyttämään, miten pitkät taustatekijät tiivistyivät yhteen hetkeen. Espanjalaisilla oli teräsaseita, hevosia ja kirjoitustaito. Atahualpa ei ollut koskaan nähnyt kirjaa, eikä kirjoitus ollut koskaan levinnyt Peruun asti. Eurooppalaisten taudit olivat lisäksi heikentäneet inkavaltakuntaa jo ennen taistelua. Kirjan nimi viittaa juuri näihin keinoihin, aseisiin, tauteihin ja teräkseen, joilla viljelevät yhteiskunnat valloittivat muita, vaikka olivat usein suuresti alakynnessä.
+        Diamond käyttää tapausta näyttämään, miten pitkät taustatekijät tiivistyivät yhteen hetkeen. Espanjalaisilla oli teräsaseita, hevosia ja kirjoitustaito. Atahualpa ei ollut koskaan nähnyt kirjaa, eikä kirjoitus ollut koskaan levinnyt Peruun asti. Kirjan nimi viittaa juuri näihin keinoihin, aseisiin, tauteihin ja teräkseen, joilla viljelevät yhteiskunnat valloittivat muita, vaikka olivat usein suuresti alakynnessä.
     - otsikko: "Euroopan pirstaleisuus voitti Kiinan yhtenäisyyden"
       selitys: |
         Diamond pohtii myös, miksi juuri Länsi-Eurooppa eikä Kiina nousi valloittajaksi. Kehittynyt sivilisaatio syntyi ensin alueille, kuten Kiinaan, Intiaan ja Mesopotamiaan, joiden maantiede ei luonut luonnollisia rajoja. Siellä suuret imperiumit hallitsivat vuosituhansia.
@@ -104,7 +105,7 @@ en:
       selitys: |
         The book's basic claim is that gaps in power and technology between human groups originate mainly in environmental differences. Where cultural or genetic differences have favoured Eurasians, such as writing or resistance to disease, Diamond argues that these too arose from the influence of geography and were not inherent in Eurasian genes.
 
-        Diamond explicitly rejects explanations that put Eurasian dominance down to intellectual, moral or genetic superiority. In the documentary based on the book, he says native hunter-gatherers were just as intelligent as people of European descent. Starting conditions and chance explain the differences, not the people themselves.
+        Diamond explicitly rejects explanations that put Eurasian dominance down to intellectual, moral or genetic superiority. The documentary based on the book makes the same point: native hunter-gatherers were just as intelligent as people of European descent. Starting conditions and chance explain the differences, not the people themselves.
     - otsikko: "It all began with plants that could be domesticated"
       selitys: |
         The first step towards civilisation was the move from a mobile hunter-gatherer life to settled farming. According to the book, this required carbohydrate-rich plants that keep in storage, a climate dry enough for storage and animals suitable for domestication.
@@ -134,7 +135,7 @@ en:
       selitys: |
         The book's most famous scene is Cajamarca in 1532, where Francisco Pizarro's force met the Inca ruler Atahualpa. According to the documentary based on the book, 168 Spanish conquistadors defeated an Inca army of about 80,000.
 
-        Diamond uses the episode to show how long-term factors came together in a single moment. The Spaniards had steel weapons, horses and writing. Atahualpa had never seen a book, and writing had never reached Peru. European diseases had also weakened the Inca empire before the battle. The book's title refers to exactly these means, guns, germs and steel, by which farming societies conquered others even when they were vastly outnumbered.
+        Diamond uses the episode to show how long-term factors came together in a single moment. The Spaniards had steel weapons, horses and writing. Atahualpa had never seen a book, and writing had never reached Peru. The book's title refers to exactly these means, guns, germs and steel, by which farming societies conquered others even when they were vastly outnumbered.
     - otsikko: "Europe's fragmentation beat China's unity"
       selitys: |
         Diamond also asks why Western Europe rather than China became the conqueror. Advanced civilisation arose first in places like China, India and Mesopotamia, whose geography lacked natural barriers. Large empires ruled there for thousands of years.
