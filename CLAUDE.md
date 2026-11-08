@@ -428,6 +428,10 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
 - **Mobiili ensin:** 16 px reunat, ei vaakavieritystä, kosketuskohteet vähintään 44 px. Leveät taustaefektit (lampun valo, kansihehku) leikataan `main`-elementissä (`overflow-x: clip`). Pelkkä `body`-leikkaus ei riitä, koska se siirtyy näkymälle, joka raportoi silloin leveämmän sivun.
 - **Kielivalinta FI/EN** koko sivulle. Valinta muistetaan localStoragessa, ja jokainen luku ja kirjoitus on try/catchissa. Oletuskieli on suomi.
 - **Liike:** animaatiot ovat hillittyjä, ja `prefers-reduced-motion` kunnioitetaan.
+- **Alatunnisteen tunnuslause** jokaisella sivulla: "Make everything as simple as possible, but not simpler."
+  - Vain englanniksi ja sama molemmilla kielillä (`lang="en"`), kursiivilla ja hillitysti.
+  - Ilman attribuutiota tai linkkiä.
+  - Erotettu pienellä messinkisellä tähtijakajalla (sama kuin osiojakajissa).
 - **Alatunniste:** linkki raydar.fi:hin, "Covers: Open Library" ja maininta: "Tiivistelmät on tuotettu tekoälyn avulla ja voivat sisältää virheitä." / "Summaries are AI-generated and may contain errors."
 - **Suorituskyky:** Lighthouse vähintään 90 kaikissa kategorioissa mobiilissa, ja hero-kuva alle 400 kt (WebP). SEO-tavoite 90 koskee vain tilaa `indexable: true`. Hero-kuvaa ei ladata laiskasti, koska se näkyy heti. Paikallinen Lighthouse-mittaus vaihtelee paljon koneen kuormasta riippuen (erityisesti TBT; katso `environment.benchmarkIndex`). Aja mobiilimittaus vähintään kolme kertaa ja vertaa samalla tavalla mitattuun mainiin (live-sivu) ennen kuin päättelet regression yhdestä ajosta.
 - **Indeksointi:**
@@ -436,14 +440,15 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
 
 ### Visuaalinen hyväksyntä
 
-- **Kuvakaappaukset:** jokaisesta ulkoasumuutoksesta kuvakaappaukset työpöydällä (1440 px) ja mobiilissa (390 px) ennen mergeä.
+- **Ulkoasu arvioidaan live-sivulta.** Ray ei tarkista kuvia etukäteen, eikä kuvakaappauksia tarvita.
+- **Raportoi live-sivun tarkistus:** mitä tarkistettiin, millä leveyksillä (työpöytä 1440 px ja mobiili 390 px) ja mitä havaittiin.
 - **Testisivut:** etusivu, pitkä kirjasivu ja kirja ilman kantta (varakansi).
-- **Sisällysluettelo:** ulkoasumuutoksissa ajetaan `npm run check:toc` ennen mergeä.
+- **Sisällysluettelo:** ulkoasumuutoksissa ajetaan `npm run check:toc` ennen pushia.
   - Aja ensin `npm run build` ja sitten `npm run preview` toisessa terminaalissa.
   - Tarkistus vierittää kirjasivuja alas, ylös ja hypäten (1440 ja 390 px) ja vertaa sisällysluettelon aktiivista kohtaa vierityskohtaan.
   - Se tarvitsee Playwrightin Chromiumin kerran koneelle: `npx playwright install chromium`.
   - Tarkistus ei kuulu julkaisuajoon.
-- **Onnistunut build todistaa toimivuuden,** ei sitä, näyttääkö sivu Rayn mielestä oikealta.
+- **Onnistunut build todistaa toimivuuden,** ei sitä, näyttääkö sivu Rayn mielestä oikealta. Siksi ulkoasumuutokset ovat omina committeinaan ja peruttavissa.
 
 ## Sisällön tarkistustyökalu
 
@@ -467,29 +472,26 @@ Varoitukset raportoidaan Raylle. Niitä ei korjata automaattisesti, vaan ne arvi
 
 ## Hyväksyntä
 
-- **Ilman erillistä hyväksyntää** (Rayn pyyntö on hyväksyntä):
-  - kirjan lisäys `/kirja`-komennolla
-  - pyydetty muokkaus olemassa olevaan kirjaan
-  
-  Molemmat committataan ja pushataan suoraan `main`-haaraan.
-- **Ensimmäinen rakennus** saa mennä `main`-haaraan, koska sivua ei ole vielä otettu käyttöön. Kuvakaappaukset näytetään silti.
-- **Hyväksyntä ennen `main`-haaraa:**
-  - ulkoasu- ja asettelumuutokset
-  - käyttöliittymätekstit
+- **Suoraan `main`-haaraan ilman etukäteishyväksyntää** (Rayn pyyntö on hyväksyntä):
+  - kirjan lisäys `/kirja`-komennolla ja pyydetty muokkaus olemassa olevaan kirjaan
+  - ulkoasu-, asettelu- ja käyttöliittymätekstimuutokset, ilman branchia
+  - bugikorjaukset, joiden juurisyy on toistettu ja todennettu
+  - dokumentaatio
+- **Pakolliset automaattiset tarkistukset ennen pushia.** Jos jokin epäonnistuu, korjaa ennen pushia:
+  - `npm run build` (sisältää check-books-tarkistuksen)
+  - kontrastit vähintään WCAG AA kaikista muuttuneista teksteistä, myös hover-tiloista, mitattuna pikseleistä
+  - `npm run check:toc` ulkoasumuutoksissa
+- **Jokainen kokonaisuus omana committinaan,** jotta sen voi perua `git revert`illä. Älä niputa toisistaan riippumattomia muutoksia samaan committiin.
+- **Raportissa kerrotaan live-sivun tarkistus.** Kuvakaappauksia ei tarvita.
+- **Kysy edelleen ensin:**
   - skeemamuutokset
   - uudet riippuvuudet
-  - arkkitehtuurimuutokset ja usean tiedoston muutokset
-  
-  Tee ne omaan branchiin, näytä kuvakaappaukset ja merge mainiin vasta hyväksynnän jälkeen, koska push mainiin julkaisee heti.
-- **Tee ja raportoi jälkikäteen:**
-  - bugikorjaukset, joiden juurisyy on toistettu ja todennettu ja jotka eivät muuta ulkoasua
-  - dokumentaatio
-  
-  Erillisenä committina, jotta muutoksen voi perua yksinään.
+  - arkkitehtuurimuutokset
+  - sisällön poistaminen
+  - asiat, jotka muuttaisivat sovittua toimintaa
 - **Pysähdy ja kysy aina, kun:**
   - juurisyytä ei oikeasti ymmärretä
   - muutos koskisi enemmän kuin raportoitua ongelmaa
-  - muutos muuttaisi sovittua toimintaa
 
 ## Työnkulku
 
