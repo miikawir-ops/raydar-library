@@ -382,6 +382,7 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
 ### Kirjasivu
 
 - **Järjestys:**
+  0. paluupainike "← Kokoelma" / "← Collection" sisällön vasemmassa yläkulmassa ennen kantta
   1. kansi ja perustiedot
   2. `ydin` korostettuna ja sen alla pieni rivi, joka linkittää "Lue koko kirja" -osioon: "Johdatus teokseen, ei korvaa kirjaa. Lue koko kirja ↓" / "An introduction, not a replacement. Read the full book ↓"
   3. sisällysluettelo ankkurilinkein
@@ -390,6 +391,13 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
   6. liittyvät kirjat
   7. Lue koko kirja (ks. alla)
   8. lähteet
+  9. paluupainike "← Takaisin kokoelmaan" / "← Back to the collection" paperin alapuolella
+- **Paluu kokoelmaan:**
+  - Molemmat paluupainikkeet ovat tummalla kehyksellä, eivät paperilla. Niissä on messinkinen ääriviiva, hover-tila ja vähintään 44 px korkeus.
+  - Painikkeet ovat tavallisia linkkejä etusivulle, joten ne toimivat ilman JavaScriptiä.
+  - Jos edellinen sivu oli saman sivuston etusivu, skripti käyttää `history.back()`:ia.
+  - Etusivu tallentaa suodattimen, järjestyksen, haun ja vierityskohdan omaan historiamerkintäänsä (`history.replaceState`) ja palauttaa ne latautuessaan. Ne säilyvät siis myös, kun selain lataa sivun uudelleen eikä palauta sitä välimuistista (bfcache), ja selaimen omalla takaisin-painikkeella.
+  - **Logo** (RayDar Library) on linkki etusivulle: hoverissa "Library" muuttuu messingiksi ja piste hehkuu.
 - **"Lue koko kirja" / "Read the full book"** -osio (`#lue-koko-kirja`, myös sisällysluettelossa):
   - messinkiaksentti ja kansi pienenä
   - teksti: "Tämä tiivistelmä on johdatus teokseen. Kirjan varsinainen arvo on sen perusteluissa, esimerkeissä ja kirjoittajan omassa äänessä, joita tiivistelmä ei voi korvata. Suosittelemme lämpimästi lukemaan koko kirjan." / "This summary is an introduction. The real value of the book lies in its arguments, examples and the author's own voice, which no summary can replace. We warmly recommend reading the whole book."
@@ -413,6 +421,7 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
   - osioiden välinen koristejakaja (ohut viiva ja pieni tähti)
   - käsitekorttien numerot
   - kokoelman yläotsikko "Kokoelma"
+  - kirjasivun paluupainikkeet ja logon hover-tila
   - "Lue koko kirja" -rivi `ydin`-laatikon alla sekä "Lue koko kirja" -osion yläreunus ja linkit
 - **Tausta:** sivun tausta on syvä navy (`--surface-0`) ja ympäristövalo. Hero-kuva näkyy vain etusivun hero-alueella. Muualla siitä on vain pieni sumea versio reunoilla, ja lukupalsta on aina umpinainen paperi.
 - **Liike vierittäessä:** kortit ja kirjasivun osiot saavat lyhyen fade-inin. Taustan hidas liike noudattaa yllä olevaa Liike-sääntöä, ja `prefers-reduced-motion` poistaa kaiken liikkeen.
