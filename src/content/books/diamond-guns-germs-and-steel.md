@@ -88,7 +88,7 @@ fi:
     Jared Diamond (s. 1937) on yhdysvaltalainen tutkija ja kirjailija. Hän kouluttautui alun perin biokemiaan ja fysiologiaan, toimi fysiologian professorina UCLA:n lääketieteellisessä tiedekunnassa ja myöhemmin maantieteen professorina UCLA:ssa vuoteen 2024. Hän on julkaissut myös antropologiaa, ekologiaa, maantiedettä ja evoluutiobiologiaa sekä lintututkimusta. Guns, Germs, and Steel sai vuonna 1998 Pulitzer-palkinnon, ja Diamondille on myönnetty muun muassa MacArthur-apuraha ja Yhdysvaltain National Medal of Science.
   suositukset: []
   huomio:
-    - "Kirjan keskeistä selitysmallia, jonka mukaan maantiede ja ympäristö selittävät yhteiskuntien väliset erot, on kiistetty laajasti niiden alojen tutkijoiden keskuudessa, joihin kirja nojaa. Esimerkiksi American Anthropological Association ja maantieteen lehti Antipode ovat julkaisseet kriittisiä vastineita. Kirjan selitystä ei siksi pidä oppia vakiintuneena tieteellisenä konsensuksena."
+    - "Kirjan pääselitys on saanut laajaa kritiikkiä historioitsijoilta, antropologeilta ja maantieteilijöiltä, muun muassa maantieteellisen determinismin vuoksi. Kriittisiä vastineita ovat julkaisseet esimerkiksi American Anthropological Association ja maantieteen lehti Antipode."
 en:
   ydin: |
     Eurasian peoples did not come to dominate the world because they were smarter or more capable, but because their geography gave them better starting conditions for farming. Food surpluses, dense populations, diseases from livestock and an east–west continent added up over thousands of years to a head start that finally showed as guns, germs and steel.
@@ -154,6 +154,6 @@ en:
     Jared Diamond (born 1937) is an American scientist and author. Originally trained in biochemistry and physiology, he was a professor of physiology at the UCLA School of Medicine and later a professor of geography at UCLA until 2024. He has also published in anthropology, ecology, geography and evolutionary biology, as well as ornithology. Guns, Germs, and Steel won the 1998 Pulitzer Prize, and Diamond has received honours including a MacArthur Fellowship and the US National Medal of Science.
   suositukset: []
   huomio:
-    - "The book's central explanation, that geography and environment account for the differences between societies, has been widely disputed by researchers in the fields it draws on. The American Anthropological Association and the geography journal Antipode, for example, have published critical responses. The explanation should therefore not be learned as settled scientific consensus."
+    - "The book's main explanation has received wide criticism from historians, anthropologists and geographers, among other things for geographical determinism. The American Anthropological Association and the geography journal Antipode, for example, have published critical responses."
 oma_huomio: ""
 ---

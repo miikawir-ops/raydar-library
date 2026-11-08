@@ -175,6 +175,7 @@ Jos kirjaa ei tunnisteta tai nimellä löytyy useita teoksia, kysy.
 - **Kirjan kehys selväksi kevyesti.** Kerro alussa kerran, että sisältö on kirjan esitys ("Kirjan mukaan…", "Kahneman esittää…"), ja esitä viestit sen jälkeen suoraan. Älä toista "kirjoittaja väittää" joka lauseessa.
 - **Kirjoittajasta vain julkinen ammatillinen tieto.** Ei yksityiselämää.
 - **`huomio` on poikkeus, ei osio, joka täytetään aina.** Useimmissa kirjoissa se jää tyhjäksi.
+- **Kumottu väite vai kiistetty tulkinta.** Kun väite on kumottu (esim. tutkimus ei ole toistunut), `huomio` kertoo sen suoraan. Kun keskeinen selitys on tulkinta, jota tutkijat kiistävät, `huomio` kuvaa kritiikin neutraalisti: kuka kritisoi ja mistä. Esimerkki: "Pääselitys on saanut laajaa kritiikkiä historioitsijoilta ja antropologeilta, erityisesti maantieteellisen determinismin vuoksi." Ei arviota kirjasta eikä kehotuksia lukijalle.
 
 ### Lähteet
 
