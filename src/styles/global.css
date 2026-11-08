@@ -762,3 +762,18 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
 @media (prefers-reduced-motion: reduce) {
   .back-link, .wordmark-sub, .wordmark-dot { transition: none; }
 }
+
+/* Footer motto (every page): a quiet italic line under a small brass star divider, the same
+   ornament as between book sections. English only, the same in both languages. */
+.footer-motto {
+  display: grid; justify-items: center; gap: 12px;
+  width: 100%; max-width: var(--page-max); margin: 0 auto; padding: 28px var(--gutter) 0;
+  text-align: center;
+}
+.footer-divider {
+  display: block; width: min(240px, 60%); height: 14px;
+  background:
+    var(--star-brass) center / 12px 12px no-repeat,
+    linear-gradient(90deg, transparent, rgb(var(--brass-rgb) / 0.5) 30%, rgb(var(--brass-rgb) / 0.5) 42%, transparent 42%, transparent 58%, rgb(var(--brass-rgb) / 0.5) 58%, rgb(var(--brass-rgb) / 0.5) 70%, transparent) center / 100% 1px no-repeat;
+}
+.footer-motto p { font-size: 15px; font-style: italic; letter-spacing: 0.01em; color: var(--text-muted); }
