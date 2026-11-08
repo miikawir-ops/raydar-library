@@ -6,6 +6,8 @@ Kaksikielinen (FI/EN) tietokirjatiivistelmien kirjasto. Osa RayDar-sivustoperhet
 
 **Tavoite:** tiivistelmä välittää kirjan sanoman sellaisena kuin se kirjassa on, niin selvästi ja kattavasti, ettei koko kirjaa tarvitse lukea.
 
+**Julkisesti tiivistelmät esitetään johdatuksina,** jotka kunnioittavat kirjoittajaa ja suosittelevat koko kirjaa. Sivu ei koskaan esitä tiivistelmää kirjan korvikkeena: etusivun hero-teksti, kirjasivun rivi `ydin`-laatikon alla ja "Lue koko kirja" -osio kertovat tämän lukijalle.
+
 **Tämä ei ole kirja-arvostelu.** Tehtävä on opettaa kirjan sisältö, ei arvioida sitä.
 
 **Onnistumisen mittari:** luettuaan tiivistelmän lukija osaa kertoa omin sanoin
@@ -285,8 +287,23 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
   - ei emojeja käyttöliittymässä
   - efektit tukevat tunnelmaa ja rakennetta eivätkä koskaan häiritse lukemista: ei efektejä leipätekstin takana
 - **Konsepti "yökirjasto jatkuu":** hero-kuvan valonlähteet (lampun messinki, ikkunan kuunvalo, tähdet) jatkuvat koko sivun läpi hienovaraisena ympäristövalona. Värit vain hero-kuvan paletista: navy, kuunsininen ja messinki. Ei violetteja tai neon-läikkiä, ei lasiefektiä joka paikassa eikä gradienttitekstiä leipätekstissä.
-- **Pintatasot** (`tokens.css`): `--surface-0` tausta, `--surface-1` pinta (kortit, lukupalsta, kontrollit) ja `--surface-2` korotettu (keskeisten viestien kortit, `ydin`, tilalaatikot). Kaikki ovat syvää navya, eivät harmaata eivätkä lähes mustaa.
-- **Ympäristövalo** säädetään yhdestä muuttujasta `--ambience` (0–1, oletus 0,7). Kerroksia on neljä: toistuvat messinki- ja kuunvalogradientit, harva staattinen tähtipöly, grain-tekstuuri ja reunoilla näkyvä hyvin pieni sumea hero-kuva (`public/hero-blur.webp`, 64 px, CSS-blur ei käytössä). Kaikki ovat sisällön alla, ja lukupalstan umpinainen pinta peittää ne.
+- **Pintatasot** (`tokens.css`): `--surface-0` tausta, `--surface-1` pinta (kortit, lukupalsta, kontrollit) ja `--surface-2` korotettu (keskeisten viestien kortit, `ydin`, tilalaatikot). Kaikki ovat syvää, hieman kylläistä navya, eivät harmaata eivätkä lähes mustaa.
+- **Ympäristövalo** säädetään yhdestä muuttujasta `--ambience` (0–1, oletus 0,7). Kaikki valoefektit skaalautuvat sen mukaan. Kerrokset:
+  - **valolammikot:** messinki ja kuunsininen vuorottelevat 520 px välein sivun yläreunasta alkaen, joten jokaisessa näkymässä näkyy vähintään yksi kumpaakin (`Base.astro`, 64 lammikkoa noin 33 000 px:iin asti; jos sivu kasvaa pidemmäksi, lisää määrää)
+  - **lampun valo:** lämmin messinkilammikko heti hero-alueen alla lampun kohdalla (`.lamp-spill`)
+  - **tähtipöly ja tuikkivat tähdet** vain sisältösarakkeen ulkopuolisissa reunoissa (maski). Yksikin kirkas tähtipikseli pienen tekstin alla rikkoo sen kontrastin, ja kapeilla näytöillä tähtiä ei näy lainkaan.
+  - grain-tekstuuri
+  - reunoilla näkyvä hyvin pieni sumea hero-kuva (`public/hero-blur.webp`, 64 px, CSS-blur ei käytössä)
+  - **kursorilyhty:** pehmeä lämmin valo seuraa hiirtä viiveellä, vain etusivulla ja vain `pointer: fine`
+  
+  Kaikki ovat sisällön alla, ja lukupalstan umpinainen pinta peittää ne.
+- **Liike** säädetään muuttujasta `--motion` (0–1, oletus 0,6; 0 poistaa liikkeen). Liike on sallittu, kun se on:
+  - **hidasta:** 20–40 s syklit (lammikot ajelehtivat ja sykkivät, osa tähdistä tuikkii, lampun valossa leijuu muutama pölyhiukkanen) sekä hero-kuvan parallaksi vierittäessä
+  - **taustakerroksessa,** ei koskaan leipätekstin takana
+  - **vain `transform` ja `opacity`**
+  - **pysäytetty näkymän ulkopuolella:** animaatio pyörii vain, kun elementti on näkyvissä (IntersectionObserver ja `in-view`)
+  - **kirjasivulla vain otsikkoalueella:** lukupalsta pysyy täysin rauhallisena (ensimmäinen lammikko ja kansihehku liikkuvat, muut eivät)
+  - **kokonaan pois, kun `prefers-reduced-motion`:** ei animaatioita, lyhtyä eikä parallaksia
 - **Kansihehku:** kortissa ja kirjasivun otsikkoalueella kannen takana on sama kansikuva sumeana ja matalalla peittävyydellä, ja ilman kantta hehku tulee tagin väristä. Kirjasivulla hehku on kannen ympärillä ja haipuu ennen otsikkosaraketta, jotta tekstin kontrasti säilyy. Hehkussa käytetään M-kokoista kantta, jottei hidas L-kansi nouse kirjasivun LCP-elementiksi.
 
 ### Typografia ja luettavuus
@@ -309,6 +326,8 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
   - Törmäyskielto koskee työpöytää (≥ 720 px). Mobiilissa teksti on kuvan päällä koko leveydeltä, ja peittokerros hoitaa luettavuuden.
   - Hero-alueen maksimileveys on `--hero-max` (1920 px, keskitetty), joten suuret näytöt käyttäytyvät kuten 1920 px. Sitä leveämmillä näytöillä hero-alueen reunat haipuvat sivun taustaan.
   - Kuvan alareuna ja peittokerros haipuvat läpinäkyviksi, joten sivun tausta ja ympäristövalo näkyvät rajan läpi, eikä saumaa synny. Tarkista sauma kuvakaappauksesta, jos tausta tai hero-kuva vaihtuu.
+  - Kuvauksen jatkona on johdatusteksti: "Tiivistelmät ovat johdatuksia teoksiin. Ne tavoittavat ydinsanoman, mutta kirja itse antaa paljon enemmän. Lämmin suositus: lue koko kirja." / "These summaries are introductions. They capture the core message, but the book itself offers far more. A warm recommendation: read the whole book."
+- **Kokoelman väliotsikko** ruudukon yläpuolella: messinkinen yläotsikko "Kokoelma" / "Collection" ja kirjamäärä. Tulosmäärä näytetään erikseen vain, kun haku tai suodatin on päällä.
 - **Korttiruudukko,** jossa jokaisella kortilla on kansi, otsikko, kirjoittaja, vuosi, tagit ja `ydin`.
 - **Hillitty hover-efekti:** pieni nosto ja korostusväri, ei pomppimista.
 - **Toiminnot:** haku (Pagefind), tagisuodatus, järjestys (uusimmat / kirjoittaja / julkaisuvuosi) ja "satunnainen kirja".
@@ -318,12 +337,20 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
 
 - **Järjestys:**
   1. kansi ja perustiedot
-  2. `ydin` korostettuna
+  2. `ydin` korostettuna ja sen alla pieni rivi, joka linkittää "Lue koko kirja" -osioon: "Johdatus teokseen, ei korvaa kirjaa. Lue koko kirja ↓" / "An introduction, not a replacement. Read the full book ↓"
   3. sisällysluettelo ankkurilinkein
   4. yleiskuva, keskeiset viestit (ideat), käsitteet, kirjoittaja, kirjan suositukset (jos on), huomio (jos on, pienellä)
   5. oma huomio (jos täytetty)
   6. liittyvät kirjat
-  7. lähteet
+  7. Lue koko kirja (ks. alla)
+  8. lähteet
+- **"Lue koko kirja" / "Read the full book"** -osio (`#lue-koko-kirja`, myös sisällysluettelossa):
+  - messinkiaksentti ja kansi pienenä
+  - teksti: "Tämä tiivistelmä on johdatus teokseen. Kirjan varsinainen arvo on sen perusteluissa, esimerkeissä ja kirjoittajan omassa äänessä, joita tiivistelmä ei voi korvata. Suosittelemme lämpimästi lukemaan koko kirjan." / "This summary is an introduction. The real value of the book lies in its arguments, examples and the author's own voice, which no summary can replace. We warmly recommend reading the whole book."
+  - kirjoittaja, alkuteos ja vuosi sekä suomennoksen nimi, jos on. Kirjoittajan nimeä ei taivuteta, vaan se on aina omana kenttänään.
+  - linkki Finnaan: `https://www.finna.fi/Search/Results?lookfor=<nimi kirjoittaja>&type=AllFields`, jossa nimi on suomennoksen nimi tai alkuteos ilman kaksoispisteitä ja pilkkuja. Muoto tarkistettiin: se palauttaa jokaisen kirjaston kirjan ensimmäisenä tuloksena. Tarkista uuden kirjan Finna-haku, jos nimessä on muita erikoismerkkejä.
+  - linkki Open Libraryyn (`olid`), jos se on tiedossa
+  - ei kauppa- eikä affiliate-linkkejä
 - **Pitkillä sivuilla** sisällysluettelo on työpöydällä sivupalkissa ja pysyy näkyvissä vierittäessä. Mobiilissa se on avattava lista sivun alussa.
 - **Merkinnät:** varmuustaso pienenä merkintänä, ja arvioitu lukuaika valitulla kielellä.
 - **Lukuedistyminen** ohuena palkkina ylhäällä.
@@ -337,9 +364,11 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
   - sisällysluettelon aktiivinen kohta
   - keskeisten viestien numerot
   - `ydin`-laatikon vasen reunus
+  - kokoelman yläotsikko "Kokoelma"
+  - "Lue koko kirja" -rivi `ydin`-laatikon alla sekä "Lue koko kirja" -osion yläreunus ja linkit
 - **Tausta:** sivun tausta on syvä navy (`--surface-0`) ja ympäristövalo. Hero-kuva näkyy vain etusivun hero-alueella. Muualla siitä on vain pieni sumea versio reunoilla, ja lukupalsta on aina umpinaisella pinnalla.
-- **Liike vierittäessä:** kortit ja kirjasivun osiot saavat lyhyen fade-inin. Jatkuvia animaatioita ei ole, ja `prefers-reduced-motion` poistaa kaiken liikkeen.
-- **Mobiili ensin:** 16 px reunat, ei vaakavieritystä, kosketuskohteet vähintään 44 px.
+- **Liike vierittäessä:** kortit ja kirjasivun osiot saavat lyhyen fade-inin. Taustan hidas liike noudattaa yllä olevaa Liike-sääntöä, ja `prefers-reduced-motion` poistaa kaiken liikkeen.
+- **Mobiili ensin:** 16 px reunat, ei vaakavieritystä, kosketuskohteet vähintään 44 px. Leveät taustaefektit (lampun valo, kansihehku) leikataan `main`-elementissä (`overflow-x: clip`). Pelkkä `body`-leikkaus ei riitä, koska se siirtyy näkymälle, joka raportoi silloin leveämmän sivun.
 - **Kielivalinta FI/EN** koko sivulle. Valinta muistetaan localStoragessa, ja jokainen luku ja kirjoitus on try/catchissa. Oletuskieli on suomi.
 - **Liike:** animaatiot ovat hillittyjä, ja `prefers-reduced-motion` kunnioitetaan.
 - **Alatunniste:** linkki raydar.fi:hin, "Covers: Open Library" ja maininta: "Tiivistelmät on tuotettu tekoälyn avulla ja voivat sisältää virheitä." / "Summaries are AI-generated and may contain errors."
