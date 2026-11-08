@@ -3,6 +3,13 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+    # Changes only to these paths do not change the site, so they do not trigger a deploy.
+    # A push that also touches anything else still deploys. Manual runs: workflow_dispatch.
+    paths-ignore:
+      - 'CLAUDE.md'
+      - 'tools/**'
+      - 'jono.md'
+      - '.claude/**'
   workflow_dispatch:
 
 permissions:
