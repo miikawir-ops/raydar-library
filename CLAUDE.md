@@ -279,14 +279,18 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
    - `onload` vaihtaa varakanteen, jos `naturalWidth` on alle 2: Open Library palauttaa tuntemattomasta ID:stä `200`-vastauksen ja 1×1-GIF:n, joten `onerror` ei yksin riitä
    - `alt` = "Kirjan {title} kansi" / "Cover of {title}"
 8. **Lähdeviitteet:** kirjasivulla linkki teoksen Open Library -sivulle (jos `olid` on tiedossa) ja alatunnisteessa linkki "Covers: Open Library".
-9. **Varakansi:** värit johdetaan ensimmäisestä tagista, ja otsikko ja kirjoittaja ladotaan typografisesti RayDar-tyyliin. Sen pitää näyttää tarkoitukselliselta, ei virhetilalta.
+9. **Varakansi:** värit johdetaan ensimmäisen tagin väristä (`[data-cover-tag]` `tokens.css`:ssä seuraa `tags.ts`:n huea: tummat sävyt kanteen, text-sävy viivaan ja kirjoittajaan), ja otsikko ja kirjoittaja ladotaan typografisesti RayDar-tyyliin. Sen pitää näyttää tarkoitukselliselta, ei virhetilalta.
 
 ## Ulkoasu ja visuaalinen laatu
 
 ### Linja
 
 - **Tunnistettavasti RayDar-perhettä:** "Dark Intelligence" -ilme, tumma navy-gradientti ja samat fontit ja korostusvärit kuin raydar.fi:ssä.
-- **Vain tumma teema,** kuten perheen muut sivut.
+- **Tumma kehys, paperinen lukupalsta.**
+  - Kehys on tumma kuten perheen muilla sivuilla: hero, etusivu, navigaatio, sisällysluettelo ja reunat.
+  - Kirjasivun lukupalsta on lämmin kermanvaalea paperi tummalla lämpimällä tekstillä, kuin kirjan sivu lampun valossa.
+  - Valittu marraskuussa 2026 kahden variantin vertailusta. Hylätty vaihtoehto oli tumma, läpikuultava lukupaneeli.
+  - Vaaleaa teemaa ei muuten ole: paperi on vain lukupalsta.
 - **Periaate:** hyvin ammattimainen mutta ei tylsä.
 - **Tunnelma:** laadukas digitaalinen kirjasto, jossa kansikuvat ovat näyttämöllä ja teksti on helppo lukea pitkäänkin.
 - **Ei geneeristä template-ilmettä:**
@@ -307,7 +311,13 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
   - keskeisten viestien numerot
   - käsitteiden termit
   - osio-otsikoiden lyhyt alaviiva
-- **Pintatasot** (`tokens.css`): `--surface-0` tausta, `--surface-1` pinta (kortit, lukupalsta, kontrollit) ja `--surface-2` korotettu (keskeisten viestien kortit, `ydin`, tilalaatikot). Kaikki ovat syvää, hieman kylläistä navya, eivät harmaata eivätkä lähes mustaa.
+- **Pintatasot** (`tokens.css`): `--surface-0` tausta, `--surface-1` pinta (kortit, kontrollit, mobiilin sisällysluettelo) ja `--surface-2` korotettu (keskeisten viestien kortit, `ydin`, tilalaatikot). Kaikki ovat syvää, hieman kylläistä navya, eivät harmaata eivätkä lähes mustaa.
+- **Lukupalsta** (`.book-text`, tokens `--paper`, `--paper-2`, `--paper-line`, `--paper-grain`, `--ink`, `--ink-strong`, `--ink-muted`):
+  - Lämmin paperi, jossa on hienovarainen rae ja ylhäältä tuleva valo, sekä pehmeä varjo kuin sivulla lampun valossa.
+  - Teksti `--ink`, otsikot `--ink-strong`, numerot, termit ja korostukset kirjan värin ink-sävyllä, linkit `--moon-ink` ja messinki `--brass-ink`.
+  - Kortit paperilla (ideat, käsitteet, oma huomio) ovat paperia vaaleampia (valkoinen 40 %), ja niissä on ohut ruskea reunus.
+  - **Mobiilissa** paperi on 10 px:n päässä näytön reunasta pyöristetyin kulmin, jotta se näyttää sivulta eikä täytä näyttöä reunasta reunaan.
+  - **Uusi elementti lukupalstaan** tarvitsee paperiversion: tumman pinnan valkoinen teksti ei kelpaa paperilla. Mittaa kontrasti, koska sisäkkäiset otsikot jäivät kerran valkoisiksi (1,32:1).
 - **Ympäristövalo** säädetään yhdestä muuttujasta `--ambience` (0–1, oletus 0,7). Kaikki valoefektit skaalautuvat sen mukaan. Kerrokset:
   - **valolammikot:** yksi kiinteä taustakerros (`position: fixed`, `pointer-events: none`), jossa on neljä lammikkoa: messinki vasemmalla ylhäällä ja oikealla alhaalla, kuunsininen oikealla ja vasemmalla alempana. Jokaisessa näkymässä näkyy siis aina vähintään yksi kumpaakin sivun pituudesta riippumatta. Lammikot ajelehtivat hitaasti (CSS) ja siirtyvät hieman vierityksen mukana (rAF, rajattu siniliike, vain `transform`), joten ne eivät koskaan poistu näkymästä.
   - **lampun valo:** lämmin messinkilammikko heti hero-alueen alla lampun kohdalla (`.lamp-spill`)
@@ -387,6 +397,7 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
   - linkki Finnaan: `https://www.finna.fi/Search/Results?lookfor=<nimi kirjoittaja>&type=AllFields`, jossa nimi on suomennoksen nimi tai alkuteos ilman kaksoispisteitä ja pilkkuja. Muoto tarkistettiin: se palauttaa jokaisen kirjaston kirjan ensimmäisenä tuloksena. Tarkista uuden kirjan Finna-haku, jos nimessä on muita erikoismerkkejä.
   - linkki Open Libraryyn (`olid`), jos se on tiedossa
   - ei kauppa- eikä affiliate-linkkejä
+- **Leveät näytöt** säilyttävät saman sommittelun kuin 1440 px. Sisältö on saman levyisenä keskellä (kirjasivu `max-width` 1100 px, muu sisältö `--page-max` 1240 px), ja ylimääräinen tila jää reunakuville.
 - **Pitkillä sivuilla** sisällysluettelo on työpöydällä sivupalkissa ja pysyy näkyvissä vierittäessä. Mobiilissa se on avattava lista sivun alussa.
 - **Merkinnät:** varmuustaso pienenä merkintänä, ja arvioitu lukuaika valitulla kielellä.
 - **Lukuedistyminen** ohuena palkkina ylhäällä.
@@ -403,7 +414,7 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
   - käsitekorttien numerot
   - kokoelman yläotsikko "Kokoelma"
   - "Lue koko kirja" -rivi `ydin`-laatikon alla sekä "Lue koko kirja" -osion yläreunus ja linkit
-- **Tausta:** sivun tausta on syvä navy (`--surface-0`) ja ympäristövalo. Hero-kuva näkyy vain etusivun hero-alueella. Muualla siitä on vain pieni sumea versio reunoilla, ja lukupalsta on aina umpinaisella pinnalla.
+- **Tausta:** sivun tausta on syvä navy (`--surface-0`) ja ympäristövalo. Hero-kuva näkyy vain etusivun hero-alueella. Muualla siitä on vain pieni sumea versio reunoilla, ja lukupalsta on aina umpinainen paperi.
 - **Liike vierittäessä:** kortit ja kirjasivun osiot saavat lyhyen fade-inin. Taustan hidas liike noudattaa yllä olevaa Liike-sääntöä, ja `prefers-reduced-motion` poistaa kaiken liikkeen.
 - **Mobiili ensin:** 16 px reunat, ei vaakavieritystä, kosketuskohteet vähintään 44 px. Leveät taustaefektit (lampun valo, kansihehku) leikataan `main`-elementissä (`overflow-x: clip`). Pelkkä `body`-leikkaus ei riitä, koska se siirtyy näkymälle, joka raportoi silloin leveämmän sivun.
 - **Kielivalinta FI/EN** koko sivulle. Valinta muistetaan localStoragessa, ja jokainen luku ja kirjoitus on try/catchissa. Oletuskieli on suomi.
