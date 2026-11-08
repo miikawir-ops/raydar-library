@@ -294,6 +294,7 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
   - Kuvan päällä sivun nimi, lyhyt kuvaus ja hakukenttä vasemmassa reunassa, jossa kuvassa on rauhallinen alue.
   - Kuva liukuu alaosassa gradientilla tummaan navyyn, josta korttiruudukko jatkuu saumattomasti.
   - `object-fit: cover`. Mobiilissa painopiste noin `object-position: 55% center`, jotta lamppu ja kirja näkyvät. Tarkista kuvakaappauksesta.
+  - Työpöydällä (≥ 720 px) kuva on kiinnitetty vasempaan reunaan (`object-position: 0% center`), ja tekstisarakkeen leveys rajataan niin, ettei teksti osu kuvan pääaiheisiin (armillaaripallo, lamppu, kirja). Otsikko saa rivittyä kahdelle riville. Jos hero-kuva vaihtuu, mittaa aiheiden sijainti uudelleen.
   - Kuvan alareunan väri on noin `#000816`. Gradientin ja sivun navy-taustan yläpään pitää kohdata se ilman näkyvää saumaa.
 - **Korttiruudukko,** jossa jokaisella kortilla on kansi, otsikko, kirjoittaja, vuosi, tagit ja `ydin`.
 - **Hillitty hover-efekti:** pieni nosto ja korostusväri, ei pomppimista.
@@ -317,6 +318,7 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
 ### Yleistä
 
 - **Designtokenit vain `src/styles/tokens.css`:ssä.** Niitä ei muuteta kysymättä.
+- **Korostusvärit:** sininen (`--accent`) on pääkorostus: linkit, alaotsikko ja muut korostukset. Messinki (`--brass`, hero-kuvan lampun sävy) on toissijainen, ja sitä käytetään vain korttien hover- ja focus-tilassa sekä aktiivisessa suodatinchipissä.
 - **Tausta:** sivun tausta on tumma navy-gradientti. Kuvaa käytetään vain etusivun hero-alueella, ei kirjasivuilla eikä koko sivun taustana, koska pitkä teksti tarvitsee rauhallisen pohjan.
 - **Mobiili ensin:** 16 px reunat, ei vaakavieritystä, kosketuskohteet vähintään 44 px.
 - **Kielivalinta FI/EN** koko sivulle. Valinta muistetaan localStoragessa, ja jokainen luku ja kirjoitus on try/catchissa. Oletuskieli on suomi.

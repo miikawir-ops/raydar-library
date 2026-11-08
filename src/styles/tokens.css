@@ -26,6 +26,10 @@
   --accent-4: #534ab7;
   --accent-deep: #3c3489;
   --signal: #e24b4a;
+  /* Brass, sampled from the lamp light in public/hero.webp. Secondary accent only:
+     card hover and focus, and the active filter chip. Blue stays the main accent. */
+  --brass: #e4a45c;
+  --brass-soft: rgba(228, 164, 92, 0.16);
 
   /* Lines */
   --line: rgba(133, 183, 235, 0.2);

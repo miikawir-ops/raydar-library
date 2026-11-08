@@ -128,7 +128,7 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
 }
 .button { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
 .chip:hover, .button:hover, .sort select:hover { border-color: var(--accent); color: var(--text-strong); }
-.chip[aria-pressed='true'] { background: rgba(133, 183, 235, 0.18); border-color: var(--accent); color: var(--text-strong); }
+.chip[aria-pressed='true'] { background: var(--brass-soft); border-color: var(--brass); color: var(--text-strong); }
 .sort select { background-color: var(--bg-2); padding-right: 12px; }
 .sort select option { background: var(--bg-2); color: var(--text); }
 
@@ -145,7 +145,8 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
   border: 1px solid var(--line); border-radius: var(--radius);
   transition: transform 0.18s ease, border-color 0.18s ease, background-color 0.18s ease;
 }
-.card:hover { transform: translateY(-2px); border-color: var(--accent); background: var(--panel-hover); color: var(--text); }
+.card:hover { transform: translateY(-2px); border-color: var(--brass); background: var(--panel-hover); color: var(--text); }
+.card:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; border-color: var(--brass); }
 .card-title { font-size: 19px; font-weight: 600; }
 .card-meta { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
 .card-ydin { font-size: 15px; line-height: 1.5; margin-top: 10px; grid-column: 1 / -1; }
@@ -274,6 +275,16 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
 
 @media (min-width: 720px) {
   .hero { min-height: 55vh; padding-bottom: 40px; }
+  /* Keep the text left of the hero's main subjects (armillary sphere, lamp, book).
+     Their left edge is at x = 770 of the 2048 x 768 image. With object-fit: cover and the image
+     pinned left, that edge lands at max(37.6vw, 1.0026 x hero height). Using 55vh / 400px as the
+     height can only underestimate it, so the text stays clear even when the hero grows. */
+  .hero-img { object-position: 0% center; }
+  .hero-text {
+    container-type: inline-size;
+    max-width: calc(max(37.6vw, max(55vh, 400px) * 1.0026) - max(var(--gutter), (100vw - var(--page-max)) / 2 + var(--gutter)) - 24px);
+  }
+  .hero-title { font-size: clamp(30px, 12cqi, 52px); text-wrap: balance; }
   .hero-overlay {
     background:
       linear-gradient(180deg, rgba(0, 8, 22, 0) 45%, var(--bg-0) 100%),
