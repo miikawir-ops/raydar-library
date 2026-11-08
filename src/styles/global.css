@@ -50,12 +50,15 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
 /* Ambient light: "the night library continues". Everything here sits behind the content,
    scales with --ambience, and is covered by solid surfaces wherever body text is read. */
 .ambience { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
-/* Light pools, about 650 px apart, alternating brass and moonlight and left and right
-   (positions come from Base.astro), so every screenful shows at least one of each. */
-.amb-pools { position: absolute; inset: 0; overflow: hidden; }
-.amb-pool { position: absolute; width: 820px; height: 580px; border-radius: 50%; }
-.amb-pool.left { left: -280px; }
-.amb-pool.right { right: -280px; }
+/* Light pools: one fixed layer with four pools (brass top left and bottom right, moonlight right
+   and lower left), so every screenful shows at least one of each on any page length. */
+.amb-pools { position: fixed; inset: 0; overflow: hidden; pointer-events: none; }
+.amb-pool-track { position: absolute; width: 820px; height: 580px; }
+.amb-pool-track.p1 { left: -280px; top: -140px; }
+.amb-pool-track.p2 { right: -280px; top: calc(38% - 290px); }
+.amb-pool-track.p3 { left: -300px; top: calc(70% - 290px); }
+.amb-pool-track.p4 { right: -300px; top: calc(100% - 300px); }
+.amb-pool { width: 100%; height: 100%; border-radius: 50%; }
 .amb-pool.brass { background: radial-gradient(closest-side, var(--amb-brass), transparent); }
 .amb-pool.moon { background: radial-gradient(closest-side, var(--amb-moon), transparent); }
 .amb-twinkle { position: fixed; inset: 0; opacity: var(--amb-stars); }
@@ -199,7 +202,7 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
   background: linear-gradient(90deg, rgba(228, 164, 92, 0.45), transparent);
 }
 .eyebrow { font-size: 13px; font-weight: 600; line-height: 1.4; letter-spacing: 0.16em; text-transform: uppercase; color: var(--brass); }
-.collection-count { font-size: 14px; color: var(--text-muted); }
+.collection-count { font-size: 14px; color: var(--text); }
 
 .controls { display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px; }
 .filters { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -519,11 +522,11 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
   75% { opacity: 0.6; }
   100% { transform: translate3d(calc(var(--motion) * 26px), calc(var(--motion) * -70px), 0); opacity: 0; }
 }
-.motion-on .amb-pool { animation: amb-drift 28s ease-in-out infinite; animation-play-state: paused; }
-.motion-on .amb-pool:nth-child(3n + 1) { animation-duration: 34s; animation-delay: -9s; }
-.motion-on .amb-pool:nth-child(3n + 2) { animation-duration: 23s; animation-delay: -15s; }
-.motion-on .amb-pool.right { animation-direction: reverse; }
-.motion-on .amb-pool.in-view { animation-play-state: running; }
+.motion-on .amb-pool { animation: amb-drift 28s ease-in-out infinite; }
+.motion-on .p1 .amb-pool { animation-duration: 34s; animation-delay: -9s; }
+.motion-on .p2 .amb-pool { animation-duration: 23s; animation-delay: -15s; animation-direction: reverse; }
+.motion-on .p3 .amb-pool { animation-duration: 31s; animation-delay: -4s; }
+.motion-on .p4 .amb-pool { animation-duration: 26s; animation-delay: -12s; animation-direction: reverse; }
 .motion-on .amb-twinkle.t1 { animation: amb-twinkle 7s ease-in-out infinite; }
 .motion-on .amb-twinkle.t2 { animation: amb-twinkle 11s ease-in-out -4s infinite; }
 .motion-on .lamp-spill { animation: amb-pulse 26s ease-in-out infinite; animation-play-state: paused; }
@@ -537,8 +540,9 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
 .motion-on .hero-motes.in-view span { animation-play-state: running; }
 .motion-on .book-glow-wrap { animation: amb-breathe 24s ease-in-out infinite; animation-play-state: paused; }
 .motion-on .book-glow-wrap.in-view { animation-play-state: running; }
-/* Book pages: motion only in the title area. Only the first pool moves; the twinkling stays still. */
-.motion-on .is-book .amb-pool:nth-child(n + 2),
+/* Book pages: motion only in the title area. Past it (amb-still, set by script) the pools pause
+   where they are; the twinkling never runs on book pages. */
+.motion-on.amb-still .amb-pool { animation-play-state: paused; }
 .motion-on .is-book .amb-twinkle.t1,
 .motion-on .is-book .amb-twinkle.t2 { animation: none; }
 @media (prefers-reduced-motion: reduce) {

@@ -13,10 +13,14 @@ interface Props {
   ogImage?: string;
 }
 const { titleFi, titleEn, description, home = false, book = false, ogImage } = Astro.props;
-// Light pools down the page: brass and moonlight alternate, 520 px apart from the top, so every
-// screenful shows at least one of each. 64 pools cover about 33 000 px (the longest page, a
-// mobile book page, was 22 083 px); pools past the end of a shorter page are clipped.
-const pools = Array.from({ length: 64 }, (_, i) => ({ kind: i % 2 === 0 ? 'brass' : 'moon', side: i % 4 < 2 ? 'left' : 'right', top: 100 + i * 520 }));
+// Four light pools in one fixed layer, so every screenful shows brass and moonlight
+// whatever the page length. Each pool's wrapper takes the scroll offset (script), the pool itself drifts (CSS).
+const pools = [
+  { kind: 'brass', pos: 'p1' },
+  { kind: 'moon', pos: 'p2' },
+  { kind: 'moon', pos: 'p3' },
+  { kind: 'brass', pos: 'p4' },
+];
 const canonical = new URL(Astro.url.pathname, site.url).href;
 ---
 <!doctype html>
@@ -53,7 +57,7 @@ const canonical = new URL(Astro.url.pathname, site.url).href;
     <div class="ambience" aria-hidden="true">
       <div class="amb-edges"></div>
       <div class="amb-pools">
-        {pools.map((p) => <div class={`amb-pool ${p.kind} ${p.side}`} style={`top:${p.top}px`} data-anim></div>)}
+        {pools.map((p) => <div class={`amb-pool-track ${p.pos}`}><div class={`amb-pool ${p.kind}`}></div></div>)}
       </div>
       <div class="amb-stars"></div>
       <div class="amb-twinkle t1"></div>
@@ -167,6 +171,30 @@ const canonical = new URL(Astro.url.pathname, site.url).href;
           }, { passive: true });
           document.documentElement.addEventListener('mouseleave', function () { lantern.classList.remove('on'); shown = false; });
         }
+
+        // Light pools follow scrolling a little: each wrapper moves on a slow, bounded sine of the
+        // scroll position, so the pools never leave the screen. On book pages the pools (offset and
+        // drift) stop once the title area has scrolled away, so the reading column stays calm.
+        var tracks = document.querySelectorAll('.amb-pool-track');
+        var isBook = document.body.classList.contains('is-book');
+        var bookHead = isBook ? document.querySelector('.book-head') : null;
+        var poolPending = false;
+        var phases = [0, 1.7, 3.1, 4.6];
+        var movePools = function () {
+          poolPending = false;
+          var sy = window.scrollY;
+          if (bookHead) {
+            var still = sy > bookHead.offsetTop + bookHead.offsetHeight;
+            root.classList.toggle('amb-still', still);
+            if (still) return;
+          }
+          tracks.forEach(function (t, i) {
+            var y = Math.sin(sy / 700 + phases[i]) * 70 * motion;
+            t.style.transform = 'translate3d(0,' + y.toFixed(1) + 'px,0)';
+          });
+        };
+        addEventListener('scroll', function () { if (!poolPending) { poolPending = true; requestAnimationFrame(movePools); } }, { passive: true });
+        movePools();
 
         // Hero parallax: the image moves a little slower than the page while the hero is visible.
         var heroImg = document.querySelector('.hero-img');

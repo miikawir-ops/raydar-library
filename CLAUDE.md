@@ -289,7 +289,7 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
 - **Konsepti "yökirjasto jatkuu":** hero-kuvan valonlähteet (lampun messinki, ikkunan kuunvalo, tähdet) jatkuvat koko sivun läpi hienovaraisena ympäristövalona. Värit vain hero-kuvan paletista: navy, kuunsininen ja messinki. Ei violetteja tai neon-läikkiä, ei lasiefektiä joka paikassa eikä gradienttitekstiä leipätekstissä.
 - **Pintatasot** (`tokens.css`): `--surface-0` tausta, `--surface-1` pinta (kortit, lukupalsta, kontrollit) ja `--surface-2` korotettu (keskeisten viestien kortit, `ydin`, tilalaatikot). Kaikki ovat syvää, hieman kylläistä navya, eivät harmaata eivätkä lähes mustaa.
 - **Ympäristövalo** säädetään yhdestä muuttujasta `--ambience` (0–1, oletus 0,7). Kaikki valoefektit skaalautuvat sen mukaan. Kerrokset:
-  - **valolammikot:** messinki ja kuunsininen vuorottelevat 520 px välein sivun yläreunasta alkaen, joten jokaisessa näkymässä näkyy vähintään yksi kumpaakin (`Base.astro`, 64 lammikkoa noin 33 000 px:iin asti; jos sivu kasvaa pidemmäksi, lisää määrää)
+  - **valolammikot:** yksi kiinteä taustakerros (`position: fixed`, `pointer-events: none`), jossa on neljä lammikkoa: messinki vasemmalla ylhäällä ja oikealla alhaalla, kuunsininen oikealla ja vasemmalla alempana. Jokaisessa näkymässä näkyy siis aina vähintään yksi kumpaakin sivun pituudesta riippumatta. Lammikot ajelehtivat hitaasti (CSS) ja siirtyvät hieman vierityksen mukana (rAF, rajattu siniliike, vain `transform`), joten ne eivät koskaan poistu näkymästä.
   - **lampun valo:** lämmin messinkilammikko heti hero-alueen alla lampun kohdalla (`.lamp-spill`)
   - **tähtipöly ja tuikkivat tähdet** vain sisältösarakkeen ulkopuolisissa reunoissa (maski). Yksikin kirkas tähtipikseli pienen tekstin alla rikkoo sen kontrastin, ja kapeilla näytöillä tähtiä ei näy lainkaan.
   - grain-tekstuuri
@@ -301,8 +301,8 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
   - **hidasta:** 20–40 s syklit (lammikot ajelehtivat ja sykkivät, osa tähdistä tuikkii, lampun valossa leijuu muutama pölyhiukkanen) sekä hero-kuvan parallaksi vierittäessä
   - **taustakerroksessa,** ei koskaan leipätekstin takana
   - **vain `transform` ja `opacity`**
-  - **pysäytetty näkymän ulkopuolella:** animaatio pyörii vain, kun elementti on näkyvissä (IntersectionObserver ja `in-view`)
-  - **kirjasivulla vain otsikkoalueella:** lukupalsta pysyy täysin rauhallisena (ensimmäinen lammikko ja kansihehku liikkuvat, muut eivät)
+  - **pysäytetty näkymän ulkopuolella:** sivun mukana vierivät efektit (lampun valo, pölyhiukkaset, kansihehku) pyörivät vain näkyvissä ollessaan (IntersectionObserver ja `in-view`)
+  - **kirjasivulla vain otsikkoalueella:** kun otsikkoalue on vieritetty pois, lammikot pysähtyvät paikoilleen (`amb-still`), ja lukupalsta pysyy täysin rauhallisena. Tähdet eivät tuiki kirjasivulla.
   - **kokonaan pois, kun `prefers-reduced-motion`:** ei animaatioita, lyhtyä eikä parallaksia
 - **Kansihehku:** kortissa ja kirjasivun otsikkoalueella kannen takana on sama kansikuva sumeana ja matalalla peittävyydellä, ja ilman kantta hehku tulee tagin väristä. Kirjasivulla hehku on kannen ympärillä ja haipuu ennen otsikkosaraketta, jotta tekstin kontrasti säilyy. Hehkussa käytetään M-kokoista kantta, jottei hidas L-kansi nouse kirjasivun LCP-elementiksi.
 
