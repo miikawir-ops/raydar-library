@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "astro dev",
     "check:books": "node tools/check-books.mjs",
+    "check:toc": "node tools/toccheck.mjs",
     "prebuild": "node tools/check-books.mjs",
     "build": "astro build && pagefind --site dist",
     "preview": "astro preview"
@@ -18,5 +19,8 @@
     "marked": "^18.1.3",
     "pagefind": "^1.6.0",
     "yaml": "^2.9.1"
+  },
+  "devDependencies": {
+    "playwright": "^1.65.0"
   }
 }
