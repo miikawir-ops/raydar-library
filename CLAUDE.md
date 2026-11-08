@@ -318,15 +318,17 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
 ### Etusivu
 
 - **Hero-alue:**
-  - `public/hero.webp` täysleveänä, noin 50–60 % näytön korkeudesta (mobiilissa noin 45 %).
-  - Kuvan päällä sivun nimi, lyhyt kuvaus ja hakukenttä vasemmassa reunassa, jossa kuvassa on rauhallinen alue.
-  - Kuva liukuu alaosassa gradientilla tummaan navyyn, josta korttiruudukko jatkuu saumattomasti.
+  - `public/hero.webp` täysleveänä, työpöydällä (≥ 720 px) vähintään 67vh ja mobiilissa noin 45 % näytön korkeudesta.
+  - Kuvan päällä sivun nimi, alaotsikko, yksi kuvauskappale ja hakukenttä vasemmassa reunassa, jossa kuvassa on rauhallinen alue.
+  - **Peittokerros työpöydällä** on vaakasuuntainen gradientti vain tekstin takana: tumma vasemmalla (noin 0,8 noin 30 %:iin asti), ja se haipuu kuvan pääaiheiden kohdalla (38–60 %). Oikea puoli näkyy lähes täydellä kirkkaudella. Mobiilissa teksti on koko leveydeltä kuvan päällä, joten peittokerros on tasainen. Jos tekstisarake tai hero-kuva muuttuu, mittaa tekstin kontrasti uudelleen myös 1920 px:llä, koska siellä tekstisarake ulottuu lähimmäs vaaleaa aluetta.
+  - Kuva liukuu alaosassa gradientilla tummaan navyyn, josta korttiruudukko jatkuu saumattomasti. Työpöydällä liukuma alkaa vasta aivan alhaalta (alin noin 12 %).
   - `object-fit: cover`. Mobiilissa painopiste noin `object-position: 55% center`, jotta lamppu ja kirja näkyvät. Tarkista kuvakaappauksesta.
   - Työpöydällä (≥ 720 px) kuva on kiinnitetty vasempaan reunaan (`object-position: 0% center`), ja tekstisarakkeen leveys rajataan niin, ettei teksti osu kuvan pääaiheisiin (armillaaripallo, lamppu, kirja). Otsikko saa rivittyä kahdelle riville. Jos hero-kuva vaihtuu, mittaa aiheiden sijainti uudelleen.
   - Törmäyskielto koskee työpöytää (≥ 720 px). Mobiilissa teksti on kuvan päällä koko leveydeltä, ja peittokerros hoitaa luettavuuden.
   - Hero-alueen maksimileveys on `--hero-max` (1920 px, keskitetty), joten suuret näytöt käyttäytyvät kuten 1920 px. Sitä leveämmillä näytöillä hero-alueen reunat haipuvat sivun taustaan.
   - Kuvan alareuna ja peittokerros haipuvat läpinäkyviksi, joten sivun tausta ja ympäristövalo näkyvät rajan läpi, eikä saumaa synny. Tarkista sauma kuvakaappauksesta, jos tausta tai hero-kuva vaihtuu.
-  - Kuvauksen jatkona on johdatusteksti: "Tiivistelmät ovat johdatuksia teoksiin. Ne tavoittavat ydinsanoman, mutta kirja itse antaa paljon enemmän. Lämmin suositus: lue koko kirja." / "These summaries are introductions. They capture the core message, but the book itself offers far more. A warm recommendation: read the whole book."
+  - Kuvaus on yksi kappale: "Tietokirjojen ydinsanomat suomeksi ja englanniksi – johdatuksia, jotka eivät korvaa kirjaa. Lämmin suositus: lue koko kirja." / "The core messages of non-fiction books in Finnish and English – introductions, not replacements. A warm recommendation: read the whole book."
+  - Pölyhiukkaset ovat laatikossa, jolla on hero-kuvan oma cover-geometria, joten niiden prosenttisijainnit ovat kuvan koordinaatteja ja ne pysyvät lampun valossa kaikilla hero-koon arvoilla.
 - **Kokoelman väliotsikko** ruudukon yläpuolella: messinkinen yläotsikko "Kokoelma" / "Collection" ja kirjamäärä. Tulosmäärä näytetään erikseen vain, kun haku tai suodatin on päällä.
 - **Korttiruudukko,** jossa jokaisella kortilla on kansi, otsikko, kirjoittaja, vuosi, tagit ja `ydin`.
 - **Hillitty hover-efekti:** pieni nosto ja korostusväri, ei pomppimista.
