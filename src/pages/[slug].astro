@@ -206,12 +206,36 @@ const titleEn = `${d.title} | RayDar Library`;
   <script is:inline>
     (function () {
       var bar = document.querySelector('[data-progress]');
+      var links = document.querySelectorAll('.toc a, .toc-mobile a');
+      var sections = document.querySelectorAll('.book-text > section[id]');
+      var activeId;
       var pending = false;
+
+      // Mark the section being read in both tables of contents, from the scroll position itself, so
+      // it is right after any scroll or jump in either direction: the last section whose top has
+      // passed a quarter of the screen; none above the first section; the last one at the very bottom.
+      function markActive(el, max) {
+        var line = window.innerHeight * 0.25;
+        var id = null;
+        for (var i = 0; i < sections.length; i++) {
+          if (sections[i].getBoundingClientRect().top <= line) id = sections[i].id;
+          else break;
+        }
+        if (max > 0 && el.scrollTop >= max - 2 && sections.length) id = sections[sections.length - 1].id;
+        if (id === activeId) return;
+        activeId = id;
+        links.forEach(function (a) {
+          if (id && a.getAttribute('href') === '#' + id) a.setAttribute('aria-current', 'true');
+          else a.removeAttribute('aria-current');
+        });
+      }
+
       function update() {
         pending = false;
         var el = document.documentElement;
         var max = el.scrollHeight - el.clientHeight;
         bar.style.transform = 'scaleX(' + (max > 0 ? Math.min(1, el.scrollTop / max) : 0) + ')';
+        markActive(el, max);
       }
       function request() {
         if (!pending) {
@@ -222,22 +246,12 @@ const titleEn = `${d.title} | RayDar Library`;
       addEventListener('scroll', request, { passive: true });
       addEventListener('resize', request);
       update();
-
-      // Mark the section being read in both tables of contents.
-      if ('IntersectionObserver' in window) {
-        var links = document.querySelectorAll('.toc a, .toc-mobile a');
-        var io = new IntersectionObserver(function (entries) {
-          entries.forEach(function (entry) {
-            if (!entry.isIntersecting) return;
-            var id = entry.target.id;
-            links.forEach(function (a) {
-              if (a.getAttribute('href') === '#' + id) a.setAttribute('aria-current', 'true');
-              else a.removeAttribute('aria-current');
-            });
-          });
-        }, { rootMargin: '-20% 0px -70% 0px' });
-        document.querySelectorAll('.book-text > section[id]').forEach(function (s) { io.observe(s); });
-      }
+      // Covers and fonts can move sections after the first paint, and the fade-in slides each
+      // section 10 px into place after it has been scrolled to.
+      addEventListener('load', request);
+      document.addEventListener('transitionend', function (e) {
+        if (e.propertyName === 'transform' && e.target.matches && e.target.matches('.book-text > section')) request();
+      });
     })();
   </script>
 </Base>
