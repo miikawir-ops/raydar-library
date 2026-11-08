@@ -17,6 +17,7 @@ const d = book.data;
   data-added={d.added.toISOString()}
   data-year={d.year}
   data-author={authorSortKey(d.author)}
+  data-hue={tags[d.tags[0]].hue}
 >
   <div class="card-stage"><CoverGlow book={d} size="M" /><Cover book={d} size="M" /></div>
   <div class="card-body">
@@ -25,7 +26,7 @@ const d = book.data;
     </h3>
     <p class="card-meta">{d.author} · {d.year}</p>
     <ul class="tag-list">
-      {d.tags.map((t) => <li class="tag"><T fi={tags[t].fi} en={tags[t].en} /></li>)}
+      {d.tags.map((t) => <li class="tag" data-hue={tags[t].hue}><T fi={tags[t].fi} en={tags[t].en} /></li>)}
     </ul>
     <p class="card-ydin i18n" lang="fi" set:html={mdInline(d.fi.ydin)} />
     <p class="card-ydin i18n" lang="en" set:html={mdInline(d.en.ydin)} />

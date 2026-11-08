@@ -54,7 +54,7 @@ Tämä on julkinen sivu. Virhe tiivistelmässä on väärää tietoa sivulla, jo
 ```
 src/content/books/*.md      # yksi kirja = yksi tiedosto, kaikki sisältö frontmatterissa
 src/content.config.ts       # Zod-skeema (rakenteen totuuden lähde)
-src/data/tags.ts            # sallitut tagit + FI/EN-nimet
+src/data/tags.ts            # sallitut tagit, FI/EN-nimet ja tagin väri (hue)
 src/styles/tokens.css       # RayDar-designtokenit (värit, fontit, välit)
 src/site.config.ts          # mm. indexable: false/true
 tools/check-books.mjs       # sisällön tarkistus, ajetaan ennen buildia
@@ -240,24 +240,29 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
 
 - Vain `src/data/tags.ts`:n listalta, 1–3 per kirja.
 - Uutta tagia ei lisätä omin päin: ehdota sitä Raylle.
-- Aloituslista (id → FI / EN):
+- Jokaisella tagilla on väri (`hue` `tags.ts`:ssä) hero-paletista. Uudelle tagille valitaan väri samalla logiikalla:
+  - messinki: raha ja työ
+  - viini: ihmiset ajassa
+  - smaragdi: mieli ja elämä
+  - kuunsininen: järki ja koneet
+- Aloituslista (id → FI / EN / väri):
 
-| id | FI | EN |
-|---|---|---|
-| `talous` | Talous | Economics |
-| `sijoittaminen` | Sijoittaminen | Investing |
-| `liiketoiminta` | Liiketoiminta | Business |
-| `johtaminen` | Johtaminen | Leadership |
-| `psykologia` | Psykologia | Psychology |
-| `paatoksenteko` | Päätöksenteko | Decision-making |
-| `teknologia` | Teknologia | Technology |
-| `tekoaly` | Tekoäly | AI |
-| `tiede` | Tiede | Science |
-| `historia` | Historia | History |
-| `yhteiskunta` | Yhteiskunta | Society |
-| `filosofia` | Filosofia | Philosophy |
-| `terveys` | Terveys | Health |
-| `tuottavuus` | Tuottavuus | Productivity |
+| id | FI | EN | väri |
+|---|---|---|---|
+| `talous` | Talous | Economics | messinki |
+| `sijoittaminen` | Sijoittaminen | Investing | messinki |
+| `liiketoiminta` | Liiketoiminta | Business | messinki |
+| `johtaminen` | Johtaminen | Leadership | viini |
+| `psykologia` | Psykologia | Psychology | smaragdi |
+| `paatoksenteko` | Päätöksenteko | Decision-making | kuunsininen |
+| `teknologia` | Teknologia | Technology | kuunsininen |
+| `tekoaly` | Tekoäly | AI | kuunsininen |
+| `tiede` | Tiede | Science | kuunsininen |
+| `historia` | Historia | History | viini |
+| `yhteiskunta` | Yhteiskunta | Society | viini |
+| `filosofia` | Filosofia | Philosophy | smaragdi |
+| `terveys` | Terveys | Health | smaragdi |
+| `tuottavuus` | Tuottavuus | Productivity | messinki |
 
 ## Kansikuvat
 
@@ -274,22 +279,45 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
    - `onload` vaihtaa varakanteen, jos `naturalWidth` on alle 2: Open Library palauttaa tuntemattomasta ID:stä `200`-vastauksen ja 1×1-GIF:n, joten `onerror` ei yksin riitä
    - `alt` = "Kirjan {title} kansi" / "Cover of {title}"
 8. **Lähdeviitteet:** kirjasivulla linkki teoksen Open Library -sivulle (jos `olid` on tiedossa) ja alatunnisteessa linkki "Covers: Open Library".
-9. **Varakansi:** värit johdetaan ensimmäisestä tagista, ja otsikko ja kirjoittaja ladotaan typografisesti RayDar-tyyliin. Sen pitää näyttää tarkoitukselliselta, ei virhetilalta.
+9. **Varakansi:** värit johdetaan ensimmäisen tagin väristä (`[data-cover-tag]` `tokens.css`:ssä seuraa `tags.ts`:n huea: tummat sävyt kanteen, text-sävy viivaan ja kirjoittajaan), ja otsikko ja kirjoittaja ladotaan typografisesti RayDar-tyyliin. Sen pitää näyttää tarkoitukselliselta, ei virhetilalta.
 
 ## Ulkoasu ja visuaalinen laatu
 
 ### Linja
 
 - **Tunnistettavasti RayDar-perhettä:** "Dark Intelligence" -ilme, tumma navy-gradientti ja samat fontit ja korostusvärit kuin raydar.fi:ssä.
-- **Vain tumma teema,** kuten perheen muut sivut.
+- **Tumma kehys, paperinen lukupalsta.**
+  - Kehys on tumma kuten perheen muilla sivuilla: hero, etusivu, navigaatio, sisällysluettelo ja reunat.
+  - Kirjasivun lukupalsta on lämmin kermanvaalea paperi tummalla lämpimällä tekstillä, kuin kirjan sivu lampun valossa.
+  - Valittu marraskuussa 2026 kahden variantin vertailusta. Hylätty vaihtoehto oli tumma, läpikuultava lukupaneeli.
+  - Vaaleaa teemaa ei muuten ole: paperi on vain lukupalsta.
 - **Periaate:** hyvin ammattimainen mutta ei tylsä.
 - **Tunnelma:** laadukas digitaalinen kirjasto, jossa kansikuvat ovat näyttämöllä ja teksti on helppo lukea pitkäänkin.
 - **Ei geneeristä template-ilmettä:**
   - ei oletus-Bootstrapia tai Tailwind-demon näköisyyttä
   - ei emojeja käyttöliittymässä
   - efektit tukevat tunnelmaa ja rakennetta eivätkä koskaan häiritse lukemista: ei efektejä leipätekstin takana
-- **Konsepti "yökirjasto jatkuu":** hero-kuvan valonlähteet (lampun messinki, ikkunan kuunvalo, tähdet) jatkuvat koko sivun läpi hienovaraisena ympäristövalona. Värit vain hero-kuvan paletista: navy, kuunsininen ja messinki. Ei violetteja tai neon-läikkiä, ei lasiefektiä joka paikassa eikä gradienttitekstiä leipätekstissä.
-- **Pintatasot** (`tokens.css`): `--surface-0` tausta, `--surface-1` pinta (kortit, lukupalsta, kontrollit) ja `--surface-2` korotettu (keskeisten viestien kortit, `ydin`, tilalaatikot). Kaikki ovat syvää, hieman kylläistä navya, eivät harmaata eivätkä lähes mustaa.
+- **Konsepti "yökirjasto jatkuu":** hero-kuvan valonlähteet (lampun messinki, ikkunan kuunvalo, tähdet) jatkuvat koko sivun läpi hienovaraisena ympäristövalona. Värit vain hero-kuvan paletista: navy, kuunsininen ja messinki sekä toissijaisina syvä smaragdi (huopa ja muratti) ja viininpunainen nahka (nojatuoli ja kirjanselät). Ei violetteja tai neon-läikkiä, ei lasiefektiä joka paikassa eikä gradienttitekstiä leipätekstissä.
+- **Paletti** (`tokens.css`): jokaisella toissijaisella värillä on kolme sävyä:
+  - `--emerald`/`--wine` viivoihin ja sävytyksiin
+  - `-text`-sävy tekstiin tummalla pinnalla
+  - `-ink`-sävy tekstiin paperilla
+
+  Smaragdi on otettu huovasta (noin `#17272c`) ja viini nojatuolin nahasta (noin `#5f1c07`). Viiniä on siirretty kohti viininpunaista, jottei se sekoitu messinkiin. Kaikki text- ja ink-sävyt on mitattu vähintään 4,5:1 omaa pintaansa vasten.
+- **Tagin väri** (`[data-hue]`, kirjan ensimmäinen tagi) näkyy seuraavissa:
+  - tagichipit, joissa jokainen tagi on omalla värillään
+  - korttien yläreunan viiva
+  - kirjasivun otsikkoalueen taustasävytys, jotta vaaleatkin kannet saavat värin
+  - keskeisten viestien numerot
+  - käsitteiden termit
+  - osio-otsikoiden lyhyt alaviiva
+- **Pintatasot** (`tokens.css`): `--surface-0` tausta, `--surface-1` pinta (kortit, kontrollit, mobiilin sisällysluettelo) ja `--surface-2` korotettu (keskeisten viestien kortit, `ydin`, tilalaatikot). Kaikki ovat syvää, hieman kylläistä navya, eivät harmaata eivätkä lähes mustaa.
+- **Lukupalsta** (`.book-text`, tokens `--paper`, `--paper-2`, `--paper-line`, `--paper-grain`, `--ink`, `--ink-strong`, `--ink-muted`):
+  - Lämmin paperi, jossa on hienovarainen rae ja ylhäältä tuleva valo, sekä pehmeä varjo kuin sivulla lampun valossa.
+  - Teksti `--ink`, otsikot `--ink-strong`, numerot, termit ja korostukset kirjan värin ink-sävyllä, linkit `--moon-ink` ja messinki `--brass-ink`.
+  - Kortit paperilla (ideat, käsitteet, oma huomio) ovat paperia vaaleampia (valkoinen 40 %), ja niissä on ohut ruskea reunus.
+  - **Mobiilissa** paperi on 10 px:n päässä näytön reunasta pyöristetyin kulmin, jotta se näyttää sivulta eikä täytä näyttöä reunasta reunaan.
+  - **Uusi elementti lukupalstaan** tarvitsee paperiversion: tumman pinnan valkoinen teksti ei kelpaa paperilla. Mittaa kontrasti, koska sisäkkäiset otsikot jäivät kerran valkoisiksi (1,32:1).
 - **Ympäristövalo** säädetään yhdestä muuttujasta `--ambience` (0–1, oletus 0,7). Kaikki valoefektit skaalautuvat sen mukaan. Kerrokset:
   - **valolammikot:** yksi kiinteä taustakerros (`position: fixed`, `pointer-events: none`), jossa on neljä lammikkoa: messinki vasemmalla ylhäällä ja oikealla alhaalla, kuunsininen oikealla ja vasemmalla alempana. Jokaisessa näkymässä näkyy siis aina vähintään yksi kumpaakin sivun pituudesta riippumatta. Lammikot ajelehtivat hitaasti (CSS) ja siirtyvät hieman vierityksen mukana (rAF, rajattu siniliike, vain `transform`), joten ne eivät koskaan poistu näkymästä.
   - **lampun valo:** lämmin messinkilammikko heti hero-alueen alla lampun kohdalla (`.lamp-spill`)
@@ -297,7 +325,14 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
   - grain-tekstuuri
   - reunoilla näkyvä hyvin pieni sumea hero-kuva (`public/hero-blur.webp`, 64 px, CSS-blur ei käytössä)
   - **kursorilyhty:** pehmeä lämmin valo seuraa hiirtä viiveellä, vain etusivulla ja vain `pointer: fine`
-  - **reunafiguurit:** `public/edge.webp` (kirjahylly) vasemmassa reunassa ja peilikuvana (`scaleX(-1)`) oikeassa.
+  - **reunafiguurit:** `public/edge.webp` vasemmassa reunassa ja peilikuvana (`scaleX(-1)`) oikeassa.
+    - **Rajaus:** näkyvissä on kaiverrettu pilari ja sen seinälamppu, ei hyllyjä.
+      - Kuvan koordinaatit (338 × 1024): hyllyt x 0–135, pilari x 136–232, taivas x 232–338, lamppu (189, 645), sumu y > 900.
+      - Lamppu on hieman keskikorkeuden alapuolella, ja alareunan sumu haipuu.
+      - Kapealla marginaalilla pilarin ulkoreunasta rajataan, ei sisäreunasta. Sisäreunan maski alkaa vasta pilarin jälkeen eikä koskaan peitä pilaria.
+      - Kuvan kaari on hyllyjen yläpuolella, joten hyllyttömässä rajauksessa siitä näkyy vain oikea pää ja muratti.
+      - Jos kuva vaihtuu, mittaa koordinaatit uudelleen.
+    - **Lampun valo:** lämmin hehku, joka heijastuu heikosti sisältösarakkeen reunaan, ja hyvin hienovarainen värähtely `--motion`-muuttujan alla. Kirjasivulla värähtely pysähtyy otsikkoalueen jälkeen (`amb-still`), ja reduced-motion poistaa sen.
     - Kiinteä taustakerros (`position: fixed`, `pointer-events: none`), korkeus 100vh + 80 px parallaksin liikevaraa varten.
     - Näkyy vain, kun näkymä on vähintään 1400 px. Silloin sisältösarakkeen (`--page-max` 1240 px) ulkopuolelle jää vähintään 80 px. Kapeammalla figuuri olisi vain kapea suikale.
     - Leveys on enintään sisältösarakkeen ulkopuolinen tila, ja kuvan sisäreuna haipuu läpinäkyväksi (mask). Figuuri ei siis koskaan ulotu sisältösarakkeen tai tekstin alle.
@@ -362,6 +397,7 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
   - linkki Finnaan: `https://www.finna.fi/Search/Results?lookfor=<nimi kirjoittaja>&type=AllFields`, jossa nimi on suomennoksen nimi tai alkuteos ilman kaksoispisteitä ja pilkkuja. Muoto tarkistettiin: se palauttaa jokaisen kirjaston kirjan ensimmäisenä tuloksena. Tarkista uuden kirjan Finna-haku, jos nimessä on muita erikoismerkkejä.
   - linkki Open Libraryyn (`olid`), jos se on tiedossa
   - ei kauppa- eikä affiliate-linkkejä
+- **Leveät näytöt** säilyttävät saman sommittelun kuin 1440 px. Sisältö on saman levyisenä keskellä (kirjasivu `max-width` 1100 px, muu sisältö `--page-max` 1240 px), ja ylimääräinen tila jää reunakuville.
 - **Pitkillä sivuilla** sisällysluettelo on työpöydällä sivupalkissa ja pysyy näkyvissä vierittäessä. Mobiilissa se on avattava lista sivun alussa.
 - **Merkinnät:** varmuustaso pienenä merkintänä, ja arvioitu lukuaika valitulla kielellä.
 - **Lukuedistyminen** ohuena palkkina ylhäällä.
@@ -370,14 +406,15 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
 
 - **Designtokenit vain `src/styles/tokens.css`:ssä.** Niitä ei muuteta kysymättä.
 - **Korostusvärit:** sininen (`--accent`) on pääkorostus: linkit, alaotsikko ja muut korostukset. Messinki (`--brass`, hero-kuvan lampun sävy) on toissijainen. Sitä käytetään vain seuraavissa:
-  - korttien hover- ja focus-tila sekä korttien yläreunan ohut viiva
+  - korttien hover- ja focus-tila
   - aktiivinen suodatinchip
   - sisällysluettelon aktiivinen kohta
-  - keskeisten viestien numerot
-  - `ydin`-laatikon vasen reunus
+  - `ydin`-laatikon kehys, sisäviiva ja kulmatähdet
+  - osioiden välinen koristejakaja (ohut viiva ja pieni tähti)
+  - käsitekorttien numerot
   - kokoelman yläotsikko "Kokoelma"
   - "Lue koko kirja" -rivi `ydin`-laatikon alla sekä "Lue koko kirja" -osion yläreunus ja linkit
-- **Tausta:** sivun tausta on syvä navy (`--surface-0`) ja ympäristövalo. Hero-kuva näkyy vain etusivun hero-alueella. Muualla siitä on vain pieni sumea versio reunoilla, ja lukupalsta on aina umpinaisella pinnalla.
+- **Tausta:** sivun tausta on syvä navy (`--surface-0`) ja ympäristövalo. Hero-kuva näkyy vain etusivun hero-alueella. Muualla siitä on vain pieni sumea versio reunoilla, ja lukupalsta on aina umpinainen paperi.
 - **Liike vierittäessä:** kortit ja kirjasivun osiot saavat lyhyen fade-inin. Taustan hidas liike noudattaa yllä olevaa Liike-sääntöä, ja `prefers-reduced-motion` poistaa kaiken liikkeen.
 - **Mobiili ensin:** 16 px reunat, ei vaakavieritystä, kosketuskohteet vähintään 44 px. Leveät taustaefektit (lampun valo, kansihehku) leikataan `main`-elementissä (`overflow-x: clip`). Pelkkä `body`-leikkaus ei riitä, koska se siirtyy näkymälle, joka raportoi silloin leveämmän sivun.
 - **Kielivalinta FI/EN** koko sivulle. Valinta muistetaan localStoragessa, ja jokainen luku ja kirjoitus on try/catchissa. Oletuskieli on suomi.
@@ -468,6 +505,10 @@ Tarkista ero originiin (`git status`, `git fetch`).
 - **Commit-viestit** muodossa `type: what changed`. Esimerkit: `content: add Thinking, Fast and Slow`, `content: update <title>`, `feat: tag filter`, `fix: cover fallback`.
 - **Commit-hashit, polut ja luvut** raportoidaan vain komentojen tulosteesta, ei koskaan muistista.
 - **Historiaa ei kirjoiteta uudelleen** eikä force-pushata kysymättä.
+- **Julkaisu ohitetaan, kun pushissa muuttuvat vain nämä:** `CLAUDE.md`, `tools/**`, `jono.md` tai `.claude/**` (`paths-ignore` workflowssa).
+  - Huomaa, että myös `tools/check-books.mjs` (prebuild) kuuluu tähän: sen muutos tulee voimaan vasta seuraavassa julkaisussa.
+  - Tällaisesta pushista ei ole ajoa, jota seurata.
+  - Julkaisun voi käynnistää käsin (`workflow_dispatch`).
 - **Seuraa deployta:** hae ajon tunniste `gh run list --commit <commit>` -komennolla pushatun commitin perusteella, aja `gh run watch <tunniste> --exit-status` ja kerro, menikö julkaisu läpi. Pelkkä `--limit 1` voi palauttaa edellisen commitin ajon, jos uusi ajo ei ole vielä rekisteröitynyt.
 
 ### Domain-käyttöönotto

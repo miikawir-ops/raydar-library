@@ -52,7 +52,7 @@ const titleEn = `${d.title} | RayDar Library`;
 ---
 <Base titleFi={titleFi} titleEn={titleEn} description={d.fi.ydin} ogImage={coverSrc(d, 'L') ?? undefined} book>
   <div class="progress" aria-hidden="true"><span data-progress></span></div>
-  <article class="book" data-pagefind-body>
+  <article class="book" data-pagefind-body data-hue={tags[d.tags[0]].hue}>
     <!-- The small M cover keeps the glow from becoming the largest contentful paint: the L cover
          loads through two redirects, and a blurred glow needs no detail. -->
     <div class="book-glow-wrap" data-anim aria-hidden="true"><CoverGlow book={d} size="M" class="book-glow" /></div>
@@ -65,7 +65,7 @@ const titleEn = `${d.title} | RayDar Library`;
         {d.title_fi && <p class="book-original i18n" lang="fi">Alkuteos: {d.title}</p>}
         <p class="book-author">{d.author} · {d.year}</p>
         <ul class="tag-list" data-pagefind-ignore>
-          {d.tags.map((t) => <li class="tag"><T fi={tags[t].fi} en={tags[t].en} /></li>)}
+          {d.tags.map((t) => <li class="tag" data-hue={tags[t].hue}><T fi={tags[t].fi} en={tags[t].en} /></li>)}
         </ul>
         <p class="book-marks" data-pagefind-ignore>
           <T fi={`Noin ${readingMinutes(d.fi)} min lukuaika`} en={`About ${readingMinutes(d.en)} min read`} />

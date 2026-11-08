@@ -56,8 +56,8 @@ const canonical = new URL(Astro.url.pathname, site.url).href;
   <body class:list={[{ 'is-home': home, 'is-book': book }]}>
     <div class="ambience" aria-hidden="true">
       <div class="amb-edges"></div>
-      <div class="amb-figure left"></div>
-      <div class="amb-figure right"></div>
+      <div class="amb-figure left" data-anim></div>
+      <div class="amb-figure right" data-anim></div>
       <div class="amb-pools">
         {pools.map((p) => <div class={`amb-pool-track ${p.pos}`}><div class={`amb-pool ${p.kind}`}></div></div>)}
       </div>

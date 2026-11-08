@@ -61,28 +61,61 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
 .amb-pool { width: 100%; height: 100%; border-radius: 50%; }
 .amb-pool.brass { background: radial-gradient(closest-side, var(--amb-brass), transparent); }
 .amb-pool.moon { background: radial-gradient(closest-side, var(--amb-moon), transparent); }
-/* Edge figures: the bookcase image (public/edge.webp) in the left margin and mirrored in the right,
-   only on screens wide enough to leave a real margin outside the content column (>= 80 px each side,
-   so >= 1400 px). Each is clamped to the margin width and its inner side fades out, so it never
-   reaches under the content column or text. --hero-cut (script) hides it over the home hero. */
+/* Edge figures: the carved pillar with its wall lamp from public/edge.webp (338 x 1024) in the left
+   margin, mirrored in the right, only where the margin outside the content column is >= 80 px
+   (>= 1400 px). Image coordinates: shelves x 0-135, pillar x 136-232, sky x 232-338, lamp flame at
+   (189, 645), arch and ivy y 0-300, fog below y 900.
+   - Height-scaled (--s px per image px) and shifted up a little (--shift), so the lamp sits a bit
+     below the middle of the screen; the foggy bottom fades out.
+   - Shows image x 136 onwards (the pillar, not the shelves). On a narrower margin the pillar's outer
+     edge is cropped instead (--p), so its inner edge stays left of the inner fade, which starts at 80 %
+     of the width: the mask never covers the pillar. --m uses 100vw and can be up to half a scrollbar
+     wider than the real margin, which the 0.7 factor absorbs.
+   - The arch in this image stands over the shelves (x 0-135), so with the shelves cropped out only
+     its right end and the ivy show at the top; the lamp sits at about 55-58 % of the screen height.
+   - Never reaches under the content column: width = the margin at most.
+   - --hero-cut (script) hides it over the home hero. */
 .amb-figure { display: none; }
 @media (min-width: 1400px) {
   .amb-figure {
-    display: block; position: fixed; top: -10px; height: calc(100vh + 80px);
-    width: min(calc((100vh + 80px) * 338 / 1024), calc((100% - var(--page-max)) / 2));
+    --fh: calc(100vh + 80px);
+    --s: calc(var(--fh) / 1024);
+    --shift: calc(var(--fh) * 0.07 + 20px);
+    --m: calc((100vw - var(--page-max)) / 2);
+    --w: min(var(--m), calc(202 * var(--s)));
+    --p: max(calc(136 * var(--s)), calc(232 * var(--s) - 0.7 * var(--w)));
+    --lx: calc(189 * var(--s) - var(--p));
+    --ly: calc(645 * var(--s) - var(--shift));
+    --cut: linear-gradient(180deg, transparent var(--hero-cut, 0px), #000 calc(var(--hero-cut, 0px) + 240px));
+    display: block; position: fixed; top: -10px; height: var(--fh);
+    width: min(calc((100% - var(--page-max)) / 2), calc(202 * var(--s)));
     opacity: var(--amb-figures); pointer-events: none;
-    -webkit-mask-image: linear-gradient(180deg, transparent var(--hero-cut, 0px), #000 calc(var(--hero-cut, 0px) + 240px));
-    mask-image: linear-gradient(180deg, transparent var(--hero-cut, 0px), #000 calc(var(--hero-cut, 0px) + 240px));
   }
   .amb-figure.left { left: 0; }
   .amb-figure.right { right: 0; }
   .amb-figure::before {
     content: ''; position: absolute; inset: 0;
-    background: url('/edge.webp') left center / auto 100% no-repeat;
-    -webkit-mask-image: linear-gradient(90deg, #000 30%, transparent 100%);
-    mask-image: linear-gradient(90deg, #000 30%, transparent 100%);
+    background: url('/edge.webp') no-repeat;
+    background-size: auto var(--fh);
+    background-position: calc(-1 * var(--p)) calc(-1 * var(--shift));
+    -webkit-mask-image: linear-gradient(90deg, #000 80%, transparent 100%), linear-gradient(180deg, #000 calc(var(--fh) - var(--shift) - 220px), transparent calc(var(--fh) - var(--shift) - 40px)), var(--cut);
+    mask-image: linear-gradient(90deg, #000 80%, transparent 100%), linear-gradient(180deg, #000 calc(var(--fh) - var(--shift) - 220px), transparent calc(var(--fh) - var(--shift) - 40px)), var(--cut);
+    -webkit-mask-composite: source-in, source-in;
+    mask-composite: intersect;
   }
   .amb-figure.right::before { transform: scaleX(-1); }
+  /* The lamp's warm halo, and its light reaching faintly to the edge of the content column. */
+  .amb-figure::after {
+    content: ''; position: absolute; top: 0; height: 100%; width: calc(100% + 240px);
+    --lamp-x: var(--lx);
+    background:
+      radial-gradient(circle at var(--lamp-x) var(--ly), rgb(255 206 140 / 0.5) 0, rgb(var(--brass-rgb) / 0.22) calc(16 * var(--s)), transparent calc(64 * var(--s))),
+      radial-gradient(ellipse calc(100% - var(--lx)) calc(240 * var(--s)) at var(--lamp-x) var(--ly), rgb(var(--brass-rgb) / 0.12), transparent 100%);
+    -webkit-mask-image: var(--cut);
+    mask-image: var(--cut);
+  }
+  .amb-figure.left::after { left: 0; }
+  .amb-figure.right::after { right: 0; --lamp-x: calc(100% - var(--lx)); }
 }
 .amb-twinkle { position: fixed; inset: 0; opacity: var(--amb-stars); }
 /* Stars stay in the side margins outside the content column, so a star never sits behind text
@@ -265,10 +298,10 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
   border: 1px solid var(--line); border-radius: var(--radius);
   transition: transform 0.18s ease, border-color 0.18s ease;
 }
-/* A thin brass line along the top edge, fading out to the right. */
+/* A thin line along the top edge in the colour of the book's first tag, fading out to the right. */
 .card::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; z-index: 2;
-  background: linear-gradient(90deg, var(--brass), transparent 75%);
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; z-index: 2;
+  background: linear-gradient(90deg, var(--hue, var(--brass)), transparent 75%);
 }
 .card:hover { transform: translateY(-2px); border-color: var(--brass); color: var(--text); }
 .card:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; border-color: var(--brass); }
@@ -297,6 +330,8 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
   background: rgba(175, 169, 236, 0.1);
   border: 0.5px solid var(--line-strong); border-radius: 10px;
 }
+/* Each tag in its own colour (src/data/tags.ts). */
+.tag[data-hue] { color: var(--hue-text); background: rgb(var(--hue-rgb) / 0.14); border: 1px solid rgb(var(--hue-rgb) / 0.55); }
 
 /* Covers */
 .cover {
@@ -365,12 +400,24 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
 .book-author { font-size: 17px; margin-top: 8px; }
 .book-marks { font-size: 13px; color: var(--text); margin-top: 10px; }
 
+/* Core message: a brass-framed plate with a warm tint, an inner hairline and small brass stars on
+   two corners. No quotation marks: the core message is not a quote. */
 .ydin {
-  margin-top: 24px; padding: 18px 20px;
+  margin-top: 28px; padding: 20px 22px;
   font-size: 19px; line-height: 1.5; color: var(--text-strong);
-  background: var(--surface-2);
-  border: 1px solid var(--line); border-left: 3px solid var(--brass); border-radius: var(--radius);
-  box-shadow: 0 0 48px -8px rgb(228 164 92 / calc(var(--ambience) * 0.22));
+  background:
+    linear-gradient(160deg, rgb(var(--brass-rgb) / 0.17), rgb(var(--brass-rgb) / 0.05) 45%, transparent 75%),
+    var(--surface-2);
+  border: 1px solid rgb(var(--brass-rgb) / 0.6); border-radius: var(--radius);
+  box-shadow: 0 22px 50px -22px rgba(0, 0, 0, 0.8), 0 0 60px -12px rgb(var(--brass-rgb) / calc(var(--ambience) * 0.3));
+}
+.ydin::after {
+  content: ''; position: absolute; inset: 5px; pointer-events: none;
+  border: 1px solid rgb(var(--brass-rgb) / 0.22); border-radius: calc(var(--radius) - 4px);
+}
+.ydin::before {
+  content: ''; position: absolute; inset: -8px; pointer-events: none;
+  background: var(--star-brass) left top / 16px 16px no-repeat, var(--star-brass) right bottom / 16px 16px no-repeat;
 }
 
 .toc-mobile { margin-top: 16px; border: 1px solid var(--line); border-radius: var(--radius-s); background: var(--surface-1); }
@@ -386,13 +433,14 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
 .toc-title { font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; padding-left: 12px; }
 
 .book-layout { display: block; }
-/* The reading column is a calm, solid surface: no effect ever shows behind body text. */
+/* The reading column is a page of warm paper (styled below, "Reading panel"): a calm, solid
+   surface, so no effect ever shows behind body text. On phones it sits 10 px from the screen edge
+   with rounded corners, so it reads as a page rather than filling the screen. */
 .book-text {
   min-width: 0;
-  margin: 24px calc(-1 * var(--gutter)) 0;
-  padding: 4px var(--gutter) 32px;
-  background: var(--surface-1);
-  border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  margin: 24px -6px 0;
+  padding: 4px 18px 32px;
+  border-radius: 12px;
 }
 .book-text > section { margin-top: 40px; scroll-margin-top: 20px; max-width: var(--measure); }
 .book-text h2 { font-size: 27px; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 16px; }
@@ -408,17 +456,53 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
   background: var(--surface-2);
   border: 1px solid var(--line); border-radius: var(--radius-s);
 }
-.idea-num { display: block; font-size: 34px; font-weight: 600; line-height: 1; letter-spacing: -0.01em; color: var(--brass); font-variant-numeric: tabular-nums; margin-bottom: 10px; }
+.idea-num { display: block; font-size: 34px; font-weight: 600; line-height: 1; letter-spacing: -0.01em; color: var(--hue-text, var(--brass)); font-variant-numeric: tabular-nums; margin-bottom: 10px; }
 .idea h3 { font-size: 20px; font-weight: 600; margin-bottom: 10px; }
 
-.concepts { display: grid; gap: 16px; }
-.concepts dt { font-weight: 600; color: var(--accent); }
-.concepts dd { margin-top: 2px; }
+/* Concepts as a list of cards, each numbered in brass in its corner. */
+.concepts { display: grid; gap: 14px; counter-reset: concept; }
+.concepts > div {
+  position: relative; counter-increment: concept;
+  padding: 16px 52px 16px 18px;
+  background: var(--surface-2);
+  border: 1px solid var(--line); border-radius: var(--radius-s);
+}
+.concepts > div::after {
+  content: counter(concept, decimal-leading-zero);
+  position: absolute; top: 14px; right: 16px;
+  font-size: 13px; font-weight: 600; letter-spacing: 0.06em; color: var(--brass); font-variant-numeric: tabular-nums;
+}
+.concepts dt { font-weight: 600; color: var(--hue-text, var(--accent)); }
+.concepts dd { margin-top: 4px; }
+
+/* Section headings carry a short bar in the book's colour; sections are separated by a thin
+   brass rule with a small star in the middle. */
+.book-text > section > h2::after {
+  content: ''; display: block; width: 40px; height: 2px; margin-top: 10px; border-radius: 1px;
+  background: var(--hue, var(--brass));
+}
+.book-text > section + section { margin-top: 36px; }
+.book-text > section + section::before {
+  content: ''; display: block; height: 16px; max-width: 360px; margin: 0 auto 34px;
+  background:
+    var(--star-brass) center / 14px 14px no-repeat,
+    linear-gradient(90deg, transparent, rgb(var(--brass-rgb) / 0.5) 30%, rgb(var(--brass-rgb) / 0.5) 44%, transparent 44%, transparent 56%, rgb(var(--brass-rgb) / 0.5) 56%, rgb(var(--brass-rgb) / 0.5) 70%, transparent) center / 100% 1px no-repeat;
+}
+
+/* The title area takes a tint of the book's first tag colour, so pale covers get colour too. */
+.book::before {
+  content: ''; position: absolute; z-index: 0; pointer-events: none;
+  top: -40px; left: 50%; width: 100vw; height: 760px; transform: translateX(-50%);
+  background:
+    radial-gradient(ellipse 50% 60% at 32% 34%, rgb(var(--hue-rgb, var(--brass-rgb)) / calc(var(--ambience) * 0.42)), transparent 72%),
+    radial-gradient(ellipse 80% 70% at 50% 20%, rgb(var(--hue-rgb, var(--brass-rgb)) / calc(var(--ambience) * 0.14)), transparent 80%);
+}
 
 .recommendations li + li { margin-top: 0.6em; }
 
-.note { font-size: 15px; color: var(--text-muted); padding-top: 16px; border-top: 1px solid var(--line); }
+.note { font-size: 15px; color: var(--text-muted); }
 .note h2 { font-size: 16px; color: var(--text); margin-bottom: 6px; }
+.book-text > section.note > h2::after { display: none; }
 .note .i18n > div + div { margin-top: 8px; }
 
 .personal-note { padding: 18px 20px; background: var(--surface-2); border: 1px solid var(--line-strong); border-radius: var(--radius-s); }
@@ -584,4 +668,73 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
 @media (prefers-reduced-motion: reduce) {
   .amb-pool, .amb-twinkle, .lamp-spill, .hero-motes span, .book-glow-wrap { animation: none !important; }
   .amb-lantern { display: none; }
+}
+
+/* ===== Reading panel: a book page. Warm cream paper with a faint grain, lit from above like a page
+   under the lamp; dark warm text; headings, numbers and accents in the book's colour (ink tones).
+   The frame around it (hero, home page, navigation, table of contents, edges) stays dark. ===== */
+.book-text {
+  color: var(--ink);
+  background:
+    var(--paper-grain),
+    radial-gradient(ellipse 90% 340px at 50% 0, rgb(255 238 206 / 0.6), transparent 100%),
+    linear-gradient(180deg, #f6eedd, var(--paper) 420px, #efe4cd);
+  border: 1px solid var(--paper-line);
+  box-shadow: 0 14px 34px -16px rgba(0, 0, 0, 0.85);
+}
+@media (min-width: 720px) {
+  .book-text {
+    box-shadow: 0 36px 90px -34px rgba(0, 0, 0, 0.9), 0 0 160px -60px rgb(var(--brass-rgb) / 0.5);
+  }
+}
+.book-text > section > h2,
+.idea h3,
+.book-text .prose strong,
+.book-text .read-full h2 { color: var(--ink-strong); }
+.book-text > section > h2::after { background: var(--hue-ink, var(--brass-ink)); }
+.book-text > section + section::before {
+  background:
+    var(--star-ink) center / 14px 14px no-repeat,
+    linear-gradient(90deg, transparent, rgb(133 85 16 / 0.45) 30%, rgb(133 85 16 / 0.45) 44%, transparent 44%, transparent 56%, rgb(133 85 16 / 0.45) 56%, rgb(133 85 16 / 0.45) 70%, transparent) center / 100% 1px no-repeat;
+}
+.idea,
+.concepts > div,
+.personal-note {
+  background: rgb(255 255 255 / 0.4);
+  border-color: var(--paper-line);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.6), 0 8px 18px -12px rgb(80 50 20 / 0.4);
+}
+.idea-num { color: var(--hue-ink, var(--brass-ink)); }
+.concepts dt { color: var(--hue-ink, var(--moon-ink)); }
+.concepts > div::after { color: var(--brass-ink); }
+.note { color: var(--ink-muted); }
+.note h2 { color: var(--ink); }
+.read-full { background: var(--paper-2); border-color: var(--paper-line); border-top-color: var(--brass-ink); }
+.read-full-meta dt { color: var(--ink-muted); }
+.read-full-meta dd { color: var(--ink-strong); }
+.read-full-links a { color: var(--brass-ink); }
+.read-full-links a:hover,
+.sources a:hover,
+.prose a:hover { color: var(--ink-strong); }
+.sources a,
+.prose a { color: var(--moon-ink); }
+
+/* Edge-figure lamp: a very subtle, irregular flicker, scaled by --motion. On book pages it stops with
+   the rest of the background once the title area has scrolled away (amb-still). */
+@keyframes amb-flicker {
+  0%, 100% { opacity: 1; }
+  9% { opacity: calc(1 - var(--motion) * 0.12); }
+  14% { opacity: calc(1 - var(--motion) * 0.03); }
+  33% { opacity: calc(1 - var(--motion) * 0.08); }
+  41% { opacity: 1; }
+  62% { opacity: calc(1 - var(--motion) * 0.14); }
+  68% { opacity: calc(1 - var(--motion) * 0.05); }
+  84% { opacity: calc(1 - var(--motion) * 0.1); }
+}
+.motion-on .amb-figure::after { animation: amb-flicker 5.3s ease-in-out infinite; animation-play-state: paused; }
+.motion-on .amb-figure.right::after { animation-duration: 6.1s; animation-delay: -2.4s; }
+.motion-on .amb-figure.in-view::after { animation-play-state: running; }
+.motion-on.amb-still .amb-figure::after { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) {
+  .amb-figure::after { animation: none !important; }
 }
