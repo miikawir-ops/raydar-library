@@ -196,7 +196,42 @@ const description = 'Tietokirjojen ydinsanomat selkeinä tiivistelminä, suomeks
         location.href = pool[Math.floor(Math.random() * pool.length)].dataset.url;
       });
 
+      // Keep the collection view (filter, sort, search, scroll position) in this history entry, so
+      // returning from a book page (the back button or the "Collection" link, which uses
+      // history.back()) restores it even when the browser reloads the page instead of using its
+      // back-forward cache. Writes are debounced: browsers limit how often replaceState may run.
+      let saveTimer;
+      const saveView = () => {
+        try {
+          history.replaceState({ ...(history.state || {}), collection: { tag: activeTag, sort: sort.value, q: input.value, y: Math.round(scrollY) } }, '');
+        } catch (e) {}
+      };
+      const saveSoon = () => { clearTimeout(saveTimer); saveTimer = setTimeout(saveView, 250); };
+      addEventListener('scroll', saveSoon, { passive: true });
+      [sort, input, ...chips].forEach((el) => el.addEventListener('change', saveSoon));
+      chips.forEach((c) => c.addEventListener('click', saveSoon));
+      input.addEventListener('input', saveSoon);
+      addEventListener('pagehide', () => { clearTimeout(saveTimer); saveView(); });
+      grid.addEventListener('click', () => { clearTimeout(saveTimer); saveView(); }, true);
+
       render();
+
+      const saved = history.state && history.state.collection;
+      if (saved) {
+        if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+        if (saved.sort && comparators[saved.sort]) {
+          sort.value = saved.sort;
+          [...cards].sort(comparators[saved.sort]).forEach((c) => grid.append(c));
+        }
+        if (saved.tag && chips.some((c) => c.dataset.tagFilter === saved.tag)) setTag(saved.tag);
+        const restoreScroll = () => requestAnimationFrame(() => window.scrollTo({ top: saved.y || 0, behavior: 'instant' }));
+        if (saved.q) {
+          input.value = saved.q;
+          runSearch(saved.q).then(restoreScroll);
+        } else {
+          restoreScroll();
+        }
+      }
     </script>
   )}
 </Base>

@@ -84,6 +84,10 @@ const canonical = new URL(Astro.url.pathname, site.url).href;
     <slot name="hero" />
     <main id="content"><slot /></main>
     <footer class="footer">
+      <div class="footer-motto">
+        <span class="footer-divider" aria-hidden="true"></span>
+        <p lang="en">Make everything as simple as possible, but not simpler.</p>
+      </div>
       <div class="footer-inner">
         <p class="footer-note"><T fi="Tiivistelmät on tuotettu tekoälyn avulla ja voivat sisältää virheitä." en="Summaries are AI-generated and may contain errors." /></p>
         <p class="footer-links">
