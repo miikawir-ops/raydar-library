@@ -110,18 +110,20 @@
 [data-hue='wine'] { --hue: var(--wine); --hue-rgb: var(--wine-rgb); --hue-text: var(--wine-text); --hue-ink: var(--wine-ink); }
 [data-hue='moon'] { --hue: var(--moon); --hue-rgb: var(--moon-rgb); --hue-text: var(--accent); --hue-ink: var(--moon-ink); }
 
-/* Fallback cover colours, keyed by a book's first tag. --cover-line also tints the cover glow. */
-[data-cover-tag='talous'] { --cover-a: #12324f; --cover-b: #0a1a2e; --cover-line: #85b7eb; }
-[data-cover-tag='sijoittaminen'] { --cover-a: #123f3b; --cover-b: #08201f; --cover-line: #6fcfb4; }
-[data-cover-tag='liiketoiminta'] { --cover-a: #2b2f55; --cover-b: #12142c; --cover-line: #afa9ec; }
-[data-cover-tag='johtaminen'] { --cover-a: #4a2c1c; --cover-b: #21130c; --cover-line: #e8a66f; }
-[data-cover-tag='psykologia'] { --cover-a: #3c3489; --cover-b: #17123f; --cover-line: #afa9ec; }
-[data-cover-tag='paatoksenteko'] { --cover-a: #1d3a6e; --cover-b: #0c1a3a; --cover-line: #85b7eb; }
-[data-cover-tag='teknologia'] { --cover-a: #0f3e52; --cover-b: #071f2c; --cover-line: #6cc4e0; }
-[data-cover-tag='tekoaly'] { --cover-a: #40205f; --cover-b: #1a0830; --cover-line: #c79af0; }
-[data-cover-tag='tiede'] { --cover-a: #173f33; --cover-b: #0a2019; --cover-line: #8fd19e; }
-[data-cover-tag='historia'] { --cover-a: #4a3a18; --cover-b: #211a0a; --cover-line: #dcc27a; }
-[data-cover-tag='yhteiskunta'] { --cover-a: #4f2230; --cover-b: #260e16; --cover-line: #e88a9f; }
-[data-cover-tag='filosofia'] { --cover-a: #2f3548; --cover-b: #141824; --cover-line: #c8d4e8; }
-[data-cover-tag='terveys'] { --cover-a: #1a4640; --cover-b: #0b2320; --cover-line: #7fd6c2; }
-[data-cover-tag='tuottavuus'] { --cover-a: #4b3a12; --cover-b: #221a08; --cover-line: #efc35f; }
+/* Fallback cover colours, keyed by a book's first tag and following the tag colours (tags.ts hue):
+   a deep tone of the hue for the cover, the hue's text tone for the rule and author line.
+   --cover-line also tints the cover glow. */
+[data-cover-tag='talous'],
+[data-cover-tag='sijoittaminen'],
+[data-cover-tag='liiketoiminta'],
+[data-cover-tag='tuottavuus'] { --cover-a: #4b3a12; --cover-b: #221a08; --cover-line: #e4a45c; }
+[data-cover-tag='johtaminen'],
+[data-cover-tag='historia'],
+[data-cover-tag='yhteiskunta'] { --cover-a: #4f1c26; --cover-b: #250b11; --cover-line: #ee9ea6; }
+[data-cover-tag='psykologia'],
+[data-cover-tag='filosofia'],
+[data-cover-tag='terveys'] { --cover-a: #173f33; --cover-b: #0a2019; --cover-line: #7fd0ad; }
+[data-cover-tag='paatoksenteko'],
+[data-cover-tag='teknologia'],
+[data-cover-tag='tekoaly'],
+[data-cover-tag='tiede'] { --cover-a: #1d3a6e; --cover-b: #0c1a3a; --cover-line: #85b7eb; }

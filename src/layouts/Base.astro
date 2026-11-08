@@ -24,7 +24,7 @@ const pools = [
 const canonical = new URL(Astro.url.pathname, site.url).href;
 ---
 <!doctype html>
-<html lang="fi" data-lang="fi" data-panel={site.panel} data-title-fi={titleFi} data-title-en={titleEn}>
+<html lang="fi" data-lang="fi" data-title-fi={titleFi} data-title-en={titleEn}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -50,11 +50,6 @@ const canonical = new URL(Astro.url.pathname, site.url).href;
         } catch (e) {}
         document.documentElement.dataset.lang = lang;
         document.documentElement.lang = lang;
-        // Reading-panel variant comparison: ?panel=a or ?panel=b overrides site.panel.
-        try {
-          var panel = new URLSearchParams(location.search).get('panel');
-          if (panel === 'a' || panel === 'b') document.documentElement.dataset.panel = panel;
-        } catch (e) {}
       })();
     </script>
   </head>
