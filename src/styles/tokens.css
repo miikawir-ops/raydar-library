@@ -50,6 +50,38 @@
   --brass: #e4a45c;
   --brass-soft: rgba(228, 164, 92, 0.16);
 
+  /* Secondary palette from public/hero.webp. Emerald: the knitted blanket and the ivy (sampled
+     about #17272c, lifted and saturated). Wine: the leather armchair and book spines (sampled
+     about #5f1c07, shifted toward wine so it does not merge with brass). Each colour has a hue
+     for lines and tints, a light text tone for dark surfaces and a dark ink tone for paper. */
+  --emerald: #2f8a6c;
+  --emerald-rgb: 47 138 108;
+  --emerald-text: #7fd0ad;
+  --emerald-ink: #1d5e48;
+  --wine: #a53a46;
+  --wine-rgb: 165 58 70;
+  --wine-text: #ee9ea6;
+  --wine-ink: #862633;
+  --brass-rgb: 228 164 92;
+  --brass-ink: #855510;
+  --moon: #3d7fc0;
+  --moon-rgb: 61 127 192;
+  --moon-ink: #285a8e;
+
+  /* Reading panel on paper (variant B): warm cream lit by the lamp, dark warm text. */
+  --paper: #f3ead8;
+  --paper-2: #eadfc8;
+  --paper-line: rgba(110, 80, 40, 0.22);
+  --ink: #2c2117;
+  --ink-strong: #1c140c;
+  --ink-muted: #5a4835;
+  /* Paper grain for variant B: faint warm fractal noise, tiled. */
+  --paper-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.35 0 0 0 0 0.25 0 0 0 0 0.12 0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+
+  /* Four-point star ornament (core-message corners, section dividers): brass, and ink brass for paper. */
+  --star-brass: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='%23e4a45c' d='M8 0C8.6 5 11 7.4 16 8 11 8.6 8.6 11 8 16 7.4 11 5 8.6 0 8 5 7.4 7.4 5 8 0Z'/%3E%3C/svg%3E");
+  --star-ink: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='%23855510' d='M8 0C8.6 5 11 7.4 16 8 11 8.6 8.6 11 8 16 7.4 11 5 8.6 0 8 5 7.4 7.4 5 8 0Z'/%3E%3C/svg%3E");
+
   /* Lines */
   --line: rgba(133, 183, 235, 0.2);
   --line-strong: rgba(175, 169, 236, 0.35);
@@ -70,6 +102,13 @@
   --touch: 44px;
   --shadow-cover: 0 14px 34px rgba(0, 0, 0, 0.55);
 }
+
+/* Tag colours (src/data/tags.ts gives each tag a hue). --hue for lines and tints, --hue-text for
+   text on dark surfaces, --hue-ink for text on paper. */
+[data-hue='brass'] { --hue: var(--brass); --hue-rgb: var(--brass-rgb); --hue-text: var(--brass); --hue-ink: var(--brass-ink); }
+[data-hue='emerald'] { --hue: var(--emerald); --hue-rgb: var(--emerald-rgb); --hue-text: var(--emerald-text); --hue-ink: var(--emerald-ink); }
+[data-hue='wine'] { --hue: var(--wine); --hue-rgb: var(--wine-rgb); --hue-text: var(--wine-text); --hue-ink: var(--wine-ink); }
+[data-hue='moon'] { --hue: var(--moon); --hue-rgb: var(--moon-rgb); --hue-text: var(--accent); --hue-ink: var(--moon-ink); }
 
 /* Fallback cover colours, keyed by a book's first tag. --cover-line also tints the cover glow. */
 [data-cover-tag='talous'] { --cover-a: #12324f; --cover-b: #0a1a2e; --cover-line: #85b7eb; }
