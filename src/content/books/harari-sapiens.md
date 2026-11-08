@@ -8,7 +8,7 @@ olid: "OL26234146M"
 tags: [historia, yhteiskunta]
 added: 2026-11-08
 updated: 2026-11-08
-varmuus: kohtalainen
+varmuus: korkea
 lahteet:
   - nimi: "Wikipedia: Sapiens: A Brief History of Humankind"
     url: "https://en.wikipedia.org/wiki/Sapiens:_A_Brief_History_of_Humankind"
@@ -70,7 +70,7 @@ fi:
       selitys: |
         Harari huomauttaa, että onnellisuuden historiaa on tutkittu vähän, vaikka se on historian kannalta keskeinen kysymys. Hänen mukaansa ihmiset eivät nykyään ole merkittävästi onnellisempia kuin aiempina aikakausina, vaikka valtaa ja vaurautta on enemmän.
 
-        Kirja pitää onnellisuuden avaimia pitkälti biokemiallisen järjestelmämme hallussa. Tämä kytkeytyy kirjan laajempaan ajatukseen siitä, että lajin menestys ei automaattisesti tarkoita yksilöiden parempaa elämää.
+        Kirja pitää onnellisuuden avaimia pitkälti biokemiallisen järjestelmämme hallussa.
     - otsikko: "Sapiens voi pian tehdä itsensä tarpeettomaksi"
       selitys: |
         Kirja päättyy tulevaisuuteen. Harari pohtii, miten moderni teknologia voi pian lopettaa lajin nykyisessä muodossaan geenitekniikan, kuolemattomuuden tavoittelun ja ei-orgaanisen elämän kautta.
@@ -140,7 +140,7 @@ en:
       selitys: |
         Harari points out that the history of happiness has been little studied, even though it is a central question for history. In his view people today are not significantly happier than in earlier eras, despite having more power and wealth.
 
-        The book places the keys to happiness largely in our biochemical system. This ties into the book's wider point that the success of a species does not automatically mean better lives for individuals.
+        The book places the keys to happiness largely in our biochemical system.
     - otsikko: "Sapiens may soon make itself obsolete"
       selitys: |
         The book ends with the future. Harari considers how modern technology may soon end the species in its current form through genetic engineering, the pursuit of immortality and non-organic life.
