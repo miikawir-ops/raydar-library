@@ -29,7 +29,7 @@
   --amb-grain: calc(var(--ambience) * 0.05);
   --amb-edges: calc(var(--ambience) * 0.4);
   /* Edge figures (public/edge.webp, bookcases in the side margins on wide screens). */
-  --amb-figures: calc(var(--ambience) * 1);
+  --amb-figures: min(1, calc(var(--ambience) * 1.4));
   /* Cover glow at rest: small and tight; the full glow (x 3.6) shows only on hover and focus. */
   --amb-cover-glow: calc(var(--ambience) * 0.25);
 

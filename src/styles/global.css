@@ -104,18 +104,27 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
     mask-composite: intersect;
   }
   .amb-figure.right::before { transform: scaleX(-1); }
-  /* The lamp's warm halo, and its light reaching faintly to the edge of the content column. */
+  /* The wall lamp's warm radial glow (brass), centred on the flame. It stays inside the figure: the
+     element is exactly the figure's width (never wider than the margin) and its inner side fades out
+     like the image, so no light reaches the content column. Flickers subtly under --motion (below). */
   .amb-figure::after {
-    content: ''; position: absolute; top: 0; height: 100%; width: calc(100% + 240px);
+    content: ''; position: absolute; top: 0; height: 100%; width: 100%;
     --lamp-x: var(--lx);
     background:
-      radial-gradient(circle at var(--lamp-x) var(--ly), rgb(255 206 140 / 0.5) 0, rgb(var(--brass-rgb) / 0.22) calc(16 * var(--s)), transparent calc(64 * var(--s))),
-      radial-gradient(ellipse calc(100% - var(--lx)) calc(240 * var(--s)) at var(--lamp-x) var(--ly), rgb(var(--brass-rgb) / 0.12), transparent 100%);
-    -webkit-mask-image: var(--cut);
-    mask-image: var(--cut);
+      radial-gradient(circle at var(--lamp-x) var(--ly), rgb(255 214 156 / 0.8) 0, rgb(var(--brass-rgb) / 0.42) calc(14 * var(--s)), rgb(var(--brass-rgb) / 0.12) calc(46 * var(--s)), transparent calc(82 * var(--s))),
+      radial-gradient(ellipse calc(90 * var(--s)) calc(170 * var(--s)) at var(--lamp-x) var(--ly), rgb(var(--brass-rgb) / 0.16), transparent 100%);
+    -webkit-mask-image: linear-gradient(90deg, #000 80%, transparent 100%), var(--cut);
+    mask-image: linear-gradient(90deg, #000 80%, transparent 100%), var(--cut);
+    -webkit-mask-composite: source-in;
+    mask-composite: intersect;
   }
   .amb-figure.left::after { left: 0; }
-  .amb-figure.right::after { right: 0; --lamp-x: calc(100% - var(--lx)); }
+  /* The right figure is the mirror image: its inner (fading) side is on the left. */
+  .amb-figure.right::after {
+    right: 0; --lamp-x: calc(100% - var(--lx));
+    -webkit-mask-image: linear-gradient(270deg, #000 80%, transparent 100%), var(--cut);
+    mask-image: linear-gradient(270deg, #000 80%, transparent 100%), var(--cut);
+  }
 }
 .amb-twinkle { position: fixed; inset: 0; opacity: var(--amb-stars); }
 /* Stars stay in the side margins outside the content column, so a star never sits behind text
