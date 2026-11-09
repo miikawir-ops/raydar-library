@@ -61,6 +61,7 @@ tools/check-books.mjs       # sisällön tarkistus, ajetaan ennen buildia
 tools/toccheck.mjs          # sisällysluettelon aktiivisen kohdan tarkistus (npm run check:toc)
 public/hero.webp            # etusivun hero-kuva (Ray toimittaa)
 public/edge.webp            # reunafiguuri, kirjahylly 338 × 1024 (Ray toimittaa)
+public/fonts/               # itse hostattu Pinyon Script (Latin-subset woff2) ja sen OFL-lisenssi
 public/CNAME                # library.raydar.fi
 jono.md                     # lukujono: kirjat, joista halutaan tiivistelmä
 .claude/commands/kirja.md   # /kirja: uusi kirja (tai useampi ;-erotettuna)
@@ -363,7 +364,20 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
 
 - **Hero-alue:**
   - `public/hero.webp` täysleveänä, työpöydällä (≥ 720 px) vähintään 67vh ja mobiilissa noin 45 % näytön korkeudesta.
-  - Kuvan päällä sivun nimi, alaotsikko, yksi kuvauskappale ja hakukenttä vasemmassa reunassa, jossa kuvassa on rauhallinen alue.
+  - **Rakenne** vasemmassa reunassa, jossa kuvassa on rauhallinen alue:
+    1. sivun nimi (H1)
+    2. tunnuslause
+    3. yksi kuvauskappale
+    4. hakukenttä
+
+    Erillistä alaotsikkoa ei ole.
+  - **Tunnuslause** "Make everything as simple as possible, but not simpler." (`.hero-motto`):
+    - Sama molemmilla kielillä (`lang="en"`), messinkinä (`--brass`).
+    - Kaunokirjoitusfontti Pinyon Script (`--font-script`), itse hostattuna `public/fonts/`-kansiosta.
+      - Latin-subset woff2, noin 39 kt, `font-display: swap`, preload vain etusivulla.
+      - Ei Google Fonts -linkkiä eikä npm-pakettia, ja OFL-lisenssi on fontin vieressä.
+    - Fontti on määritelty sekä normal- että italic-tyylille, jotta Pinyon piirtyy sellaisenaan ja varafontti (serif) kursiivina.
+    - Koko seuraa tekstisaraketta (`clamp(28px, 9.4cqi, 38px)` työpöydällä, 28 px mobiilissa), joten lause pysyy kahdella rivillä kaikilla leveyksillä.
   - **Peittokerros työpöydällä** on vaakasuuntainen gradientti vain tekstin takana: tumma vasemmalla (noin 0,8 noin 30 %:iin asti), ja se haipuu kuvan pääaiheiden kohdalla (38–60 %). Oikea puoli näkyy lähes täydellä kirkkaudella. Mobiilissa teksti on koko leveydeltä kuvan päällä, joten peittokerros on tasainen. Jos tekstisarake tai hero-kuva muuttuu, mittaa tekstin kontrasti uudelleen myös 1920 px:llä, koska siellä tekstisarake ulottuu lähimmäs vaaleaa aluetta.
   - Kuva liukuu alaosassa gradientilla tummaan navyyn, josta korttiruudukko jatkuu saumattomasti. Työpöydällä liukuma alkaa vasta aivan alhaalta (alin noin 12 %).
   - `object-fit: cover`. Mobiilissa painopiste noin `object-position: 55% center`, jotta lamppu ja kirja näkyvät. Tarkista kuvakaappauksesta.
@@ -371,7 +385,9 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
   - Törmäyskielto koskee työpöytää (≥ 720 px). Mobiilissa teksti on kuvan päällä koko leveydeltä, ja peittokerros hoitaa luettavuuden.
   - Hero-alueen maksimileveys on `--hero-max` (1920 px, keskitetty), joten suuret näytöt käyttäytyvät kuten 1920 px. Sitä leveämmillä näytöillä hero-alueen reunat haipuvat sivun taustaan.
   - Kuvan alareuna ja peittokerros haipuvat läpinäkyviksi, joten sivun tausta ja ympäristövalo näkyvät rajan läpi, eikä saumaa synny. Tarkista sauma kuvakaappauksesta, jos tausta tai hero-kuva vaihtuu.
-  - Kuvaus on yksi kappale: "Tietokirjojen ydinsanomat suomeksi ja englanniksi – johdatuksia, jotka eivät korvaa kirjaa. Lämmin suositus: lue koko kirja." / "The core messages of non-fiction books in Finnish and English – introductions, not replacements. A warm recommendation: read the whole book."
+  - Kuvaus on yksi kappale luonnonvalkoisena (`--paper`): "Tietokirjojen ydinsanomat suomeksi ja englanniksi – johdatuksia, jotka eivät korvaa kirjaa. Lämmin suositus: lue koko kirja!" / "The core messages of non-fiction books in Finnish and English – introductions, not replacements. A warm recommendation: read the whole book!"
+    - Lopun suositus (`.hero-reco`) on messinkinä.
+    - Mobiilin tasainen peittokerros on otsikon alapuolella 0,84, jotta messinkinen suositus säilyttää AA-kontrastin lampun valon päällä. Mitattu 4,85:1, joten varaa on vähän: mittaa uudelleen, jos peittokerros tai hero-kuva muuttuu.
   - Pölyhiukkaset ovat laatikossa, jolla on hero-kuvan oma cover-geometria, joten niiden prosenttisijainnit ovat kuvan koordinaatteja ja ne pysyvät lampun valossa kaikilla hero-koon arvoilla.
 - **Kokoelman väliotsikko** ruudukon yläpuolella: messinkinen yläotsikko "Kokoelma" / "Collection" ja kirjamäärä. Tulosmäärä näytetään erikseen vain, kun haku tai suodatin on päällä.
 - **Korttiruudukko,** jossa jokaisella kortilla on kansi, otsikko, kirjoittaja, vuosi, tagit ja `ydin`.
@@ -422,13 +438,14 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
   - käsitekorttien numerot
   - kokoelman yläotsikko "Kokoelma"
   - kirjasivun paluupainikkeet ja logon hover-tila
+  - etusivun tunnuslause ja kuvauksen lopun suositus
   - "Lue koko kirja" -rivi `ydin`-laatikon alla sekä "Lue koko kirja" -osion yläreunus ja linkit
 - **Tausta:** sivun tausta on syvä navy (`--surface-0`) ja ympäristövalo. Hero-kuva näkyy vain etusivun hero-alueella. Muualla siitä on vain pieni sumea versio reunoilla, ja lukupalsta on aina umpinainen paperi.
 - **Liike vierittäessä:** kortit ja kirjasivun osiot saavat lyhyen fade-inin. Taustan hidas liike noudattaa yllä olevaa Liike-sääntöä, ja `prefers-reduced-motion` poistaa kaiken liikkeen.
 - **Mobiili ensin:** 16 px reunat, ei vaakavieritystä, kosketuskohteet vähintään 44 px. Leveät taustaefektit (lampun valo, kansihehku) leikataan `main`-elementissä (`overflow-x: clip`). Pelkkä `body`-leikkaus ei riitä, koska se siirtyy näkymälle, joka raportoi silloin leveämmän sivun.
 - **Kielivalinta FI/EN** koko sivulle. Valinta muistetaan localStoragessa, ja jokainen luku ja kirjoitus on try/catchissa. Oletuskieli on suomi.
 - **Liike:** animaatiot ovat hillittyjä, ja `prefers-reduced-motion` kunnioitetaan.
-- **Alatunnisteen tunnuslause** jokaisella sivulla: "Make everything as simple as possible, but not simpler."
+- **Alatunnisteen tunnuslause** kaikilla sivuilla paitsi etusivulla, jossa sama lause on herossa: "Make everything as simple as possible, but not simpler." Samaa lausetta ei näytetä kahdesti samalla sivulla.
   - Vain englanniksi ja sama molemmilla kielillä (`lang="en"`), kursiivilla ja hillitysti.
   - Ilman attribuutiota tai linkkiä.
   - Erotettu pienellä messinkisellä tähtijakajalla (sama kuin osiojakajissa).
