@@ -217,24 +217,17 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
 }
 .hero-content { position: relative; width: 100%; max-width: var(--page-max); margin: 0 auto; padding: 0 var(--gutter); }
 .hero-title { font-size: clamp(30px, 8vw, 52px); font-weight: 600; letter-spacing: -0.02em; }
-/* The motto in brass script (Petit Formal Script), as the closing line after the description. Declared
-   for both normal and italic style from the same file, so the motto can ask for italic: the script face
-   is used as drawn (no synthetic slant), and if it has not loaded the fallback serif shows in a real
-   italic. A short brass rule above keeps it apart from the brass recommendation that ends the
-   description. */
+/* The motto in brass Cormorant Garamond Italic (500), a quiet closing line after the description.
+   A real italic face, so no synthetic slant; the fallback is an italic serif. A short brass rule
+   above keeps it apart from the brass recommendation that ends the description. */
 @font-face {
-  font-family: 'Petit Formal Script'; font-style: normal; font-weight: 400; font-display: swap;
-  src: url('/fonts/petit-formal-script-latin.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-@font-face {
-  font-family: 'Petit Formal Script'; font-style: italic; font-weight: 400; font-display: swap;
-  src: url('/fonts/petit-formal-script-latin.woff2') format('woff2');
+  font-family: 'Cormorant Garamond'; font-style: italic; font-weight: 500; font-display: swap;
+  src: url('/fonts/cormorant-garamond-italic-latin.woff2') format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 .hero-motto {
-  margin-top: 16px; font-family: var(--font-script); font-style: italic; font-weight: 400;
-  font-size: 24px; line-height: 1.35; color: var(--brass);
+  margin-top: 16px; font-family: var(--font-motto); font-style: italic; font-weight: 500;
+  font-size: 19px; line-height: 1.4; letter-spacing: 0.01em; color: var(--brass);
   text-wrap: balance;
 }
 .hero-motto::before {
@@ -577,8 +570,8 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
     max-width: calc(max(37.6cqi, max(67vh, 400px) * 1.0026) - max(var(--gutter), (100cqi - var(--page-max)) / 2 + var(--gutter)) - 24px);
   }
   .hero-title { font-size: clamp(30px, 12cqi, 52px); text-wrap: balance; }
-  /* The motto follows the text column (narrowest at about 1920 px). */
-  .hero-motto { font-size: clamp(24px, 7cqi, 28px); }
+  /* The motto: a quiet closing line, 21 px on wide screens (19 px on phones). */
+  .hero-motto { font-size: 21px; }
   /* Shade only behind the text on the left; the image's subjects on the right stay at nearly full
      brightness. The text column ends where the subjects begin (about 37.6 % of the hero or more). */
   .hero-overlay {
