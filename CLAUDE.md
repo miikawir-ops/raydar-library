@@ -61,7 +61,7 @@ tools/check-books.mjs       # sisällön tarkistus, ajetaan ennen buildia
 tools/toccheck.mjs          # sisällysluettelon aktiivisen kohdan tarkistus (npm run check:toc)
 public/hero.webp            # etusivun hero-kuva (Ray toimittaa)
 public/edge.webp            # reunafiguuri, kirjahylly 338 × 1024 (Ray toimittaa)
-public/fonts/               # itse hostattu Pinyon Script (Latin-subset woff2) ja sen OFL-lisenssi
+public/fonts/               # itse hostattu Petit Formal Script (Latin-subset woff2) ja sen OFL-lisenssi
 public/CNAME                # library.raydar.fi
 jono.md                     # lukujono: kirjat, joista halutaan tiivistelmä
 .claude/commands/kirja.md   # /kirja: uusi kirja (tai useampi ;-erotettuna)
@@ -366,25 +366,22 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
   - `public/hero.webp` täysleveänä, työpöydällä (≥ 720 px) vähintään 67vh ja mobiilissa noin 45 % näytön korkeudesta.
   - **Rakenne** vasemmassa reunassa, jossa kuvassa on rauhallinen alue:
     1. sivun nimi (H1)
-    2. tunnuslause
-    3. yksi kuvauskappale
+    2. yksi kuvauskappale
+    3. tunnuslause
     4. hakukenttä
 
     Erillistä alaotsikkoa ei ole.
-  - **Tunnuslause** "Make everything as simple as possible, but not simpler." (`.hero-motto`):
+  - **Tunnuslause** "Make everything as simple as possible, but not simpler." (`.hero-motto`) kuvauksen jälkeen ennen hakua:
+    - Se on lopetus, ei alaotsikko, joten se ei ole otsikon alla.
     - Sama molemmilla kielillä (`lang="en"`), messinkinä (`--brass`).
-    - Kaunokirjoitusfontti Pinyon Script (`--font-script`), itse hostattuna `public/fonts/`-kansiosta.
-      - Latin-subset woff2, noin 39 kt, `font-display: swap`, preload vain etusivulla.
+    - Kuvauksen messinkisestä suosituksesta sen erottaa ohut lyhyt messinkiviiva (44 px) ja väli.
+    - Kaunokirjoitusfontti Petit Formal Script (`--font-script`), itse hostattuna `public/fonts/`-kansiosta.
+      - Latin-subset woff2, noin 28 kt, `font-display: swap`, preload vain etusivulla.
       - Ei Google Fonts -linkkiä eikä npm-pakettia, ja OFL-lisenssi on fontin vieressä.
-    - Fontti on määritelty sekä normal- että italic-tyylille, jotta Pinyon piirtyy sellaisenaan ja varafontti (serif) kursiivina.
-    - Koko seuraa tekstisaraketta (`clamp(28px, 9.4cqi, 38px)` työpöydällä, 28 px mobiilissa), joten lause pysyy kahdella rivillä kaikilla leveyksillä.
-  - **Peittokerros työpöydällä** on vaakasuuntainen gradientti vain tekstin takana: tumma vasemmalla (noin 0,8 noin 30 %:iin asti), ja se haipuu kuvan pääaiheiden kohdalla (38–60 %). Oikea puoli näkyy lähes täydellä kirkkaudella. Mobiilissa teksti on koko leveydeltä kuvan päällä, joten peittokerros on tasainen. Jos tekstisarake tai hero-kuva muuttuu, mittaa tekstin kontrasti uudelleen myös 1920 px:llä, koska siellä tekstisarake ulottuu lähimmäs vaaleaa aluetta.
-  - Kuva liukuu alaosassa gradientilla tummaan navyyn, josta korttiruudukko jatkuu saumattomasti. Työpöydällä liukuma alkaa vasta aivan alhaalta (alin noin 12 %).
-  - `object-fit: cover`. Mobiilissa painopiste noin `object-position: 55% center`, jotta lamppu ja kirja näkyvät. Tarkista kuvakaappauksesta.
-  - Työpöydällä (≥ 720 px) kuva on kiinnitetty vasempaan reunaan (`object-position: 0% center`), ja tekstisarakkeen leveys rajataan niin, ettei teksti osu kuvan pääaiheisiin (armillaaripallo, lamppu, kirja). Otsikko saa rivittyä kahdelle riville. Jos hero-kuva vaihtuu, mittaa aiheiden sijainti uudelleen.
-  - Törmäyskielto koskee työpöytää (≥ 720 px). Mobiilissa teksti on kuvan päällä koko leveydeltä, ja peittokerros hoitaa luettavuuden.
-  - Hero-alueen maksimileveys on `--hero-max` (1920 px, keskitetty), joten suuret näytöt käyttäytyvät kuten 1920 px. Sitä leveämmillä näytöillä hero-alueen reunat haipuvat sivun taustaan.
-  - Kuvan alareuna ja peittokerros haipuvat läpinäkyviksi, joten sivun tausta ja ympäristövalo näkyvät rajan läpi, eikä saumaa synny. Tarkista sauma kuvakaappauksesta, jos tausta tai hero-kuva vaihtuu.
+      - Valittu Pinyon Scriptin tilalle, koska se on selkeämpi lukea.
+    - Fontti on määritelty sekä normal- että italic-tyylille, jotta se piirtyy sellaisenaan ja varafontti (serif) kursiivina.
+    - Koko on 24 px mobiilissa ja `clamp(24px, 7cqi, 28px)` työpöydällä, joten lause on kahdella rivillä kaikilla leveyksillä.
+    - **Kontrastivara:** 24 px on WCAG:n suuren tekstin raja (3:1). Mobiilissa mitattu 4,34:1 lampun valon päällä, joten älä pienennä kokoa alle 24 px:n nostamatta kontrastia.
   - Kuvaus on yksi kappale luonnonvalkoisena (`--paper`): "Tietokirjojen ydinsanomat suomeksi ja englanniksi – johdatuksia, jotka eivät korvaa kirjaa. Lämmin suositus: lue koko kirja!" / "The core messages of non-fiction books in Finnish and English – introductions, not replacements. A warm recommendation: read the whole book!"
     - Lopun suositus (`.hero-reco`) on messinkinä.
     - Mobiilin tasainen peittokerros on otsikon alapuolella 0,84, jotta messinkinen suositus säilyttää AA-kontrastin lampun valon päällä. Mitattu 4,85:1, joten varaa on vähän: mittaa uudelleen, jos peittokerros tai hero-kuva muuttuu.
