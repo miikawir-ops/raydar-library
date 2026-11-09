@@ -68,9 +68,9 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
    - Height-scaled (--s px per image px) and shifted up a little (--shift), so the lamp sits a bit
      below the middle of the screen; the foggy bottom fades out.
    - Shows image x 136 onwards (the pillar, not the shelves). On a narrower margin the pillar's outer
-     edge is cropped instead (--p), so its inner edge stays left of the inner fade, which starts at 80 %
+     edge is cropped instead (--p), so its inner edge stays left of the inner fade, which starts at 86 %
      of the width: the mask never covers the pillar. --m uses 100vw and can be up to half a scrollbar
-     wider than the real margin, which the 0.7 factor absorbs.
+     wider than the real margin, which the 0.76 factor absorbs.
    - The arch in this image stands over the shelves (x 0-135), so with the shelves cropped out only
      its right end and the ivy show at the top; the lamp sits at about 55-58 % of the screen height.
    - Never reaches under the content column: width = the margin at most.
@@ -83,7 +83,7 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
     --shift: calc(var(--fh) * 0.07 + 20px);
     --m: calc((100vw - var(--page-max)) / 2);
     --w: min(var(--m), calc(202 * var(--s)));
-    --p: max(calc(136 * var(--s)), calc(232 * var(--s) - 0.7 * var(--w)));
+    --p: max(calc(136 * var(--s)), calc(232 * var(--s) - 0.76 * var(--w)));
     --lx: calc(189 * var(--s) - var(--p));
     --ly: calc(645 * var(--s) - var(--shift));
     --cut: linear-gradient(180deg, transparent var(--hero-cut, 0px), #000 calc(var(--hero-cut, 0px) + 240px));
@@ -98,8 +98,10 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
     background: url('/edge.webp') no-repeat;
     background-size: auto var(--fh);
     background-position: calc(-1 * var(--p)) calc(-1 * var(--shift));
-    -webkit-mask-image: linear-gradient(90deg, #000 80%, transparent 100%), linear-gradient(180deg, #000 calc(var(--fh) - var(--shift) - 220px), transparent calc(var(--fh) - var(--shift) - 40px)), var(--cut);
-    mask-image: linear-gradient(90deg, #000 80%, transparent 100%), linear-gradient(180deg, #000 calc(var(--fh) - var(--shift) - 220px), transparent calc(var(--fh) - var(--shift) - 40px)), var(--cut);
+    /* The source image is dark; brighten it so the carving and the lamp read clearly. */
+    filter: brightness(1.32) saturate(1.15);
+    -webkit-mask-image: linear-gradient(90deg, #000 86%, transparent 100%), linear-gradient(180deg, #000 calc(var(--fh) - var(--shift) - 220px), transparent calc(var(--fh) - var(--shift) - 40px)), var(--cut);
+    mask-image: linear-gradient(90deg, #000 86%, transparent 100%), linear-gradient(180deg, #000 calc(var(--fh) - var(--shift) - 220px), transparent calc(var(--fh) - var(--shift) - 40px)), var(--cut);
     -webkit-mask-composite: source-in, source-in;
     mask-composite: intersect;
   }
@@ -111,10 +113,10 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
     content: ''; position: absolute; top: 0; height: 100%; width: 100%;
     --lamp-x: var(--lx);
     background:
-      radial-gradient(circle at var(--lamp-x) var(--ly), rgb(255 214 156 / 0.8) 0, rgb(var(--brass-rgb) / 0.42) calc(14 * var(--s)), rgb(var(--brass-rgb) / 0.12) calc(46 * var(--s)), transparent calc(82 * var(--s))),
-      radial-gradient(ellipse calc(90 * var(--s)) calc(170 * var(--s)) at var(--lamp-x) var(--ly), rgb(var(--brass-rgb) / 0.16), transparent 100%);
-    -webkit-mask-image: linear-gradient(90deg, #000 80%, transparent 100%), var(--cut);
-    mask-image: linear-gradient(90deg, #000 80%, transparent 100%), var(--cut);
+      radial-gradient(circle at var(--lamp-x) var(--ly), rgb(255 220 165 / 0.95) 0, rgb(var(--brass-rgb) / 0.55) calc(16 * var(--s)), rgb(var(--brass-rgb) / 0.2) calc(56 * var(--s)), transparent calc(100 * var(--s))),
+      radial-gradient(ellipse calc(115 * var(--s)) calc(220 * var(--s)) at var(--lamp-x) var(--ly), rgb(var(--brass-rgb) / 0.24), transparent 100%);
+    -webkit-mask-image: linear-gradient(90deg, #000 86%, transparent 100%), var(--cut);
+    mask-image: linear-gradient(90deg, #000 86%, transparent 100%), var(--cut);
     -webkit-mask-composite: source-in;
     mask-composite: intersect;
   }
@@ -122,8 +124,8 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
   /* The right figure is the mirror image: its inner (fading) side is on the left. */
   .amb-figure.right::after {
     right: 0; --lamp-x: calc(100% - var(--lx));
-    -webkit-mask-image: linear-gradient(270deg, #000 80%, transparent 100%), var(--cut);
-    mask-image: linear-gradient(270deg, #000 80%, transparent 100%), var(--cut);
+    -webkit-mask-image: linear-gradient(270deg, #000 86%, transparent 100%), var(--cut);
+    mask-image: linear-gradient(270deg, #000 86%, transparent 100%), var(--cut);
   }
 }
 .amb-twinkle { position: fixed; inset: 0; opacity: var(--amb-stars); }
@@ -315,6 +317,10 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
 
 /* Cards */
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 20px; }
+/* With the narrower column at 1440-1700 px (tokens.css) the grid keeps its four columns. */
+@media (min-width: 1440px) and (max-width: 1700px) {
+  .grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
 
 .card {
   position: relative; overflow: hidden;

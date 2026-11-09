@@ -330,10 +330,11 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
     - **Rajaus:** näkyvissä on kaiverrettu pilari ja sen seinälamppu, ei hyllyjä.
       - Kuvan koordinaatit (338 × 1024): hyllyt x 0–135, pilari x 136–232, taivas x 232–338, lamppu (189, 645), sumu y > 900.
       - Lamppu on hieman keskikorkeuden alapuolella, ja alareunan sumu haipuu.
-      - Kapealla marginaalilla pilarin ulkoreunasta rajataan, ei sisäreunasta. Sisäreunan maski alkaa vasta pilarin jälkeen eikä koskaan peitä pilaria.
+      - Kapealla marginaalilla pilarin ulkoreunasta rajataan, ei sisäreunasta. Sisäreunan häivytys alkaa vasta 86 %:n kohdalla, pilarin jälkeen, eikä koskaan peitä pilaria.
+      - Kuvaa kirkastetaan suodattimella `brightness(1.32) saturate(1.15)`, koska lähdekuva on tumma.
       - Kuvan kaari on hyllyjen yläpuolella, joten hyllyttömässä rajauksessa siitä näkyy vain oikea pää ja muratti.
       - Jos kuva vaihtuu, mittaa koordinaatit uudelleen.
-    - **Lampun valo:** voimakas lämmin messinkinen radiaalihehku liekin kohdalla ja hyvin hienovarainen värähtely `--motion`-muuttujan alla.
+    - **Lampun valo:** voimakas ja melko laaja lämmin messinkinen radiaalihehku liekin kohdalla ja hyvin hienovarainen värähtely `--motion`-muuttujan alla.
       - Hehku pysyy figuurin sisällä: se on figuurin levyinen ja sen sisäreuna haipuu kuten kuva (oikealla peilattuna). Valo ei koskaan ulotu sisältösarakkeeseen.
       - Liekin kohta on tarkistettu 1440, 1920 ja 2560 px:llä. Kirjasivulla värähtely pysähtyy otsikkoalueen jälkeen (`amb-still`), ja reduced-motion poistaa sen.
     - Kiinteä taustakerros (`position: fixed`, `pointer-events: none`), korkeus 100vh + 80 px parallaksin liikevaraa varten.
@@ -429,6 +430,11 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
   - linkki Finnaan: `https://www.finna.fi/Search/Results?lookfor=<nimi kirjoittaja>&type=AllFields`, jossa nimi on suomennoksen nimi tai alkuteos ilman kaksoispisteitä ja pilkkuja. Muoto tarkistettiin: se palauttaa jokaisen kirjaston kirjan ensimmäisenä tuloksena. Tarkista uuden kirjan Finna-haku, jos nimessä on muita erikoismerkkejä.
   - linkki Open Libraryyn (`olid`), jos se on tiedossa
   - ei kauppa- eikä affiliate-linkkejä
+- **Sisältösarake 1 440–1 700 px:llä** on 1 120 px eikä 1 240 px (`--page-max`, `tokens.css`).
+  - Kavennus on 60 px kummaltakin puolelta. Näin reunafiguureille jää todellinen marginaali, noin 150–210 px, ja koko pilari näkyy.
+  - Korttiruudukko pidetään tällä välillä eksplisiittisesti neljässä sarakkeessa (`global.css`), ja kortit ovat noin 257 px leveitä.
+  - Kirjasivun oma sarake on 1 100 px, joten lukupalsta (832 px) ei muutu. Lukupalsta ei saa kaventua alle 760 px:n.
+  - 1 400–1 439 px:llä sarake on täysi, ja figuuri on vain noin 80 px:n kaistale.
 - **Leveät näytöt** säilyttävät saman sommittelun kuin 1440 px. Sisältö on saman levyisenä keskellä (kirjasivu `max-width` 1100 px, muu sisältö `--page-max` 1240 px), ja ylimääräinen tila jää reunakuville.
 - **Pitkillä sivuilla** sisällysluettelo on työpöydällä sivupalkissa ja pysyy näkyvissä vierittäessä. Mobiilissa se on avattava lista sivun alussa.
 - **Merkinnät:** varmuustaso pienenä merkintänä, ja arvioitu lukuaika valitulla kielellä.

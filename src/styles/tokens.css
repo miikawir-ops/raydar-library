@@ -108,6 +108,13 @@
   --shadow-cover: 0 1px 2px rgba(0, 0, 0, 0.6), 0 6px 12px -4px rgba(0, 0, 0, 0.7);
 }
 
+/* 1440-1700 px: the content column is 60 px narrower on each side (1120 instead of 1240), so the
+   edge figures get a real margin and show the whole pillar. The card grid stays at four columns
+   (global.css) and the book page's own 1100 px column, and so its reading column, is unchanged. */
+@media (min-width: 1440px) and (max-width: 1700px) {
+  :root { --page-max: 1120px; }
+}
+
 /* Tag colours (src/data/tags.ts gives each tag a hue). --hue for lines and tints, --hue-text for
    text on dark surfaces, --hue-ink for text on paper. */
 [data-hue='brass'] { --hue: var(--brass); --hue-rgb: var(--brass-rgb); --hue-text: var(--brass); --hue-ink: var(--brass-ink); }
