@@ -61,7 +61,7 @@ tools/check-books.mjs       # sisällön tarkistus, ajetaan ennen buildia
 tools/toccheck.mjs          # sisällysluettelon aktiivisen kohdan tarkistus (npm run check:toc)
 public/hero.webp            # etusivun hero-kuva (Ray toimittaa)
 public/edge.webp            # reunafiguuri, kirjahylly 338 × 1024 (Ray toimittaa)
-public/fonts/               # itse hostattu Petit Formal Script (Latin-subset woff2) ja sen OFL-lisenssi
+public/fonts/               # itse hostattu Cormorant Garamond Italic 500 (Latin-subset woff2) ja sen OFL-lisenssi
 public/CNAME                # library.raydar.fi
 jono.md                     # lukujono: kirjat, joista halutaan tiivistelmä
 .claude/commands/kirja.md   # /kirja: uusi kirja (tai useampi ;-erotettuna)
@@ -333,11 +333,13 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
       - Kapealla marginaalilla pilarin ulkoreunasta rajataan, ei sisäreunasta. Sisäreunan maski alkaa vasta pilarin jälkeen eikä koskaan peitä pilaria.
       - Kuvan kaari on hyllyjen yläpuolella, joten hyllyttömässä rajauksessa siitä näkyy vain oikea pää ja muratti.
       - Jos kuva vaihtuu, mittaa koordinaatit uudelleen.
-    - **Lampun valo:** lämmin hehku, joka heijastuu heikosti sisältösarakkeen reunaan, ja hyvin hienovarainen värähtely `--motion`-muuttujan alla. Kirjasivulla värähtely pysähtyy otsikkoalueen jälkeen (`amb-still`), ja reduced-motion poistaa sen.
+    - **Lampun valo:** voimakas lämmin messinkinen radiaalihehku liekin kohdalla ja hyvin hienovarainen värähtely `--motion`-muuttujan alla.
+      - Hehku pysyy figuurin sisällä: se on figuurin levyinen ja sen sisäreuna haipuu kuten kuva (oikealla peilattuna). Valo ei koskaan ulotu sisältösarakkeeseen.
+      - Liekin kohta on tarkistettu 1440, 1920 ja 2560 px:llä. Kirjasivulla värähtely pysähtyy otsikkoalueen jälkeen (`amb-still`), ja reduced-motion poistaa sen.
     - Kiinteä taustakerros (`position: fixed`, `pointer-events: none`), korkeus 100vh + 80 px parallaksin liikevaraa varten.
     - Näkyy vain, kun näkymä on vähintään 1400 px. Silloin sisältösarakkeen (`--page-max` 1240 px) ulkopuolelle jää vähintään 80 px. Kapeammalla figuuri olisi vain kapea suikale.
     - Leveys on enintään sisältösarakkeen ulkopuolinen tila, ja kuvan sisäreuna haipuu läpinäkyväksi (mask). Figuuri ei siis koskaan ulotu sisältösarakkeen tai tekstin alle.
-    - Peittävyys on `--amb-figures` (`--ambience`-muuttujan alla).
+    - **Peittävyys** on `--amb-figures` = `min(1, ambience × 1,4)`, eli oletuksella 0,98. Figuurit näkyvät selvästi, eivät haaleina.
     - Etusivulla figuurit haipuvat hero-alueella (`--hero-cut`, skripti), jotta hero-kuva ei kilpaile niiden kanssa. Tämä seuraa sisällön paikkaa eikä ole liikettä, joten se toimii myös reduced-motionilla.
     - Parallaksi on enintään 60 px × `--motion` koko sivun matkalla, ja reduced-motion poistaa sen.
   
@@ -349,7 +351,12 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
   - **pysäytetty näkymän ulkopuolella:** sivun mukana vierivät efektit (lampun valo, pölyhiukkaset, kansihehku) pyörivät vain näkyvissä ollessaan (IntersectionObserver ja `in-view`)
   - **kirjasivulla vain otsikkoalueella:** kun otsikkoalue on vieritetty pois, lammikot pysähtyvät paikoilleen (`amb-still`), ja lukupalsta pysyy täysin rauhallisena. Tähdet eivät tuiki kirjasivulla.
   - **kokonaan pois, kun `prefers-reduced-motion`:** ei animaatioita, lyhtyä eikä parallaksia
-- **Kansihehku:** kortissa ja kirjasivun otsikkoalueella kannen takana on sama kansikuva sumeana ja matalalla peittävyydellä, ja ilman kantta hehku tulee tagin väristä. Kirjasivulla hehku on kannen ympärillä ja haipuu ennen otsikkosaraketta, jotta tekstin kontrasti säilyy. Hehkussa käytetään M-kokoista kantta, jottei hidas L-kansi nouse kirjasivun LCP-elementiksi.
+- **Kansihehku:** kortissa ja kirjasivun otsikkoalueella kannen takana on sama kansikuva sumeana, ja ilman kantta hehku tulee tagin väristä.
+  - **Levossa pieni ja tiukka** (`--amb-cover-glow` = ambience × 0,25), jotta vaaleat kannet eivät tee korteista utuisia.
+  - **Täysi hehku** (× 3,6) vain korttien hover- ja focus-tilassa.
+  - **Varjo:** kannen alla on terävä, lyhyt varjo (`--shadow-cover`), joten kansi irtoaa taustasta selvästi ilman leveää hehkua.
+  - **Kirjasivulla** hehku on kannen ympärillä noin puolet aiemmasta säteestä ja haipuu ennen otsikkosaraketta, jotta tekstin kontrasti säilyy.
+  - Hehkussa käytetään M-kokoista kantta, jottei hidas L-kansi nouse kirjasivun LCP-elementiksi.
 
 ### Typografia ja luettavuus
 
@@ -375,13 +382,14 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
     - Se on lopetus, ei alaotsikko, joten se ei ole otsikon alla.
     - Sama molemmilla kielillä (`lang="en"`), messinkinä (`--brass`).
     - Kuvauksen messinkisestä suosituksesta sen erottaa ohut lyhyt messinkiviiva (44 px) ja väli.
-    - Kaunokirjoitusfontti Petit Formal Script (`--font-script`), itse hostattuna `public/fonts/`-kansiosta.
-      - Latin-subset woff2, noin 28 kt, `font-display: swap`, preload vain etusivulla.
+    - Hillitty motto: fontti Cormorant Garamond Italic, paino 500 (`--font-motto`), itse hostattuna `public/fonts/`-kansiosta.
+      - Latin-subset woff2, noin 24 kt, `font-display: swap`, preload vain etusivulla.
       - Ei Google Fonts -linkkiä eikä npm-pakettia, ja OFL-lisenssi on fontin vieressä.
-      - Valittu Pinyon Scriptin tilalle, koska se on selkeämpi lukea.
-    - Fontti on määritelty sekä normal- että italic-tyylille, jotta se piirtyy sellaisenaan ja varafontti (serif) kursiivina.
-    - Koko on 24 px mobiilissa ja `clamp(24px, 7cqi, 28px)` työpöydällä, joten lause on kahdella rivillä kaikilla leveyksillä.
-    - **Kontrastivara:** 24 px on WCAG:n suuren tekstin raja (3:1). Mobiilissa mitattu 4,34:1 lampun valon päällä, joten älä pienennä kokoa alle 24 px:n nostamatta kontrastia.
+      - Paino 500, koska Cormorantin ohut 400 on näin pienenä vaikealukuinen.
+      - Varafontti on kursiivi serif.
+      - Aiemmat kokeilut olivat Pinyon Script ja Petit Formal Script. Kaunokirjoitus dominoi liikaa.
+    - Koko on 19 px mobiilissa ja 21 px leveämmillä näytöillä.
+    - **Kontrasti:** alle 24 px se on tavallista tekstiä, joten vaatimus on 4,5:1. Mitattu: mobiilissa 4,78:1 ja työpöydällä noin 7,8–8,6:1. Mittaa uudelleen, jos koko, peittokerros tai hero-kuva muuttuu.
   - Kuvaus on yksi kappale luonnonvalkoisena (`--paper`): "Tietokirjojen ydinsanomat suomeksi ja englanniksi – johdatuksia, jotka eivät korvaa kirjaa. Lämmin suositus: lue koko kirja!" / "The core messages of non-fiction books in Finnish and English – introductions, not replacements. A warm recommendation: read the whole book!"
     - Lopun suositus (`.hero-reco`) on messinkinä.
     - Mobiilin tasainen peittokerros on otsikon alapuolella 0,84, jotta messinkinen suositus säilyttää AA-kontrastin lampun valon päällä. Mitattu 4,85:1, joten varaa on vähän: mittaa uudelleen, jos peittokerros tai hero-kuva muuttuu.
