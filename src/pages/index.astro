@@ -24,11 +24,11 @@ const description = 'Tietokirjojen ydinsanomat selkeinä tiivistelminä, suomeks
     <div class="hero-content">
       <div class="hero-text">
       <h1 class="hero-title" lang="en">Rime of the Ancient Mariner</h1>
-      <p class="hero-subtitle"><T fi="Kirjatiivistelmien kokoelma" en="A collection of book summaries" /></p>
-      <p class="hero-lead"><T
-        fi="Tietokirjojen ydinsanomat suomeksi ja englanniksi – johdatuksia, jotka eivät korvaa kirjaa. Lämmin suositus: lue koko kirja."
-        en="The core messages of non-fiction books in Finnish and English – introductions, not replacements. A warm recommendation: read the whole book."
-      /></p>
+      <p class="hero-motto" lang="en">Make everything as simple as possible, but not simpler.</p>
+      <p class="hero-lead">
+        <span class="i18n" lang="fi">Tietokirjojen ydinsanomat suomeksi ja englanniksi – johdatuksia, jotka eivät korvaa kirjaa. <span class="hero-reco">Lämmin suositus: lue koko kirja!</span></span>
+        <span class="i18n" lang="en">The core messages of non-fiction books in Finnish and English – introductions, not replacements. <span class="hero-reco">A warm recommendation: read the whole book!</span></span>
+      </p>
       {books.length > 0 && (
         <form class="search" role="search" data-search-form>
           <label class="visually-hidden" for="search-input"><T fi="Hae kirjastosta" en="Search the library" /></label>

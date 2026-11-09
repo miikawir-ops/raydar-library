@@ -41,6 +41,7 @@ const canonical = new URL(Astro.url.pathname, site.url).href;
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon.png" type="image/png" sizes="32x32" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    {home && <link rel="preload" href="/fonts/pinyon-script-latin.woff2" as="font" type="font/woff2" crossorigin />}
     <script is:inline>
       (function () {
         var lang = 'fi';
@@ -84,10 +85,13 @@ const canonical = new URL(Astro.url.pathname, site.url).href;
     <slot name="hero" />
     <main id="content"><slot /></main>
     <footer class="footer">
-      <div class="footer-motto">
-        <span class="footer-divider" aria-hidden="true"></span>
-        <p lang="en">Make everything as simple as possible, but not simpler.</p>
-      </div>
+      {/* The motto sits in the home hero, so the home page leaves it out here: never twice on one page. */}
+      {!home && (
+        <div class="footer-motto">
+          <span class="footer-divider" aria-hidden="true"></span>
+          <p lang="en">Make everything as simple as possible, but not simpler.</p>
+        </div>
+      )}
       <div class="footer-inner">
         <p class="footer-note"><T fi="Tiivistelmät on tuotettu tekoälyn avulla ja voivat sisältää virheitä." en="Summaries are AI-generated and may contain errors." /></p>
         <p class="footer-links">
