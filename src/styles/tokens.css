@@ -30,7 +30,8 @@
   --amb-edges: calc(var(--ambience) * 0.4);
   /* Edge figures (public/edge.webp, bookcases in the side margins on wide screens). */
   --amb-figures: calc(var(--ambience) * 1);
-  --amb-cover-glow: calc(var(--ambience) * 0.5);
+  /* Cover glow at rest: small and tight; the full glow (x 3.6) shows only on hover and focus. */
+  --amb-cover-glow: calc(var(--ambience) * 0.25);
 
   /* Text */
   --text-strong: #ffffff;
@@ -103,7 +104,8 @@
   --radius-s: 8px;
   --page-max: 1240px;
   --touch: 44px;
-  --shadow-cover: 0 14px 34px rgba(0, 0, 0, 0.55);
+  /* A sharp, short drop shadow, so the cover lifts clearly off the page (pale covers too). */
+  --shadow-cover: 0 1px 2px rgba(0, 0, 0, 0.6), 0 6px 12px -4px rgba(0, 0, 0, 0.7);
 }
 
 /* Tag colours (src/data/tags.ts gives each tag a hue). --hue for lines and tints, --hue-text for

@@ -328,17 +328,18 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
 .card-meta { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
 .card-ydin { font-size: 15px; line-height: 1.5; margin-top: 10px; grid-column: 1 / -1; }
 
-/* Cover glow: the cover itself, blurred, or the tag colour when there is no cover image. */
+/* Cover glow: the cover itself, blurred, or the tag colour when there is no cover image. Small and
+   tight at rest, so pale covers do not haze the card; full only on hover and focus. */
 .cover-glow {
   position: absolute; inset: 0; z-index: -1; pointer-events: none;
   opacity: var(--amb-cover-glow);
   background: radial-gradient(closest-side, var(--cover-line), transparent);
   transition: opacity 0.25s ease;
 }
-.cover-glow img { width: 100%; height: 100%; object-fit: cover; filter: blur(10px) saturate(1.2); }
+.cover-glow img { width: 100%; height: 100%; object-fit: cover; filter: blur(8px) saturate(1.2); }
 /* Phones: the cover sits next to the text, so the glow stays tight around it. */
-.card-stage .cover-glow { inset: 8px; }
-.card:hover .cover-glow, .card:focus-visible .cover-glow { opacity: min(1, calc(var(--amb-cover-glow) * 1.8)); }
+.card-stage .cover-glow { inset: 12px; }
+.card:hover .cover-glow, .card:focus-visible .cover-glow { opacity: min(1, calc(var(--amb-cover-glow) * 3.6)); }
 
 .tag-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 .tag {
@@ -398,13 +399,13 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
    into the navy before it reaches the title column, so the heading text keeps its contrast.
    --gx/--gy = cover centre in the glow box; the glow fades out between --core and --fade. */
 .cover-glow.book-glow {
-  --gx: 112px; --gy: 152px; --core: 20px; --fade: 120px;
+  --gx: 112px; --gy: 152px; --core: 12px; --fade: 72px;
   inset: auto; top: -80px; left: -60px; width: calc(100% + 120px); max-width: 900px; height: 520px; z-index: 0;
   background: radial-gradient(circle at var(--gx) var(--gy), var(--cover-line), transparent var(--fade));
   -webkit-mask-image: radial-gradient(circle at var(--gx) var(--gy), #000 var(--core), transparent var(--fade));
   mask-image: radial-gradient(circle at var(--gx) var(--gy), #000 var(--core), transparent var(--fade));
 }
-.cover-glow.book-glow img { filter: blur(40px) brightness(0.8) saturate(1.3); }
+.cover-glow.book-glow img { filter: blur(28px) brightness(0.8) saturate(1.3); }
 /* Wrapper for the title-area glow: the only part of a book page that moves (a slow breathing). */
 .book-glow-wrap { position: absolute; top: 0; left: 0; right: 0; height: 640px; z-index: 0; pointer-events: none; }
 .book-head, .ydin, .read-full-hint, .toc-mobile, .book-layout { position: relative; z-index: 1; }
@@ -588,9 +589,9 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
   .card { display: flex; flex-direction: column; padding: 0; gap: 0; }
   .card-stage { display: flex; justify-content: center; padding: 24px 0 20px; border-bottom: 1px solid var(--line); }
   .card-stage .cover { width: 148px; }
-  .card-stage .cover-glow { inset: 14px 20%; }
-  .card-stage .cover-glow img { filter: blur(18px) saturate(1.2); }
-  .cover-glow.book-glow { --gx: 186px; --gy: 269px; --core: 40px; --fade: 205px; }
+  .card-stage .cover-glow { inset: 20px 27%; }
+  .card-stage .cover-glow img { filter: blur(12px) saturate(1.2); }
+  .cover-glow.book-glow { --gx: 186px; --gy: 269px; --core: 24px; --fade: 120px; }
   .card-body { padding: 16px 18px 20px; }
   .hero-motes { display: block; }
   .read-full { grid-template-columns: 110px minmax(0, 1fr); gap: 26px; padding: 28px 30px; }
