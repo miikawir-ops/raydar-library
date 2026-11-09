@@ -1,8 +1,8 @@
-Copyright 2024 The Pinyon Project Authors (https://github.com/SorkinType/Pinyon)
+Copyright (c) 2011, Pablo Impallari (www.impallari.com|impallari@gmail.com), Copyright (c) 2011, Brenda Gallo. (gbrenda1987@gmail.com), Copyright (c) 2011, Rodrigo Fuenzalida (www.rfuenzalida.com|hello@rfuenzalida.com), with Reserved Font Name Petit Formal Script.
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
 This license is copied below, and is also available with a FAQ at:
-https://openfontlicense.org
+http://scripts.sil.org/OFL
 
 
 -----------------------------------------------------------
