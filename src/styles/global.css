@@ -236,7 +236,7 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
 }
 .hero-motto {
   margin-top: 16px; font-family: var(--font-motto); font-style: italic; font-weight: 500;
-  font-size: 19px; line-height: 1.4; letter-spacing: 0.01em; color: var(--brass);
+  font-size: 21px; line-height: 1.4; letter-spacing: 0.01em; color: var(--brass);
   text-wrap: balance;
 }
 .hero-motto::before {
@@ -580,8 +580,8 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
     max-width: calc(max(37.6cqi, max(67vh, 400px) * 1.0026) - max(var(--gutter), (100cqi - var(--page-max)) / 2 + var(--gutter)) - 24px);
   }
   .hero-title { font-size: clamp(30px, 12cqi, 52px); text-wrap: balance; }
-  /* The motto: a quiet closing line, 21 px on wide screens (19 px on phones). */
-  .hero-motto { font-size: 21px; }
+  /* The motto: a quiet closing line, 24 px on wide screens (21 px on phones). */
+  .hero-motto { font-size: 24px; }
   /* Shade only behind the text on the left; the image's subjects on the right stay at nearly full
      brightness. The text column ends where the subjects begin (about 37.6 % of the hero or more). */
   .hero-overlay {

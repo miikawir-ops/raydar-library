@@ -388,8 +388,11 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
       - Paino 500, koska Cormorantin ohut 400 on näin pienenä vaikealukuinen.
       - Varafontti on kursiivi serif.
       - Aiemmat kokeilut olivat Pinyon Script ja Petit Formal Script. Kaunokirjoitus dominoi liikaa.
-    - Koko on 19 px mobiilissa ja 21 px leveämmillä näytöillä.
-    - **Kontrasti:** alle 24 px se on tavallista tekstiä, joten vaatimus on 4,5:1. Mitattu: mobiilissa 4,78:1 ja työpöydällä noin 7,8–8,6:1. Mittaa uudelleen, jos koko, peittokerros tai hero-kuva muuttuu.
+    - Koko on 21 px mobiilissa ja 24 px leveämmillä näytöillä. Lause on 1–2 rivillä kaikilla leveyksillä.
+    - **Kontrasti:**
+      - Mobiilissa 21 px on tavallista tekstiä, joten vaatimus on 4,5:1. Mitattu 4,73:1, eli varaa on vähän.
+      - Työpöydällä 24 px on suurta tekstiä, joten vaatimus on 3:1. Mitattu 7,9–8,6:1.
+      - Mittaa uudelleen, jos koko, peittokerros tai hero-kuva muuttuu.
   - Kuvaus on yksi kappale luonnonvalkoisena (`--paper`): "Tietokirjojen ydinsanomat suomeksi ja englanniksi – johdatuksia, jotka eivät korvaa kirjaa. Lämmin suositus: lue koko kirja!" / "The core messages of non-fiction books in Finnish and English – introductions, not replacements. A warm recommendation: read the whole book!"
     - Lopun suositus (`.hero-reco`) on messinkinä.
     - Mobiilin tasainen peittokerros on otsikon alapuolella 0,84, jotta messinkinen suositus säilyttää AA-kontrastin lampun valon päällä. Mitattu 4,85:1, joten varaa on vähän: mittaa uudelleen, jos peittokerros tai hero-kuva muuttuu.
