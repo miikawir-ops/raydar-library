@@ -415,13 +415,14 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
   0. paluupainike "← Kokoelma" / "← Collection" sisällön vasemmassa yläkulmassa ennen kantta
   1. kansi ja perustiedot
   2. `ydin` korostettuna ja sen alla pieni rivi, joka linkittää "Lue koko kirja" -osioon: "Johdatus teokseen, ei korvaa kirjaa. Lue koko kirja ↓" / "An introduction, not a replacement. Read the full book ↓"
-  3. sisällysluettelo ankkurilinkein
-  4. yleiskuva, keskeiset viestit (ideat), käsitteet, kirjoittaja, kirjan suositukset (jos on), huomio (jos on, pienellä)
-  5. oma huomio (jos täytetty)
-  6. liittyvät kirjat
-  7. Lue koko kirja (ks. alla)
-  8. lähteet
-  9. paluupainike "← Takaisin kokoelmaan" / "← Back to the collection" paperin alapuolella
+  3. Kuuntele-ohjaimet (ks. alla)
+  4. sisällysluettelo ankkurilinkein
+  5. yleiskuva, keskeiset viestit (ideat), käsitteet, kirjoittaja, kirjan suositukset (jos on), huomio (jos on, pienellä)
+  6. oma huomio (jos täytetty)
+  7. liittyvät kirjat
+  8. Lue koko kirja (ks. alla)
+  9. lähteet
+  10. paluupainike "← Takaisin kokoelmaan" / "← Back to the collection" paperin alapuolella
 - **Paluu kokoelmaan:**
   - Molemmat paluupainikkeet ovat tummalla kehyksellä, eivät paperilla. Niissä on messinkinen ääriviiva, hover-tila ja vähintään 44 px korkeus.
   - Painikkeet ovat tavallisia linkkejä etusivulle, joten ne toimivat ilman JavaScriptiä.
@@ -444,6 +445,20 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
 - **Pitkillä sivuilla** sisällysluettelo on työpöydällä sivupalkissa ja pysyy näkyvissä vierittäessä. Mobiilissa se on avattava lista sivun alussa.
 - **Merkinnät:** varmuustaso pienenä merkintänä, ja arvioitu lukuaika valitulla kielellä.
 - **Lukuedistyminen** ohuena palkkina ylhäällä.
+- **Kuuntele** / **Listen** lukee tiivistelmän ääneen selaimen puhesynteesillä (Web Speech API). Ei riippuvuuksia eikä äänitiedostoja.
+  - **Ohjaimet** ovat tummalla kehyksellä `ydin`-laatikon alla, messinkisinä pillereinä kuten paluupainikkeet (`.listen-btn`, vähintään 44 px):
+    - toisto/tauko: `aria-pressed` kertoo, onko luenta käynnissä, ja kuvake vaihtuu
+    - pysäytys (näkyy vain luennan aikana)
+    - nopeus 0,9 / 1 / 1,2
+  - **Luettavat osiot** valitulla kielellä, tässä järjestyksessä: otsikko ja kirjoittaja, `ydin`, yleiskuva, keskeiset viestit (numero, otsikko ja selitys), käsitteet, kirjoittaja, suositukset ja huomio (jos on). Osioiden otsikot luetaan. Sisällysluetteloa, omaa huomiota, liittyviä kirjoja, "Lue koko kirja" -osiota, lähteitä, linkkejä tai painikkeita ei lueta.
+  - **Äänen valinta:** vain sivun kielen ääni. Pisteytys:
+    - +2, jos kieli on tarkalleen fi-FI (suomi) tai en-US/en-GB (englanti)
+    - +4, jos äänen nimessä on Natural, Online tai Neural
+
+    Jos kielelle ei ole ääntä, painikkeen tilalla on ilmoitus "Laitteessasi ei ole suomenkielistä puheääntä." / "Your device has no English speech voice.". Jos selain ei tue Web Speech API:a, mitään ei näytetä.
+  - **Pilkkominen:** teksti puhutaan enintään 220 merkin lauseryhminä, koska Chrome katkaisee pitkät lausumat. Tauko peruu luennan ja toistaa nykyisen lauseryhmän alusta, koska `speechSynthesis.pause()` on epäluotettava.
+  - **Korostus:** parhaillaan luettava kappale korostetaan vain lukupalstalla hillityllä messinkisävyllä (`.is-speaking`). Kontrasti on mitattu pikseleistä, ja tiukin tulos on 4,71:1 (`--brass-ink`-käsite). Otsikkoa ja `ydin`-laatikkoa ei korosteta. Näkymä vieritetään vain, kun lukija seuraa luentaa (edellinen kappale oli näkyvissä) ja uusi kappale on poistumassa näkymästä.
+  - **Pysähtyminen:** kielen vaihto ja sivulta poistuminen (`pagehide`) pysäyttävät luennan.
 
 ### Yleistä
 
@@ -456,7 +471,7 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
   - osioiden välinen koristejakaja (ohut viiva ja pieni tähti)
   - käsitekorttien numerot
   - kokoelman yläotsikko "Kokoelma"
-  - kirjasivun paluupainikkeet ja logon hover-tila
+  - kirjasivun paluupainikkeet, Kuuntele-ohjaimet ja luettavan kappaleen korostus sekä logon hover-tila
   - etusivun tunnuslause ja kuvauksen lopun suositus
   - "Lue koko kirja" -rivi `ydin`-laatikon alla sekä "Lue koko kirja" -osion yläreunus ja linkit
 - **Tausta:** sivun tausta on syvä navy (`--surface-0`) ja ympäristövalo. Hero-kuva näkyy vain etusivun hero-alueella. Muualla siitä on vain pieni sumea versio reunoilla, ja lukupalsta on aina umpinainen paperi.
