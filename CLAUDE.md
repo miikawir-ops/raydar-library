@@ -450,13 +450,19 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
     - Vasemmalla pyöreä messinkinen toistopainike (52 px). Kuvake vaihtuu toiston ja tauon välillä, ja `aria-pressed` kertoo, onko luenta käynnissä.
     - Vieressä teksti "Kuuntele tiivistelmä" / "Listen to the summary" ja arvioitu kuunteluaika ("noin X min" / "about X min").
     - Oikealla nopeudet 0,9 / 1 / 1,2 tiiviinä segmented controlina. Jokainen segmentti on silti 44 px:n kosketuskohde.
-    - Pysäytys (pyöreä messinkiääriviiva, 44 px) näkyy vain luennan aikana tai tauolla.
+    - Pysäytys (pyöreä messinkiääriviiva, 44 px) näkyy vain luennan aikana tai tauolla. Levossa se on näkymätön, mutta sen tila on varattu.
     - Toiston aikana:
       - kortin alareunassa ohut messinkinen edistymispalkki (luetut merkit / kaikki merkit)
       - kuunteluajan tilalla parhaillaan luettavan osion nimi ja järjestysnumero, esimerkiksi "Keskeiset viestit · 3/9". Numero laskee ideat, käsitteet ja suositukset, muissa osioissa kappaleet. Otsikko ja `ydin` ovat "Ydinsanoma".
-      - toistopainikkeen vieressä hillitty ääniaalto (neljä palkkia), jonka amplitudi skaalautuu `--motion`-muuttujan mukaan ja jonka reduced-motion pysäyttää
+      - toistopainikkeen vieressä hillitty ääniaalto (neljä palkkia), jonka amplitudi skaalautuu `--motion`-muuttujan mukaan ja jonka reduced-motion pysäyttää. Levossa palkit ovat paikallaan ja himmeinä.
     - `aria-live="polite"` (näkymätön) ilmoittaa vain uuden osion nimen, ei jokaista kappaletta.
-    - Mobiilissa (alle 560 px) nopeudet siirtyvät toiselle riville.
+    - Mobiilissa (alle 560 px) nopeudet ovat aina omalla rivillään. Rivinvaihto on eksplisiittinen (`.player-break`) eikä jää jäljelle jäävän leveyden varaan, koska muuten tekstisarake kutistui englanniksi noin 31 px:iin.
+  - **Ei asettelun siirtymiä (tavoite CLS 0 kirjasivuilla):**
+    - Kortin tila varataan ennen ensimmäistä piirtoa pienellä inline-skriptillä heti kortin jälkeen, mutta vain jos selain tukee Web Speech API:a. Ilman tukea (tai ilman JavaScriptiä) tilaa ei varata.
+    - Kunnes äänet ovat latautuneet (`.is-pending`), kortin kehys näkyy ja sen sisältö on näkymätön (`visibility: hidden`, ei pois asettelusta).
+    - Jos kielelle ei ole ääntä (`.no-voice`), ilmoitus tulee samaan kehykseen absoluuttisesti, joten korkeus ei muutu.
+    - Kortin sisällä mikään ei muuta mittojaan luennan aikana: osion nimi on yhdellä rivillä (katkaistaan tarvittaessa), ääniaalto pitää tilansa myös levossa (himmeänä), ja pysäytyspainike pitää tilansa myös levossa (näkymättömänä, pois sarkainjärjestyksestä). Muuten luennan luonnollinen loppuminen ilman käyttäjän syötettä siirtäisi asettelua.
+    - Mitattu: CLS 0 latauksessa ja luennan aikana 1440, 390 ja 320 px:llä suomeksi ja englanniksi sekä simuloiduilla hitailla äänillä, ilman ääniä ja ilman API:a.
   - **Kuunteluaika** = luettavan tekstin sanamäärä / (150 sanaa/min × valittu nopeus), pyöristettynä, vähintään 1 min. Se lasketaan selaimessa samasta lukujonosta, jonka puhesynteesi lukee, ja päivittyy nopeutta vaihdettaessa. Se on eri luku kuin otsikkoalueen lukuaika (200 sanaa/min).
   - **Minisoitin** (`.mini-player`) näkyy, kun luenta on käynnissä tai tauolla ja soitinkortti on vieritetty pois näkyvistä (IntersectionObserver).
     - Sisältö: toisto/tauko, osion nimi ja pysäytys.
