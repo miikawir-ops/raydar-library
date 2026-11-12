@@ -35,3 +35,7 @@ export function readingMinutes(lang: BookData['fi']): number {
 
 export const byNewest = (a: Book, b: Book) =>
   b.data.added.getTime() - a.data.added.getTime() || a.data.title.localeCompare(b.data.title);
+
+// Books with any of these tags lead the home page grid in every sort order.
+export const FEATURED_TAGS: readonly string[] = ['tekoaly', 'psykologia'];
+export const isFeatured = (book: Book) => book.data.tags.some((t) => FEATURED_TAGS.includes(t));

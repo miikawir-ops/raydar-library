@@ -5,9 +5,9 @@ import Base from '../layouts/Base.astro';
 import BookCard from '../components/BookCard.astro';
 import T from '../components/T.astro';
 import { tags, type TagId } from '../data/tags';
-import { byNewest } from '../lib/book';
+import { byNewest, isFeatured } from '../lib/book';
 
-const books = (await getCollection('books')).sort(byNewest);
+const books = (await getCollection('books')).sort((a, b) => Number(isFeatured(b)) - Number(isFeatured(a)) || byNewest(a, b));
 const usedTags = (Object.keys(tags) as TagId[]).filter((t) => books.some((b) => b.data.tags.includes(t)));
 const hasHeroImage = existsSync('public/hero.webp');
 const description = 'Tietokirjojen ydinsanomat selkeinä tiivistelminä, suomeksi ja englanniksi.';
@@ -140,9 +140,13 @@ const description = 'Tietokirjojen ydinsanomat selkeinä tiivistelminä, suomeks
         year: (a, b) => Number(b.dataset.year) - Number(a.dataset.year),
       };
 
-      sort.addEventListener('change', () => {
-        [...cards].sort(comparators[sort.value]).forEach((c) => grid.append(c));
-      });
+      // Featured books (data-featured="1") stay first in every order; the chosen order applies within each group.
+      const sortCards = (key) =>
+        [...cards]
+          .sort((a, b) => Number(b.dataset.featured) - Number(a.dataset.featured) || comparators[key](a, b))
+          .forEach((c) => grid.append(c));
+
+      sort.addEventListener('change', () => sortCards(sort.value));
 
       function setTag(tag) {
         activeTag = tag;
@@ -221,7 +225,7 @@ const description = 'Tietokirjojen ydinsanomat selkeinä tiivistelminä, suomeks
         if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
         if (saved.sort && comparators[saved.sort]) {
           sort.value = saved.sort;
-          [...cards].sort(comparators[saved.sort]).forEach((c) => grid.append(c));
+          sortCards(saved.sort);
         }
         if (saved.tag && chips.some((c) => c.dataset.tagFilter === saved.tag)) setTag(saved.tag);
         const restoreScroll = () => requestAnimationFrame(() => window.scrollTo({ top: saved.y || 0, behavior: 'instant' }));

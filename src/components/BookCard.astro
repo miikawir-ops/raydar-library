@@ -3,7 +3,7 @@ import Cover from './Cover.astro';
 import CoverGlow from './CoverGlow.astro';
 import T from './T.astro';
 import { tags } from '../data/tags';
-import { authorSortKey, mdInline, type Book } from '../lib/book';
+import { authorSortKey, isFeatured, mdInline, type Book } from '../lib/book';
 
 const { book } = Astro.props as { book: Book };
 const d = book.data;
@@ -17,6 +17,7 @@ const d = book.data;
   data-added={d.added.toISOString()}
   data-year={d.year}
   data-author={authorSortKey(d.author)}
+  data-featured={isFeatured(book) ? '1' : '0'}
   data-hue={tags[d.tags[0]].hue}
 >
   <div class="card-stage"><CoverGlow book={d} size="M" /><Cover book={d} size="M" /></div>
