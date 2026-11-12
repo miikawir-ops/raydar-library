@@ -88,6 +88,36 @@ const titleEn = `${d.title} | RayDar Library`;
       <a href="#lue-koko-kirja"><T fi="Johdatus teokseen, ei korvaa kirjaa. Lue koko kirja ↓" en="An introduction, not a replacement. Read the full book ↓" /></a>
     </p>
 
+    <!-- Listen: the browser's own speech synthesis reads the summary aloud. Hidden until the script
+         below finds the Web Speech API; without it (or without JavaScript) nothing is shown. -->
+    <div class="listen" data-listen data-pagefind-ignore hidden
+      data-title-fi={d.title_fi ?? d.title} data-title-en={d.title} data-author={d.author}>
+      <div class="listen-controls" data-listen-controls hidden>
+        <button type="button" class="listen-btn" data-listen-play aria-pressed="false"
+          data-label-fi="Kuuntele tiivistelmä" data-label-en="Listen to the summary" aria-label="Kuuntele tiivistelmä">
+          <svg class="icon-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z" fill="currentColor" /></svg>
+          <svg class="icon-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5h3v11H4zM9 2.5h3v11H9z" fill="currentColor" /></svg>
+          <T fi="Kuuntele" en="Listen" />
+        </button>
+        <button type="button" class="listen-btn" data-listen-stop hidden
+          data-label-fi="Pysäytä luenta" data-label-en="Stop reading" aria-label="Pysäytä luenta">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 3.5h9v9h-9z" fill="currentColor" /></svg>
+          <T fi="Pysäytä" en="Stop" />
+        </button>
+        <div class="listen-rate" role="group" data-label-fi="Puhenopeus" data-label-en="Speech rate" aria-label="Puhenopeus">
+          <button type="button" class="listen-btn listen-rate-btn" data-rate="0.9" aria-pressed="false"
+            data-label-fi="Nopeus 0,9" data-label-en="Rate 0.9" aria-label="Nopeus 0,9"><T fi="0,9×" en="0.9×" /></button>
+          <button type="button" class="listen-btn listen-rate-btn" data-rate="1" aria-pressed="true"
+            data-label-fi="Nopeus 1" data-label-en="Rate 1" aria-label="Nopeus 1">1×</button>
+          <button type="button" class="listen-btn listen-rate-btn" data-rate="1.2" aria-pressed="false"
+            data-label-fi="Nopeus 1,2" data-label-en="Rate 1.2" aria-label="Nopeus 1,2"><T fi="1,2×" en="1.2×" /></button>
+        </div>
+      </div>
+      <p class="listen-note" data-listen-note hidden>
+        <T fi="Laitteessasi ei ole suomenkielistä puheääntä." en="Your device has no English speech voice." />
+      </p>
+    </div>
+
     <details class="toc-mobile" data-pagefind-ignore>
       <summary><T fi="Sisällys" en="Contents" /></summary>
       <ul>{toc.map((item) => <li><a href={`#${item.id}`}><T fi={item.fi} en={item.en} /></a></li>)}</ul>
@@ -278,6 +308,232 @@ const titleEn = `${d.title} | RayDar Library`;
       document.addEventListener('transitionend', function (e) {
         if (e.propertyName === 'transform' && e.target.matches && e.target.matches('.book-text > section')) request();
       });
+    })();
+  </script>
+
+  <script is:inline>
+    // Listen: reads the summary aloud in the page language with the browser's speech synthesis.
+    (function () {
+      var box = document.querySelector('[data-listen]');
+      var synth = window.speechSynthesis;
+      if (!box || !synth || typeof window.SpeechSynthesisUtterance !== 'function') return;
+
+      var root = document.documentElement;
+      var controls = box.querySelector('[data-listen-controls]');
+      var note = box.querySelector('[data-listen-note]');
+      var playBtn = box.querySelector('[data-listen-play]');
+      var stopBtn = box.querySelector('[data-listen-stop]');
+      var rateBtns = box.querySelectorAll('[data-rate]');
+      var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      // Sections read aloud, in page order; everything else (contents, sources, links) is skipped.
+      var SECTIONS = ['yleiskuva', 'viestit', 'kasitteet', 'kirjoittaja', 'suositukset', 'huomio'];
+      // Chrome cuts long utterances short, so text is spoken a sentence group at a time.
+      var MAX_CHARS = 220;
+
+      var state = 'idle'; // idle | playing | paused
+      var queue = [];
+      var pos = 0;
+      var gen = 0; // bumped on every pause/stop/restart, so events from cancelled utterances are ignored
+      var rate = 1;
+      var voice = null;
+      var current = null; // keeps the playing utterance referenced (Chrome may drop its events otherwise)
+      var marked = null;
+      var lastEl = null;
+      var voicesTimedOut = false;
+
+      var lang = function () { return root.dataset.lang === 'en' ? 'en' : 'fi'; };
+
+      // Best voice for the language: the right language first (fi-FI; en-US or en-GB), then the
+      // higher-quality voices whose names say Natural, Online or Neural.
+      function pickVoice(l) {
+        var best = null;
+        var bestScore = -1;
+        synth.getVoices().forEach(function (v) {
+          var vl = (v.lang || '').replace('_', '-').toLowerCase();
+          if (vl.slice(0, 2) !== l) return;
+          var score = 0;
+          if (l === 'fi' ? vl === 'fi-fi' : vl === 'en-us' || vl === 'en-gb') score += 2;
+          if (/natural|online|neural/i.test(v.name)) score += 4;
+          if (score > bestScore) { best = v; bestScore = score; }
+        });
+        return best;
+      }
+
+      function refresh() {
+        voice = pickVoice(lang());
+        var known = synth.getVoices().length > 0 || voicesTimedOut;
+        box.hidden = !voice && !known;
+        controls.hidden = !voice;
+        note.hidden = !!voice || !known;
+      }
+
+      var text = function (el) { return (el.textContent || '').replace(/\s+/g, ' ').trim(); };
+      var sentence = function (t) { return /[.!?…:]$/.test(t) ? t : t + '.'; };
+
+      function split(t) {
+        var parts = t.match(/[^.!?…]+(?:[.!?…]+["”’)]*|$)\s*/g) || [t];
+        var out = [];
+        var buf = '';
+        parts.forEach(function (p) {
+          while (p.length > MAX_CHARS) {
+            var cut = p.lastIndexOf(', ', MAX_CHARS);
+            if (cut < MAX_CHARS / 2) cut = p.lastIndexOf(' ', MAX_CHARS);
+            if (cut < 1) cut = MAX_CHARS;
+            if (buf) { out.push(buf); buf = ''; }
+            out.push(p.slice(0, cut + 1));
+            p = p.slice(cut + 1);
+          }
+          if ((buf + p).length > MAX_CHARS && buf) { out.push(buf); buf = ''; }
+          buf += p;
+        });
+        if (buf.trim()) out.push(buf);
+        return out.map(function (s) { return s.trim(); }).filter(Boolean);
+      }
+
+      function add(el, t) {
+        if (!t) return;
+        split(t).forEach(function (s) { queue.push({ el: el, text: s }); });
+      }
+
+      function build() {
+        var l = lang();
+        queue = [];
+        add(document.querySelector('.book-title'), sentence(box.dataset['title' + (l === 'en' ? 'En' : 'Fi')]) + ' ' + sentence(box.dataset.author));
+        var ydin = document.querySelector('.ydin .i18n[lang="' + l + '"]');
+        if (ydin) add(document.querySelector('.ydin'), text(ydin));
+        SECTIONS.forEach(function (id) {
+          var section = document.getElementById(id);
+          if (!section) return;
+          var h2 = section.querySelector('h2 .i18n[lang="' + l + '"]');
+          if (h2) add(section.querySelector('h2'), sentence(text(h2)));
+          section.querySelectorAll('.i18n[lang="' + l + '"]').forEach(function (container) {
+            if (container.closest('h2')) return;
+            var blocks = Array.prototype.filter.call(container.querySelectorAll('h3, p, dt, li'), function (el) {
+              return !el.querySelector('h3, p, dt, li');
+            });
+            blocks.forEach(function (el) {
+              var t = text(el);
+              if (el.tagName === 'H3') {
+                var num = el.parentNode.querySelector('.idea-num');
+                t = (num ? parseInt(num.textContent, 10) + '. ' : '') + sentence(t);
+              } else if (el.tagName === 'DT') {
+                t = sentence(t);
+              }
+              add(el, t);
+            });
+          });
+        });
+      }
+
+      function inView(el) {
+        var r = el.getBoundingClientRect();
+        return r.bottom > 0 && r.top < innerHeight;
+      }
+
+      // Highlight only on the reading panel; scroll only when the reader is following along (the
+      // previous block was on screen) and the new block is leaving or below the screen.
+      function mark(el) {
+        var following = !lastEl || inView(lastEl);
+        if (marked && marked !== el) marked.classList.remove('is-speaking');
+        marked = null;
+        if (el && el.closest('.book-text')) {
+          el.classList.add('is-speaking');
+          marked = el;
+        }
+        if (el && el !== lastEl && following) {
+          var r = el.getBoundingClientRect();
+          if (r.top < 16 || r.bottom > innerHeight - 16) {
+            el.scrollIntoView({ block: r.height > innerHeight * 0.6 ? 'start' : 'center', behavior: reduce ? 'auto' : 'smooth' });
+          }
+        }
+        lastEl = el;
+      }
+
+      function speakNext() {
+        if (state !== 'playing') return;
+        if (pos >= queue.length) { stop(); return; }
+        var item = queue[pos];
+        mark(item.el);
+        var u = new SpeechSynthesisUtterance(item.text);
+        var my = gen;
+        u.voice = voice;
+        u.lang = voice.lang;
+        u.rate = rate;
+        u.onend = function () {
+          if (my !== gen) return;
+          pos++;
+          speakNext();
+        };
+        u.onerror = function (e) {
+          if (my !== gen || e.error === 'interrupted' || e.error === 'canceled') return;
+          pos++;
+          speakNext();
+        };
+        current = u;
+        synth.speak(u);
+      }
+
+      function render() {
+        playBtn.setAttribute('aria-pressed', String(state === 'playing'));
+        box.classList.toggle('is-playing', state === 'playing');
+        stopBtn.hidden = state === 'idle';
+      }
+
+      // Pausing cancels and later repeats the current sentence group: speechSynthesis.pause() is
+      // unreliable across browsers and online voices.
+      function start() {
+        if (!voice) return;
+        if (state === 'idle') { build(); pos = 0; lastEl = null; }
+        state = 'playing';
+        gen++;
+        synth.cancel();
+        render();
+        var my = gen;
+        setTimeout(function () { if (my === gen) speakNext(); }, 60);
+      }
+      function pause() {
+        state = 'paused';
+        gen++;
+        synth.cancel();
+        render();
+      }
+      function stop() {
+        var wasActive = state !== 'idle';
+        state = 'idle';
+        gen++;
+        current = null;
+        if (wasActive) synth.cancel();
+        pos = 0;
+        lastEl = null;
+        if (marked) marked.classList.remove('is-speaking');
+        marked = null;
+        render();
+      }
+
+      playBtn.addEventListener('click', function () { state === 'playing' ? pause() : start(); });
+      stopBtn.addEventListener('click', function () { stop(); playBtn.focus(); });
+      rateBtns.forEach(function (b) {
+        b.addEventListener('click', function () {
+          rate = Number(b.dataset.rate);
+          rateBtns.forEach(function (o) { o.setAttribute('aria-pressed', String(o === b)); });
+          if (state === 'playing') start(); // restart the current sentence group at the new rate
+        });
+      });
+
+      // A language change or leaving the page stops the reading.
+      new MutationObserver(function (records) {
+        if (records.every(function (r) { return r.oldValue === root.dataset.lang; })) return;
+        stop();
+        refresh();
+      }).observe(root, { attributes: true, attributeFilter: ['data-lang'], attributeOldValue: true });
+      addEventListener('pagehide', stop);
+
+      synth.cancel();
+      refresh();
+      if (synth.addEventListener) synth.addEventListener('voiceschanged', refresh);
+      else synth.onvoiceschanged = refresh;
+      // Some browsers never fire voiceschanged when there are no voices: decide after a moment.
+      setTimeout(function () { voicesTimedOut = true; refresh(); }, 1500);
     })();
   </script>
 </Base>

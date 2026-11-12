@@ -790,6 +790,41 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
 .back-link:hover { color: var(--text-strong); background: linear-gradient(rgb(var(--brass-rgb) / 0.18), rgb(var(--brass-rgb) / 0.18)), rgb(13 32 64 / 0.9); border-color: var(--brass); }
 .back-link:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
 
+/* Listen (book page, under the core message): brass pill buttons on the dark frame, like the back
+   links. Pressed (playing, chosen rate) looks like hover. */
+.listen { position: relative; z-index: 1; margin-top: 8px; }
+.listen-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.listen-rate { display: flex; gap: 4px; }
+.listen-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: var(--touch); min-width: var(--touch); padding: 0 18px;
+  font: inherit; font-size: 15px; font-weight: 500; color: var(--brass); cursor: pointer;
+  background: rgb(13 32 64 / 0.9);
+  border: 1px solid rgb(var(--brass-rgb) / 0.7); border-radius: calc(var(--touch) / 2);
+  transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+}
+.listen-rate-btn { padding: 0 12px; font-variant-numeric: tabular-nums; }
+.listen-btn svg { width: 14px; height: 14px; flex: none; }
+.listen-btn .icon-pause, .listen.is-playing .listen-btn .icon-play { display: none; }
+.listen.is-playing .listen-btn .icon-pause { display: block; }
+.listen-btn:hover, .listen-btn[aria-pressed='true'] {
+  color: var(--text-strong); border-color: var(--brass);
+  background: linear-gradient(rgb(var(--brass-rgb) / 0.18), rgb(var(--brass-rgb) / 0.18)), rgb(13 32 64 / 0.9);
+}
+.listen-btn:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
+.listen-note { font-size: 15px; color: var(--text); }
+/* The block being read aloud on the paper: a soft lamp-brass wash, extended past the text by a
+   matching shadow so the layout does not move. */
+.book-text .is-speaking {
+  background-color: rgb(var(--brass-rgb) / 0.22);
+  box-shadow: 0 0 0 6px rgb(var(--brass-rgb) / 0.22);
+  border-radius: 4px;
+  transition: background-color 0.25s ease, box-shadow 0.25s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .listen-btn, .book-text .is-speaking { transition: none; }
+}
+
 /* The wordmark is the link home: on hover "Library" turns brass and the dot glows. */
 .wordmark-sub, .wordmark-dot { transition: color 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease; }
 .wordmark:hover .wordmark-sub, .wordmark:focus-visible .wordmark-sub { background: none; -webkit-text-fill-color: var(--brass); color: var(--brass); }
