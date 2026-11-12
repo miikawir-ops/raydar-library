@@ -790,29 +790,134 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
 .back-link:hover { color: var(--text-strong); background: linear-gradient(rgb(var(--brass-rgb) / 0.18), rgb(var(--brass-rgb) / 0.18)), rgb(13 32 64 / 0.9); border-color: var(--brass); }
 .back-link:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
 
-/* Listen (book page, under the core message): brass pill buttons on the dark frame, like the back
-   links. Pressed (playing, chosen rate) looks like hover. */
-.listen { position: relative; z-index: 1; margin-top: 8px; }
-.listen-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
-.listen-rate { display: flex; gap: 4px; }
-.listen-btn {
-  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  min-height: var(--touch); min-width: var(--touch); padding: 0 18px;
-  font: inherit; font-size: 15px; font-weight: 500; color: var(--brass); cursor: pointer;
-  background: rgb(13 32 64 / 0.9);
-  border: 1px solid rgb(var(--brass-rgb) / 0.7); border-radius: calc(var(--touch) / 2);
+/* Listen (book page): a player card under the core message, as wide as it and in the same visual
+   language: a dark glass plate with a warm brass tint, a brass frame and an inner hairline. */
+.listen { position: relative; z-index: 1; margin-top: 10px; }
+.player {
+  position: relative;
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 18px 16px 14px;
+  background:
+    linear-gradient(160deg, rgb(var(--brass-rgb) / 0.13), rgb(var(--brass-rgb) / 0.04) 45%, transparent 75%),
+    rgb(26 51 90 / 0.92);
+  border: 1px solid rgb(var(--brass-rgb) / 0.55); border-radius: var(--radius);
+  box-shadow: 0 18px 40px -22px rgba(0, 0, 0, 0.8);
+}
+.player::after {
+  content: ''; position: absolute; inset: 4px; pointer-events: none;
+  border: 1px solid rgb(var(--brass-rgb) / 0.18); border-radius: calc(var(--radius) - 3px);
+}
+.player-note { display: block; font-size: 15px; color: var(--text); padding: 14px 18px; }
+
+/* Round brass play button (52 px; 44 px in the mini player). The icon swaps to pause while playing. */
+.player-play {
+  position: relative; z-index: 1; flex: none;
+  display: inline-grid; place-items: center;
+  width: 52px; height: 52px; padding: 0; border-radius: 50%; cursor: pointer;
+  color: var(--surface-0);
+  background: radial-gradient(circle at 35% 30%, #f3c48a, var(--brass) 60%, #c98a43);
+  border: 1px solid rgb(255 220 170 / 0.5);
+  box-shadow: 0 6px 16px -6px rgba(0, 0, 0, 0.7), 0 0 18px -6px rgb(var(--brass-rgb) / 0.6);
+  transition: filter 0.18s ease, box-shadow 0.18s ease;
+}
+.player-play svg { width: 20px; height: 20px; }
+.player-play .icon-play { transform: translateX(1px); }
+.player-play:hover { filter: brightness(1.08); box-shadow: 0 6px 16px -6px rgba(0, 0, 0, 0.7), 0 0 24px -4px rgb(var(--brass-rgb) / 0.8); }
+.player-play:focus-visible { outline: 2px solid var(--brass); outline-offset: 3px; }
+.player-play .icon-pause, .is-playing .player-play .icon-play { display: none; }
+.is-playing .player-play .icon-pause { display: block; }
+
+/* Sound wave next to the play button while reading: four bars, scaled by --motion. */
+.player-wave { display: none; align-items: center; gap: 3px; height: 22px; flex: none; }
+.listen.is-playing .player-wave { display: inline-flex; }
+.player-wave i { width: 3px; height: 100%; border-radius: 2px; background: var(--brass); transform: scaleY(0.35); }
+@keyframes player-wave {
+  0%, 100% { transform: scaleY(0.3); }
+  50% { transform: scaleY(calc(0.3 + 0.7 * var(--motion))); }
+}
+.motion-on .listen.is-playing .player-wave i { animation: player-wave 1.1s ease-in-out infinite; }
+.motion-on .listen.is-playing .player-wave i:nth-child(2) { animation-delay: -0.35s; animation-duration: 0.9s; }
+.motion-on .listen.is-playing .player-wave i:nth-child(3) { animation-delay: -0.7s; animation-duration: 1.25s; }
+.motion-on .listen.is-playing .player-wave i:nth-child(4) { animation-delay: -0.2s; animation-duration: 1s; }
+
+.player-meta { position: relative; z-index: 1; flex: 1; min-width: 0; }
+.player-title { font-size: 16px; font-weight: 600; color: var(--text-strong); line-height: 1.3; }
+.player-sub { font-size: 14px; color: var(--text); margin-top: 2px; line-height: 1.4; }
+.player-now { display: none; }
+.listen.is-active .player-time { display: none; }
+.listen.is-active .player-now { display: inline; }
+
+/* Stop: a round brass outline button, only while reading or paused. */
+.player-stop {
+  position: relative; z-index: 1; flex: none;
+  display: inline-grid; place-items: center;
+  width: var(--touch); height: var(--touch); padding: 0; border-radius: 50%; cursor: pointer;
+  color: var(--brass); background: rgb(13 32 64 / 0.9);
+  border: 1px solid rgb(var(--brass-rgb) / 0.7);
   transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease;
 }
-.listen-rate-btn { padding: 0 12px; font-variant-numeric: tabular-nums; }
-.listen-btn svg { width: 14px; height: 14px; flex: none; }
-.listen-btn .icon-pause, .listen.is-playing .listen-btn .icon-play { display: none; }
-.listen.is-playing .listen-btn .icon-pause { display: block; }
-.listen-btn:hover, .listen-btn[aria-pressed='true'] {
-  color: var(--text-strong); border-color: var(--brass);
-  background: linear-gradient(rgb(var(--brass-rgb) / 0.18), rgb(var(--brass-rgb) / 0.18)), rgb(13 32 64 / 0.9);
+.player-stop svg { width: 14px; height: 14px; }
+.player-stop:hover { color: var(--text-strong); border-color: var(--brass); background: linear-gradient(rgb(var(--brass-rgb) / 0.18), rgb(var(--brass-rgb) / 0.18)), rgb(13 32 64 / 0.9); }
+.player-stop:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
+
+/* Rate: a small segmented control; each segment is still a 44 px touch target. */
+.player-rate {
+  position: relative; z-index: 1; flex: none;
+  display: inline-flex; padding: 2px; gap: 2px;
+  background: rgb(13 32 64 / 0.9);
+  border: 1px solid rgb(var(--brass-rgb) / 0.45); border-radius: calc(var(--touch) / 2 + 2px);
 }
-.listen-btn:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
-.listen-note { font-size: 15px; color: var(--text); }
+.player-rate button {
+  min-width: var(--touch); min-height: var(--touch); padding: 0 10px; cursor: pointer;
+  font: inherit; font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums;
+  color: var(--brass); background: transparent; border: 0; border-radius: calc(var(--touch) / 2);
+  transition: background-color 0.18s ease, color 0.18s ease;
+}
+.player-rate button:hover { color: var(--text-strong); }
+.player-rate button[aria-pressed='true'] { color: var(--text-strong); background: rgb(var(--brass-rgb) / 0.28); }
+.player-rate button:focus-visible { outline: 2px solid var(--brass); outline-offset: -2px; }
+
+/* Thin brass progress line along the bottom edge while reading. */
+.player-progress {
+  position: absolute; left: 16px; right: 16px; bottom: 7px; height: 2px; z-index: 1;
+  background: rgb(var(--brass-rgb) / 0.16); border-radius: 1px; opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.listen.is-active .player-progress { opacity: 1; }
+.player-progress span {
+  display: block; height: 100%; border-radius: 1px; background: var(--brass);
+  transform: scaleX(0); transform-origin: left center; transition: transform 0.4s ease;
+}
+
+@media (max-width: 559px) {
+  .player { flex-wrap: wrap; row-gap: 10px; padding-bottom: 18px; }
+  .player-rate { order: 5; margin-left: 66px; }
+}
+
+/* Mini player: bottom centre while reading once the card has scrolled away; a full-width bar on
+   phones. The page gets matching bottom padding, so it never covers the last back link. */
+.mini-player {
+  position: fixed; z-index: 45; left: 50%; bottom: 16px; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 12px;
+  width: min(460px, calc(100% - 32px)); padding: 6px 6px 6px 6px;
+  background:
+    linear-gradient(160deg, rgb(var(--brass-rgb) / 0.12), transparent 60%),
+    rgb(20 40 72);
+  border: 1px solid rgb(var(--brass-rgb) / 0.6); border-radius: calc(var(--touch) / 2 + 6px);
+  box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.85), 0 0 30px -12px rgb(var(--brass-rgb) / 0.4);
+}
+.mini-player .mini-play { width: var(--touch); height: var(--touch); }
+.mini-player .mini-play svg { width: 16px; height: 16px; }
+.mini-now { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; color: var(--text-strong); }
+.listen-mini-on body { padding-bottom: 88px; }
+@media (max-width: 719px) {
+  .mini-player {
+    left: 0; right: 0; bottom: 0; transform: none; width: auto;
+    padding: 8px 16px calc(8px + env(safe-area-inset-bottom));
+    border-width: 1px 0 0; border-radius: 14px 14px 0 0;
+  }
+}
+
 /* The block being read aloud on the paper: a soft lamp-brass wash, extended past the text by a
    matching shadow so the layout does not move. */
 .book-text .is-speaking {
@@ -822,7 +927,8 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
   transition: background-color 0.25s ease, box-shadow 0.25s ease;
 }
 @media (prefers-reduced-motion: reduce) {
-  .listen-btn, .book-text .is-speaking { transition: none; }
+  .player-play, .player-stop, .player-rate button, .player-progress, .player-progress span, .book-text .is-speaking { transition: none; }
+  .player-wave i { animation: none !important; }
 }
 
 /* The wordmark is the link home: on hover "Library" turns brass and the dot glows. */

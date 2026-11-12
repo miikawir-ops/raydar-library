@@ -88,34 +88,43 @@ const titleEn = `${d.title} | RayDar Library`;
       <a href="#lue-koko-kirja"><T fi="Johdatus teokseen, ei korvaa kirjaa. Lue koko kirja ↓" en="An introduction, not a replacement. Read the full book ↓" /></a>
     </p>
 
-    <!-- Listen: the browser's own speech synthesis reads the summary aloud. Hidden until the script
-         below finds the Web Speech API; without it (or without JavaScript) nothing is shown. -->
+    <!-- Listen: a player card that reads the summary aloud with the browser's own speech synthesis.
+         Hidden until the script below finds the Web Speech API; without it (or without JavaScript)
+         nothing is shown. -->
     <div class="listen" data-listen data-pagefind-ignore hidden
       data-title-fi={d.title_fi ?? d.title} data-title-en={d.title} data-author={d.author}>
-      <div class="listen-controls" data-listen-controls hidden>
-        <button type="button" class="listen-btn" data-listen-play aria-pressed="false"
+      <div class="player" data-listen-controls hidden>
+        <button type="button" class="player-play" data-listen-play aria-pressed="false"
           data-label-fi="Kuuntele tiivistelmä" data-label-en="Listen to the summary" aria-label="Kuuntele tiivistelmä">
-          <svg class="icon-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z" fill="currentColor" /></svg>
+          <svg class="icon-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 2.8v10.4l8.2-5.2z" fill="currentColor" /></svg>
           <svg class="icon-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5h3v11H4zM9 2.5h3v11H9z" fill="currentColor" /></svg>
-          <T fi="Kuuntele" en="Listen" />
         </button>
-        <button type="button" class="listen-btn" data-listen-stop hidden
+        <span class="player-wave" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        <div class="player-meta">
+          <p class="player-title"><T fi="Kuuntele tiivistelmä" en="Listen to the summary" /></p>
+          <p class="player-sub">
+            <span class="player-time" data-listen-time><span class="i18n" lang="fi"></span><span class="i18n" lang="en"></span></span>
+            <span class="player-now" data-listen-now></span>
+          </p>
+        </div>
+        <button type="button" class="player-stop" data-listen-stop hidden
           data-label-fi="Pysäytä luenta" data-label-en="Stop reading" aria-label="Pysäytä luenta">
-          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 3.5h9v9h-9z" fill="currentColor" /></svg>
-          <T fi="Pysäytä" en="Stop" />
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4h8v8H4z" fill="currentColor" /></svg>
         </button>
-        <div class="listen-rate" role="group" data-label-fi="Puhenopeus" data-label-en="Speech rate" aria-label="Puhenopeus">
-          <button type="button" class="listen-btn listen-rate-btn" data-rate="0.9" aria-pressed="false"
+        <div class="player-rate" role="group" data-label-fi="Puhenopeus" data-label-en="Speech rate" aria-label="Puhenopeus">
+          <button type="button" data-rate="0.9" aria-pressed="false"
             data-label-fi="Nopeus 0,9" data-label-en="Rate 0.9" aria-label="Nopeus 0,9"><T fi="0,9×" en="0.9×" /></button>
-          <button type="button" class="listen-btn listen-rate-btn" data-rate="1" aria-pressed="true"
+          <button type="button" data-rate="1" aria-pressed="true"
             data-label-fi="Nopeus 1" data-label-en="Rate 1" aria-label="Nopeus 1">1×</button>
-          <button type="button" class="listen-btn listen-rate-btn" data-rate="1.2" aria-pressed="false"
+          <button type="button" data-rate="1.2" aria-pressed="false"
             data-label-fi="Nopeus 1,2" data-label-en="Rate 1.2" aria-label="Nopeus 1,2"><T fi="1,2×" en="1.2×" /></button>
         </div>
+        <span class="player-progress" aria-hidden="true"><span data-listen-bar></span></span>
       </div>
-      <p class="listen-note" data-listen-note hidden>
+      <p class="player player-note" data-listen-note hidden>
         <T fi="Laitteessasi ei ole suomenkielistä puheääntä." en="Your device has no English speech voice." />
       </p>
+      <p class="visually-hidden" aria-live="polite" data-listen-live></p>
     </div>
 
     <details class="toc-mobile" data-pagefind-ignore>
@@ -241,6 +250,22 @@ const titleEn = `${d.title} | RayDar Library`;
     </p>
   </article>
 
+  <!-- Mini player: appears at the bottom of the screen while reading once the player card has
+       scrolled out of view. Outside the article, so no stacking context keeps it under the text. -->
+  <div class="mini-player" data-listen-mini data-pagefind-ignore hidden role="group"
+    data-label-fi="Kuuntelu" data-label-en="Listening" aria-label="Kuuntelu">
+    <button type="button" class="player-play mini-play" data-listen-play aria-pressed="false"
+      data-label-fi="Kuuntele tiivistelmä" data-label-en="Listen to the summary" aria-label="Kuuntele tiivistelmä">
+      <svg class="icon-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 2.8v10.4l8.2-5.2z" fill="currentColor" /></svg>
+      <svg class="icon-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5h3v11H4zM9 2.5h3v11H9z" fill="currentColor" /></svg>
+    </button>
+    <span class="mini-now" data-listen-now></span>
+    <button type="button" class="player-stop" data-listen-stop
+      data-label-fi="Pysäytä luenta" data-label-en="Stop reading" aria-label="Pysäytä luenta">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4h8v8H4z" fill="currentColor" /></svg>
+    </button>
+  </div>
+
   <script is:inline>
     (function () {
       var bar = document.querySelector('[data-progress]');
@@ -319,19 +344,31 @@ const titleEn = `${d.title} | RayDar Library`;
       if (!box || !synth || typeof window.SpeechSynthesisUtterance !== 'function') return;
 
       var root = document.documentElement;
-      var controls = box.querySelector('[data-listen-controls]');
+      var card = box.querySelector('[data-listen-controls]');
       var note = box.querySelector('[data-listen-note]');
-      var playBtn = box.querySelector('[data-listen-play]');
-      var stopBtn = box.querySelector('[data-listen-stop]');
+      var mini = document.querySelector('[data-listen-mini]');
+      var players = [box, mini];
+      var playBtns = document.querySelectorAll('[data-listen-play]');
+      var stopBtns = document.querySelectorAll('[data-listen-stop]');
+      var nowEls = document.querySelectorAll('[data-listen-now]');
+      var timeEl = box.querySelector('[data-listen-time]');
+      var bar = box.querySelector('[data-listen-bar]');
+      var live = box.querySelector('[data-listen-live]');
       var rateBtns = box.querySelectorAll('[data-rate]');
       var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       // Sections read aloud, in page order; everything else (contents, sources, links) is skipped.
+      // A section's parts (for "Key messages · 3/9") are its ideas, concepts or items; elsewhere its paragraphs.
       var SECTIONS = ['yleiskuva', 'viestit', 'kasitteet', 'kirjoittaja', 'suositukset', 'huomio'];
+      var PARTS = { viestit: '.idea', kasitteet: '.concepts > div', suositukset: 'li' };
+      var CORE = { fi: 'Ydinsanoma', en: 'Core message' };
       // Chrome cuts long utterances short, so text is spoken a sentence group at a time.
       var MAX_CHARS = 220;
+      // Listening time estimate: words at about 150 per minute, times the chosen rate.
+      var WORDS_PER_MINUTE = 150;
 
       var state = 'idle'; // idle | playing | paused
       var queue = [];
+      var totalChars = 0;
       var pos = 0;
       var gen = 0; // bumped on every pause/stop/restart, so events from cancelled utterances are ignored
       var rate = 1;
@@ -339,6 +376,8 @@ const titleEn = `${d.title} | RayDar Library`;
       var current = null; // keeps the playing utterance referenced (Chrome may drop its events otherwise)
       var marked = null;
       var lastEl = null;
+      var lastSection = null;
+      var cardInView = true;
       var voicesTimedOut = false;
 
       var lang = function () { return root.dataset.lang === 'en' ? 'en' : 'fi'; };
@@ -357,14 +396,6 @@ const titleEn = `${d.title} | RayDar Library`;
           if (score > bestScore) { best = v; bestScore = score; }
         });
         return best;
-      }
-
-      function refresh() {
-        voice = pickVoice(lang());
-        var known = synth.getVoices().length > 0 || voicesTimedOut;
-        box.hidden = !voice && !known;
-        controls.hidden = !voice;
-        note.hidden = !!voice || !known;
       }
 
       var text = function (el) { return (el.textContent || '').replace(/\s+/g, ' ').trim(); };
@@ -390,27 +421,28 @@ const titleEn = `${d.title} | RayDar Library`;
         return out.map(function (s) { return s.trim(); }).filter(Boolean);
       }
 
-      function add(el, t) {
-        if (!t) return;
-        split(t).forEach(function (s) { queue.push({ el: el, text: s }); });
-      }
-
-      function build() {
-        var l = lang();
-        queue = [];
-        add(document.querySelector('.book-title'), sentence(box.dataset['title' + (l === 'en' ? 'En' : 'Fi')]) + ' ' + sentence(box.dataset.author));
+      // The reading queue for a language: sentence groups with their element, section and part.
+      function build(l) {
+        var q = [];
+        var add = function (el, t, section, part, parts) {
+          if (!t) return;
+          split(t).forEach(function (s) { q.push({ el: el, text: s, section: section, part: part, parts: parts }); });
+        };
+        add(document.querySelector('.book-title'), sentence(box.dataset['title' + (l === 'en' ? 'En' : 'Fi')]) + ' ' + sentence(box.dataset.author), CORE[l], 0, 0);
         var ydin = document.querySelector('.ydin .i18n[lang="' + l + '"]');
-        if (ydin) add(document.querySelector('.ydin'), text(ydin));
+        if (ydin) add(document.querySelector('.ydin'), text(ydin), CORE[l], 0, 0);
         SECTIONS.forEach(function (id) {
           var section = document.getElementById(id);
           if (!section) return;
           var h2 = section.querySelector('h2 .i18n[lang="' + l + '"]');
-          if (h2) add(section.querySelector('h2'), sentence(text(h2)));
+          var name = h2 ? text(h2) : id;
+          if (h2) add(section.querySelector('h2'), sentence(name), name, 0, 0);
           section.querySelectorAll('.i18n[lang="' + l + '"]').forEach(function (container) {
             if (container.closest('h2')) return;
             var blocks = Array.prototype.filter.call(container.querySelectorAll('h3, p, dt, li'), function (el) {
               return !el.querySelector('h3, p, dt, li');
             });
+            var units = PARTS[id] ? Array.prototype.slice.call(container.querySelectorAll(PARTS[id])) : blocks;
             blocks.forEach(function (el) {
               var t = text(el);
               if (el.tagName === 'H3') {
@@ -419,10 +451,28 @@ const titleEn = `${d.title} | RayDar Library`;
               } else if (el.tagName === 'DT') {
                 t = sentence(t);
               }
-              add(el, t);
+              var unit = PARTS[id] ? el.closest(PARTS[id]) : el;
+              add(el, t, name, units.indexOf(unit) + 1, units.length);
             });
           });
         });
+        return q;
+      }
+
+      function updateTime() {
+        ['fi', 'en'].forEach(function (l) {
+          var words = build(l).reduce(function (n, item) { return n + item.text.split(/\s+/).length; }, 0);
+          var min = Math.max(1, Math.round(words / (WORDS_PER_MINUTE * rate)));
+          timeEl.querySelector('[lang="' + l + '"]').textContent = (l === 'fi' ? 'noin ' : 'about ') + min + ' min';
+        });
+      }
+
+      function refresh() {
+        voice = pickVoice(lang());
+        var known = synth.getVoices().length > 0 || voicesTimedOut;
+        box.hidden = !voice && !known;
+        card.hidden = !voice;
+        note.hidden = !!voice || !known;
       }
 
       function inView(el) {
@@ -431,7 +481,8 @@ const titleEn = `${d.title} | RayDar Library`;
       }
 
       // Highlight only on the reading panel; scroll only when the reader is following along (the
-      // previous block was on screen) and the new block is leaving or below the screen.
+      // previous block was on screen) and the new block is leaving or below the screen (or under
+      // the mini player).
       function mark(el) {
         var following = !lastEl || inView(lastEl);
         if (marked && marked !== el) marked.classList.remove('is-speaking');
@@ -442,11 +493,25 @@ const titleEn = `${d.title} | RayDar Library`;
         }
         if (el && el !== lastEl && following) {
           var r = el.getBoundingClientRect();
-          if (r.top < 16 || r.bottom > innerHeight - 16) {
+          var bottomEdge = innerHeight - (mini.hidden ? 16 : mini.offsetHeight + 24);
+          if (r.top < 16 || r.bottom > bottomEdge) {
             el.scrollIntoView({ block: r.height > innerHeight * 0.6 ? 'start' : 'center', behavior: reduce ? 'auto' : 'smooth' });
           }
         }
         lastEl = el;
+      }
+
+      function showNow(item) {
+        var label = item.section + (item.part ? ' · ' + item.part + '/' + item.parts : '');
+        nowEls.forEach(function (el) { el.textContent = label; });
+        // The live region announces only a new section, not every paragraph.
+        if (item.section !== lastSection) {
+          lastSection = item.section;
+          live.textContent = item.section;
+        }
+        var done = 0;
+        for (var i = 0; i < pos; i++) done += queue[i].text.length;
+        bar.style.transform = 'scaleX(' + (totalChars ? done / totalChars : 0) + ')';
       }
 
       function speakNext() {
@@ -454,6 +519,7 @@ const titleEn = `${d.title} | RayDar Library`;
         if (pos >= queue.length) { stop(); return; }
         var item = queue[pos];
         mark(item.el);
+        showNow(item);
         var u = new SpeechSynthesisUtterance(item.text);
         var my = gen;
         u.voice = voice;
@@ -474,16 +540,31 @@ const titleEn = `${d.title} | RayDar Library`;
       }
 
       function render() {
-        playBtn.setAttribute('aria-pressed', String(state === 'playing'));
-        box.classList.toggle('is-playing', state === 'playing');
-        stopBtn.hidden = state === 'idle';
+        var active = state !== 'idle';
+        playBtns.forEach(function (b) { b.setAttribute('aria-pressed', String(state === 'playing')); });
+        players.forEach(function (p) {
+          p.classList.toggle('is-playing', state === 'playing');
+          p.classList.toggle('is-active', active);
+        });
+        box.querySelector('[data-listen-stop]').hidden = !active;
+        var showMini = active && !cardInView;
+        // Move focus back to the card before hiding the mini player, so keyboard users stay in place.
+        if (!showMini && mini.contains(document.activeElement)) box.querySelector('[data-listen-play]').focus({ preventScroll: true });
+        mini.hidden = !showMini;
+        root.classList.toggle('listen-mini-on', showMini);
       }
 
       // Pausing cancels and later repeats the current sentence group: speechSynthesis.pause() is
       // unreliable across browsers and online voices.
       function start() {
         if (!voice) return;
-        if (state === 'idle') { build(); pos = 0; lastEl = null; }
+        if (state === 'idle') {
+          queue = build(lang());
+          totalChars = queue.reduce(function (n, item) { return n + item.text.length; }, 0);
+          pos = 0;
+          lastEl = null;
+          lastSection = null;
+        }
         state = 'playing';
         gen++;
         synth.cancel();
@@ -505,20 +586,39 @@ const titleEn = `${d.title} | RayDar Library`;
         if (wasActive) synth.cancel();
         pos = 0;
         lastEl = null;
+        lastSection = null;
         if (marked) marked.classList.remove('is-speaking');
         marked = null;
+        bar.style.transform = 'scaleX(0)';
+        nowEls.forEach(function (el) { el.textContent = ''; });
         render();
       }
 
-      playBtn.addEventListener('click', function () { state === 'playing' ? pause() : start(); });
-      stopBtn.addEventListener('click', function () { stop(); playBtn.focus(); });
+      playBtns.forEach(function (b) {
+        b.addEventListener('click', function () { state === 'playing' ? pause() : start(); });
+      });
+      stopBtns.forEach(function (b) {
+        b.addEventListener('click', function () {
+          var fromMini = mini.contains(b);
+          stop();
+          box.querySelector('[data-listen-play]').focus({ preventScroll: fromMini });
+        });
+      });
       rateBtns.forEach(function (b) {
         b.addEventListener('click', function () {
           rate = Number(b.dataset.rate);
           rateBtns.forEach(function (o) { o.setAttribute('aria-pressed', String(o === b)); });
+          updateTime();
           if (state === 'playing') start(); // restart the current sentence group at the new rate
         });
       });
+
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver(function (entries) {
+          cardInView = entries[entries.length - 1].isIntersecting;
+          render();
+        }).observe(card);
+      }
 
       // A language change or leaving the page stops the reading.
       new MutationObserver(function (records) {
@@ -529,6 +629,7 @@ const titleEn = `${d.title} | RayDar Library`;
       addEventListener('pagehide', stop);
 
       synth.cancel();
+      updateTime();
       refresh();
       if (synth.addEventListener) synth.addEventListener('voiceschanged', refresh);
       else synth.onvoiceschanged = refresh;
