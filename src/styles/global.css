@@ -807,7 +807,14 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
   content: ''; position: absolute; inset: 4px; pointer-events: none;
   border: 1px solid rgb(var(--brass-rgb) / 0.18); border-radius: calc(var(--radius) - 3px);
 }
-.player-note { display: block; font-size: 15px; color: var(--text); padding: 14px 18px; }
+/* The card's space is reserved from the first paint; its contents stay invisible until voices have
+   loaded, and without a voice the notice sits in the same frame. */
+.listen.is-pending .player > *, .listen.no-voice .player > * { visibility: hidden; }
+.player-note {
+  position: absolute; inset: 0; z-index: 2;
+  display: flex; align-items: center; padding: 0 22px;
+  font-size: 15px; color: var(--text);
+}
 
 /* Round brass play button (52 px; 44 px in the mini player). The icon swaps to pause while playing. */
 .player-play {
@@ -827,9 +834,10 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
 .player-play .icon-pause, .is-playing .player-play .icon-play { display: none; }
 .is-playing .player-play .icon-pause { display: block; }
 
-/* Sound wave next to the play button while reading: four bars, scaled by --motion. */
-.player-wave { display: none; align-items: center; gap: 3px; height: 22px; flex: none; }
-.listen.is-playing .player-wave { display: inline-flex; }
+/* Sound wave next to the play button: four quiet bars at rest, moving while reading (scaled by
+   --motion). It always keeps its space, so starting or finishing never moves the text. */
+.player-wave { display: inline-flex; align-items: center; gap: 3px; height: 22px; flex: none; opacity: 0.4; transition: opacity 0.2s ease; }
+.listen.is-playing .player-wave { opacity: 1; }
 .player-wave i { width: 3px; height: 100%; border-radius: 2px; background: var(--brass); transform: scaleY(0.35); }
 @keyframes player-wave {
   0%, 100% { transform: scaleY(0.3); }
@@ -842,7 +850,12 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
 
 .player-meta { position: relative; z-index: 1; flex: 1; min-width: 0; }
 .player-title { font-size: 16px; font-weight: 600; color: var(--text-strong); line-height: 1.3; }
-.player-sub { font-size: 14px; color: var(--text); margin-top: 2px; line-height: 1.4; }
+/* One line only: the section label changes while reading and must never change the card's height. */
+.player-sub {
+  font-size: 14px; color: var(--text); margin-top: 2px; line-height: 1.4; min-height: 1.4em;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.player-break { display: none; }
 .player-now { display: none; }
 .listen.is-active .player-time { display: none; }
 .listen.is-active .player-now { display: inline; }
@@ -857,6 +870,9 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
   transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease;
 }
 .player-stop svg { width: 14px; height: 14px; }
+/* In the card the stop button keeps its space while idle (invisible, out of the tab order), so the
+   text column never changes width when reading starts or finishes. */
+.listen:not(.is-active) .player-stop { visibility: hidden; }
 .player-stop:hover { color: var(--text-strong); border-color: var(--brass); background: linear-gradient(rgb(var(--brass-rgb) / 0.18), rgb(var(--brass-rgb) / 0.18)), rgb(13 32 64 / 0.9); }
 .player-stop:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
 
@@ -890,7 +906,9 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
 }
 
 @media (max-width: 559px) {
+  /* The rate control always starts its own row (an explicit break, not leftover width). */
   .player { flex-wrap: wrap; row-gap: 10px; padding-bottom: 18px; }
+  .player-break { display: block; flex-basis: 100%; height: 0; order: 4; }
   .player-rate { order: 5; margin-left: 66px; }
 }
 
@@ -927,7 +945,7 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
   transition: background-color 0.25s ease, box-shadow 0.25s ease;
 }
 @media (prefers-reduced-motion: reduce) {
-  .player-play, .player-stop, .player-rate button, .player-progress, .player-progress span, .book-text .is-speaking { transition: none; }
+  .player-play, .player-wave, .player-stop, .player-rate button, .player-progress, .player-progress span, .book-text .is-speaking { transition: none; }
   .player-wave i { animation: none !important; }
 }
 

@@ -107,10 +107,11 @@ const titleEn = `${d.title} | RayDar Library`;
             <span class="player-now" data-listen-now></span>
           </p>
         </div>
-        <button type="button" class="player-stop" data-listen-stop hidden
+        <button type="button" class="player-stop" data-listen-stop
           data-label-fi="Pysäytä luenta" data-label-en="Stop reading" aria-label="Pysäytä luenta">
           <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4h8v8H4z" fill="currentColor" /></svg>
         </button>
+        <span class="player-break" aria-hidden="true"></span>
         <div class="player-rate" role="group" data-label-fi="Puhenopeus" data-label-en="Speech rate" aria-label="Puhenopeus">
           <button type="button" data-rate="0.9" aria-pressed="false"
             data-label-fi="Nopeus 0,9" data-label-en="Rate 0.9" aria-label="Nopeus 0,9"><T fi="0,9×" en="0.9×" /></button>
@@ -121,11 +122,22 @@ const titleEn = `${d.title} | RayDar Library`;
         </div>
         <span class="player-progress" aria-hidden="true"><span data-listen-bar></span></span>
       </div>
-      <p class="player player-note" data-listen-note hidden>
+      <p class="player-note" data-listen-note hidden>
         <T fi="Laitteessasi ei ole suomenkielistä puheääntä." en="Your device has no English speech voice." />
       </p>
       <p class="visually-hidden" aria-live="polite" data-listen-live></p>
     </div>
+    <script is:inline>
+      // Reserve the player card's space before the first paint when the browser can speak: voices
+      // load asynchronously, and the card filling in later then moves nothing on the page.
+      (function () {
+        var box = document.querySelector('[data-listen]');
+        if (!box || !window.speechSynthesis || typeof window.SpeechSynthesisUtterance !== 'function') return;
+        box.hidden = false;
+        box.classList.add('is-pending');
+        box.querySelector('[data-listen-controls]').hidden = false;
+      })();
+    </script>
 
     <details class="toc-mobile" data-pagefind-ignore>
       <summary><T fi="Sisällys" en="Contents" /></summary>
@@ -467,12 +479,16 @@ const titleEn = `${d.title} | RayDar Library`;
         });
       }
 
+      // The card keeps its space from the first paint (reserved by the small script above): while
+      // voices load its contents are invisible; without a voice the notice takes the same space.
       function refresh() {
         voice = pickVoice(lang());
         var known = synth.getVoices().length > 0 || voicesTimedOut;
-        box.hidden = !voice && !known;
-        card.hidden = !voice;
-        note.hidden = !!voice || !known;
+        box.hidden = false;
+        card.hidden = false;
+        box.classList.toggle('is-pending', !known);
+        box.classList.toggle('no-voice', known && !voice);
+        note.hidden = !(known && !voice);
       }
 
       function inView(el) {
@@ -546,7 +562,6 @@ const titleEn = `${d.title} | RayDar Library`;
           p.classList.toggle('is-playing', state === 'playing');
           p.classList.toggle('is-active', active);
         });
-        box.querySelector('[data-listen-stop]').hidden = !active;
         var showMini = active && !cardInView;
         // Move focus back to the card before hiding the mini player, so keyboard users stay in place.
         if (!showMini && mini.contains(document.activeElement)) box.querySelector('[data-listen-play]').focus({ preventScroll: true });
