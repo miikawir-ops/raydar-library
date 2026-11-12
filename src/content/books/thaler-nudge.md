@@ -5,7 +5,7 @@ year: 2008
 isbn: "9780300122237"
 cover_id: 6402116
 olid: "OL24276021M"
-tags: [paatoksenteko, talous, yhteiskunta]
+tags: [paatoksenteko, psykologia, talous]
 added: 2026-11-09
 varmuus: korkea
 lahteet:
