@@ -1,5 +1,6 @@
 import { marked } from 'marked';
 import type { CollectionEntry } from 'astro:content';
+import type { TagId } from '../data/tags';
 
 export type Book = CollectionEntry<'books'>;
 export type BookData = Book['data'];
@@ -36,6 +37,14 @@ export function readingMinutes(lang: BookData['fi']): number {
 export const byNewest = (a: Book, b: Book) =>
   b.data.added.getTime() - a.data.added.getTime() || a.data.title.localeCompare(b.data.title);
 
-// Books with any of these tags lead the home page grid in every sort order.
-export const FEATURED_TAGS: readonly string[] = ['tekoaly', 'psykologia'];
-export const isFeatured = (book: Book) => book.data.tags.some((t) => FEATURED_TAGS.includes(t));
+// Home page shelves, in display order. A book stands on the first shelf whose tag it has, so it is
+// on exactly one shelf; the last shelf (tag null) takes all the rest. hueTag gives the shelf's line
+// colour. With a search or a tag filter the home page shows a plain grid in the same shelf order,
+// so AI and psychology books still lead every sort order there.
+export const SHELVES: readonly { id: string; tag: TagId | null; hueTag: TagId; fi: string; en: string }[] = [
+  { id: 'tekoaly', tag: 'tekoaly', hueTag: 'tekoaly', fi: 'Tekoäly', en: 'Artificial intelligence' },
+  { id: 'psykologia', tag: 'psykologia', hueTag: 'psykologia', fi: 'Käyttäytymispsykologia', en: 'Behavioural psychology' },
+  { id: 'historia-yhteiskunta', tag: null, hueTag: 'historia', fi: 'Historia ja yhteiskunta', en: 'History and society' },
+];
+export const shelfIndex = (book: Book) =>
+  SHELVES.findIndex((s) => s.tag === null || book.data.tags.includes(s.tag));

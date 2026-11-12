@@ -367,6 +367,129 @@ html[data-lang='en'] .i18n[lang='fi'] { display: none !important; }
 /* Each tag in its own colour (src/data/tags.ts). */
 .tag[data-hue] { color: var(--hue-text); background: rgb(var(--hue-rgb) / 0.14); border: 1px solid rgb(var(--hue-rgb) / 0.55); }
 
+/* Shelves (home page): the books stand by topic on wooden shelves, lit from above like the lamp in
+   the hero. A search or a tag filter shows the same cards as the plain grid above instead. The
+   cover size sets the geometry: the board runs along the bottom edge of the covers. */
+/* minmax(0, 1fr): the column must not grow to fit a long shelf, or the shelf could not scroll. */
+.shelves { display: grid; grid-template-columns: minmax(0, 1fr); gap: 36px; margin-top: 4px; }
+.shelf {
+  --shelf-cover-w: 132px; --shelf-card-w: 152px; --shelf-gap: 16px;
+  --shelf-pad: 22px; --shelf-board: 16px;
+  --shelf-cover-h: calc(var(--shelf-cover-w) * 1.5);
+}
+.shelf-head { display: flex; align-items: baseline; gap: 12px; }
+.shelf-head::after {
+  content: ''; flex: 1; height: 1px; align-self: center;
+  background: linear-gradient(90deg, rgb(var(--hue-rgb) / 0.75), transparent);
+}
+.shelf-count { font-size: 14px; color: var(--text); }
+/* On phones the shelf reaches the screen edges, so books slide in from the side. */
+.shelf-frame { position: relative; margin: 0 calc(-1 * var(--gutter)); }
+/* Warm lamp light falling on the books from above, behind them. */
+.shelf-frame::before {
+  content: ''; position: absolute; z-index: 0; left: 6%; right: 6%; top: 0;
+  height: calc(var(--shelf-pad) + var(--shelf-cover-h)); pointer-events: none;
+  background: radial-gradient(ellipse 60% 75% at 50% 0, rgb(var(--brass-rgb) / calc(var(--ambience) * 0.17)), transparent 75%);
+}
+/* The shelf board: dark wood with a faint grain, a brass strip along its front edge and a soft
+   shadow below. */
+.shelf-board {
+  position: absolute; z-index: 0; left: 0; right: 0;
+  top: calc(var(--shelf-pad) + var(--shelf-cover-h)); height: var(--shelf-board);
+  background:
+    repeating-linear-gradient(90deg, rgb(255 230 200 / 0.025) 0 2px, transparent 2px 11px),
+    linear-gradient(180deg, #4d301a, #2f1c0f 55%, #1d1108);
+  border-top: 2px solid rgb(var(--brass-rgb) / 0.75);
+  box-shadow: 0 16px 24px -12px rgba(0, 0, 0, 0.9);
+}
+.shelf-track {
+  position: relative; z-index: 1;
+  display: flex; gap: var(--shelf-gap);
+  padding: var(--shelf-pad) var(--gutter) 14px;
+  overflow-x: auto; overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory; scroll-padding-inline: var(--gutter);
+  scrollbar-width: none;
+}
+.shelf-track::-webkit-scrollbar { display: none; }
+
+.shelf .card {
+  flex: none; width: var(--shelf-card-w);
+  display: flex; flex-direction: column; gap: 0; padding: 0;
+  overflow: visible; background: none; border: 0; border-radius: 6px;
+  scroll-snap-align: start;
+}
+.shelf .card::before { display: none; }
+.shelf .card:hover { transform: none; }
+.shelf .card:focus-visible { outline: 2px solid var(--brass); outline-offset: 4px; }
+.shelf .card-stage {
+  display: flex; justify-content: center; align-items: flex-end;
+  height: var(--shelf-cover-h); padding: 0; border: 0;
+}
+.shelf .card-stage .cover { width: var(--shelf-cover-w); transition: transform 0.25s ease; }
+.shelf .card:hover .card-stage .cover, .shelf .card:focus-visible .card-stage .cover { transform: translateY(-6px); }
+.shelf .card-stage .cover-glow { inset: 4% 8%; }
+/* The shadow each book casts on the board. */
+.shelf .card-stage::after {
+  content: ''; position: absolute; z-index: -1; left: 10%; right: 10%; bottom: -7px; height: 14px;
+  background: radial-gradient(closest-side, rgba(0, 0, 0, 0.6), transparent);
+}
+.shelf .card-body { padding: calc(var(--shelf-board) + 14px) 2px 0; }
+.shelf .card-title {
+  font-size: 16px; line-height: 1.3;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
+}
+.shelf .card-meta { font-size: 13px; color: var(--text); }
+.shelf .tag-list { display: none; }
+.shelf .card-ydin {
+  font-size: 14px; line-height: 1.45; margin-top: 8px;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden;
+}
+.shelf-arrow { display: none; }
+
+@media (min-width: 720px) {
+  .shelves { gap: 44px; }
+  .shelf { --shelf-cover-w: 164px; --shelf-card-w: 188px; --shelf-gap: 24px; --shelf-pad: 26px; --shelf-board: 18px; }
+  .shelf-frame { margin: 0; }
+  .shelf-track { padding-inline: 0; scroll-padding-inline: 0; }
+  /* Brass arrows at the shelf ends, centred on the covers, only while there is more to scroll. */
+  .shelf-arrow {
+    position: absolute; z-index: 3; top: calc(var(--shelf-pad) + var(--shelf-cover-h) / 2 - var(--touch) / 2);
+    display: inline-grid; place-items: center;
+    width: var(--touch); height: var(--touch); padding: 0; border-radius: 50%; cursor: pointer;
+    color: var(--brass); background: rgb(13 32 64 / 0.94);
+    border: 1px solid rgb(var(--brass-rgb) / 0.75);
+    box-shadow: 0 8px 18px -8px rgba(0, 0, 0, 0.9);
+    transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+  }
+  .shelf-arrow svg { width: 18px; height: 18px; }
+  .shelf-arrow-prev { left: -8px; }
+  .shelf-arrow-next { right: -8px; }
+  .shelf-arrow:hover { color: var(--text-strong); border-color: var(--brass); background: linear-gradient(rgb(var(--brass-rgb) / 0.18), rgb(var(--brass-rgb) / 0.18)), rgb(13 32 64 / 0.94); }
+  .shelf-arrow:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .shelf .card-stage .cover, .shelf-arrow { transition: none; }
+  .shelf .card:hover .card-stage .cover, .shelf .card:focus-visible .card-stage .cover { transform: none; }
+}
+
+/* The close after the last shelf: a hint of the desk's edge and the lamp light on it, fading into
+   the navy page before the footer, so the page does not end in an empty area. */
+.home-end {
+  position: relative; height: 200px; margin-top: -32px; pointer-events: none;
+  background:
+    radial-gradient(ellipse 42% 90% at 50% 0, rgb(var(--brass-rgb) / calc(var(--ambience) * 0.13)), transparent 72%),
+    linear-gradient(180deg, rgba(47, 28, 15, 0) 0, rgba(47, 28, 15, 0.42) 26%, rgba(29, 17, 8, 0.22) 50%, rgba(13, 32, 64, 0) 100%);
+  /* Faded in at the top and out at the sides, so the band has no edge anywhere. */
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 24%), linear-gradient(90deg, transparent, #000 15%, #000 85%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(180deg, transparent, #000 24%), linear-gradient(90deg, transparent, #000 15%, #000 85%, transparent);
+  mask-composite: intersect;
+}
+.home-end::before {
+  content: ''; position: absolute; left: 12%; right: 12%; top: 26%; height: 1px;
+  background: linear-gradient(90deg, transparent, rgb(var(--brass-rgb) / 0.35), transparent);
+}
+
 /* Covers */
 .cover {
   position: relative; width: 100%; aspect-ratio: 2 / 3;

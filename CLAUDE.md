@@ -241,7 +241,7 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
 
 - Vain `src/data/tags.ts`:n listalta, 1–3 per kirja.
 - Uutta tagia ei lisätä omin päin: ehdota sitä Raylle.
-- **Tekoäly- ja psykologia-tagit nostavat kirjan etusivun kärkeen** (ks. Etusivu → Järjestyssääntö). Anna niitä vain kirjoille, joiden aihe ne oikeasti ovat.
+- **Tekoäly- ja psykologia-tagit ratkaisevat etusivun hyllyn** (ks. Etusivu → Kirjahyllyt): `tekoaly` vie kirjan Tekoäly-hyllylle ja `psykologia` Käyttäytymispsykologia-hyllylle. Anna niitä vain kirjoille, joiden aihe ne oikeasti ovat.
 - Jokaisella tagilla on väri (`hue` `tags.ts`:ssä) hero-paletista. Uudelle tagille valitaan väri samalla logiikalla:
   - messinki: raha ja työ
   - viini: ihmiset ajassa
@@ -399,14 +399,31 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
     - Lopun suositus (`.hero-reco`) on messinkinä.
     - Mobiilin tasainen peittokerros on otsikon alapuolella 0,84, jotta messinkinen suositus säilyttää AA-kontrastin lampun valon päällä. Mitattu 4,85:1, joten varaa on vähän: mittaa uudelleen, jos peittokerros tai hero-kuva muuttuu.
   - Pölyhiukkaset ovat laatikossa, jolla on hero-kuvan oma cover-geometria, joten niiden prosenttisijainnit ovat kuvan koordinaatteja ja ne pysyvät lampun valossa kaikilla hero-koon arvoilla.
-- **Kokoelman väliotsikko** ruudukon yläpuolella: messinkinen yläotsikko "Kokoelma" / "Collection" ja kirjamäärä. Tulosmäärä näytetään erikseen vain, kun haku tai suodatin on päällä.
-- **Korttiruudukko,** jossa jokaisella kortilla on kansi, otsikko, kirjoittaja, vuosi, tagit ja `ydin`.
-- **Hillitty hover-efekti:** pieni nosto ja korostusväri, ei pomppimista.
+- **Kokoelman väliotsikko** hyllyjen yläpuolella: messinkinen yläotsikko "Kokoelma" / "Collection" ja kirjamäärä. Tulosmäärä näytetään erikseen vain, kun haku tai suodatin on päällä.
+- **Kirjahyllyt:** etusivulla kirjat seisovat aiheittain hyllyillä, tässä järjestyksessä:
+  1. "Tekoäly" / "Artificial intelligence": tagi `tekoaly`
+  2. "Käyttäytymispsykologia" / "Behavioural psychology": tagi `psykologia`, jos kirja ei ole jo Tekoäly-hyllyllä
+  3. "Historia ja yhteiskunta" / "History and society": kaikki muut
+  - **Määrittely yhdessä paikassa:** `SHELVES` ja `shelfIndex` (`src/lib/book.ts`). Kirja on ensimmäisellä hyllyllä, jonka tagi sillä on, eli aina vain yhdellä hyllyllä. Kortti saa `data-shelf`-attribuutin, jota etusivun skripti käyttää. Hyllyn viivan väri tulee `hueTag`-tagin väristä.
+  - Tyhjää hyllyä ei näytetä. Hyllyn sisällä käytetään valittua järjestystä (uusimmat / kirjoittaja / julkaisuvuosi).
+  - Ilman JavaScriptiä hyllyt näkyvät palvelimen järjestyksessä (uusimmat).
+- **Hyllyn ulkoasu:**
+  - Otsake: messinkinen yläotsikko ja kirjamäärä sekä ohut viiva hyllyn tagin värissä.
+  - Kannet seisovat hyllyllä: kansi 164 px leveä (mobiilissa 132 px), kortti 188 px (152 px). Kansien alla on puinen hyllyreuna (tumma puu, hieno syy, messinkilista ja varjo), ja jokainen kansi luo hyllyyn pienen varjon. Hyllyn yläpuolella on hillitty lämmin valo kuin lamppu valaisisi sitä (`--ambience`-muuttujan mukaan).
+  - Kannen alla: otsikko (enintään 2 riviä), kirjoittaja ja vuosi sekä `ydin` rajattuna kolmeen riviin. Tagit eivät näy hyllyllä.
+  - Hover ja focus: kansi nousee 6 px, ja kansihehku voimistuu kuten ennen. Reduced-motion poistaa nousun.
+  - **Vieritys:** kun kirjoja on enemmän kuin mahtuu, hylly vierii vaakasuunnassa (`scroll-snap`) itsensä sisällä, ei koko sivua.
+    - Mobiilissa hylly ulottuu näytön reunoihin ja sitä pyyhkäistään.
+    - Vähintään 720 px:llä reunoilla on messinkiset nuolipainikkeet (44 px) vain siihen suuntaan, jossa on vielä vieritettävää. Jos painike katoaa näppäimistön fokuksen alta, fokus siirtyy toiseen nuoleen.
+    - Näppäimistöllä sarkain kulkee hyllyn kirjat läpi, ja osittain näkyvä fokusoitu kortti vieritetään kokonaan näkyviin, koska selain ei tee sitä itse.
+    - Hyllyruudukon sarake on `minmax(0, 1fr)`: muuten pitkä hylly leventää saraketta eikä vieri.
+- **Haku tai tagisuodatin aktiivisena:** skripti siirtää samat kortit tavalliseen ruudukkoon hyllyjen tilalle. Tyhjennys (Kaikki tai tyhjä haku) palauttaa ne hyllyille.
+  - Ruudukossa kirjat ovat hyllyjärjestyksessä (tekoäly, psykologia, muut) ja niiden sisällä valitussa järjestyksessä, joten tekoäly- ja psykologiakirjat ovat edelleen ensimmäisinä kaikissa järjestysvaihtoehdoissa.
+  - Ruudukossa kortti on entisen näköinen (tagit mukana), ja ruudukon kortin hover on hillitty nosto ja korostusväri, ei pomppimista.
+  - "Satunnainen kirja" toimii ennallaan.
+  - Paluunavigoinnin tilaan tallennetaan suodatin, järjestys, haku, sivun vierityskohta ja jokaisen hyllyn vaakavierityskohta, joten molemmat näkymät palautuvat.
+- **Sivun loppu:** viimeisen hyllyn jälkeen on rauhallinen lopetus (`.home-end`): pöydän reunan ja lampun valon häivähdys, joka liukuu navyyn ennen alatunnistetta. Se on häivytetty ylhäältä ja sivuilta, ettei siinä näy reunaa.
 - **Toiminnot:** haku (Pagefind), tagisuodatus, järjestys (uusimmat / kirjoittaja / julkaisuvuosi) ja "satunnainen kirja".
-- **Järjestyssääntö:** kirjat, joilla on tagi `tekoaly` tai `psykologia`, näytetään aina ensimmäisinä kaikissa järjestysvaihtoehdoissa.
-  - Ryhmän sisällä ja muiden kirjojen kesken käytetään valittua järjestystä.
-  - Tagisuodatus, haku ja "satunnainen kirja" toimivat ennallaan.
-  - Kärkitagit ovat yhdessä paikassa: `FEATURED_TAGS` (`src/lib/book.ts`). Kortti saa `data-featured`-attribuutin, jota etusivun skripti käyttää.
 - **Tyhjä tila ja "ei tuloksia":** suunniteltu tila, ei tyhjä ruutu.
 
 ### Kirjasivu
@@ -438,7 +455,7 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
   - ei kauppa- eikä affiliate-linkkejä
 - **Sisältösarake 1 440–1 700 px:llä** on 1 120 px eikä 1 240 px (`--page-max`, `tokens.css`).
   - Kavennus on 60 px kummaltakin puolelta. Näin reunafiguureille jää todellinen marginaali, noin 150–210 px, ja koko pilari näkyy.
-  - Korttiruudukko pidetään tällä välillä eksplisiittisesti neljässä sarakkeessa (`global.css`), ja kortit ovat noin 257 px leveitä.
+  - Hakujen ja suodatusten korttiruudukko pidetään tällä välillä eksplisiittisesti neljässä sarakkeessa (`global.css`), ja kortit ovat noin 257 px leveitä. Hyllyllä viisi kirjaa mahtuu tällä leveydellä vierittämättä.
   - Kirjasivun oma sarake on 1 100 px, joten lukupalsta (832 px) ei muutu. Lukupalsta ei saa kaventua alle 760 px:n.
   - 1 400–1 439 px:llä sarake on täysi, ja figuuri on vain noin 80 px:n kaistale.
 - **Leveät näytöt** säilyttävät saman sommittelun kuin 1440 px. Sisältö on saman levyisenä keskellä (kirjasivu `max-width` 1100 px, muu sisältö `--page-max` 1240 px), ja ylimääräinen tila jää reunakuville.
@@ -491,7 +508,7 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
   - `ydin`-laatikon kehys, sisäviiva ja kulmatähdet
   - osioiden välinen koristejakaja (ohut viiva ja pieni tähti)
   - käsitekorttien numerot
-  - kokoelman yläotsikko "Kokoelma"
+  - kokoelman yläotsikko "Kokoelma", hyllyjen yläotsikot, hyllyreunan messinkilista ja hyllyjen nuolipainikkeet
   - kirjasivun paluupainikkeet, Kuuntele-soitinkortti ja minisoitin, luettavan kappaleen korostus sekä logon hover-tila
   - etusivun tunnuslause ja kuvauksen lopun suositus
   - "Lue koko kirja" -rivi `ydin`-laatikon alla sekä "Lue koko kirja" -osion yläreunus ja linkit

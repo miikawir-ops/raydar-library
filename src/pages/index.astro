@@ -5,9 +5,12 @@ import Base from '../layouts/Base.astro';
 import BookCard from '../components/BookCard.astro';
 import T from '../components/T.astro';
 import { tags, type TagId } from '../data/tags';
-import { byNewest, isFeatured } from '../lib/book';
+import { byNewest, shelfIndex, SHELVES } from '../lib/book';
 
-const books = (await getCollection('books')).sort((a, b) => Number(isFeatured(b)) - Number(isFeatured(a)) || byNewest(a, b));
+const books = (await getCollection('books')).sort(byNewest);
+// Books grouped onto their shelves (src/lib/book.ts); an empty shelf is not shown.
+const shelves = SHELVES.map((shelf, index) => ({ ...shelf, index, books: books.filter((b) => shelfIndex(b) === index) }))
+  .filter((shelf) => shelf.books.length > 0);
 const usedTags = (Object.keys(tags) as TagId[]).filter((t) => books.some((b) => b.data.tags.includes(t)));
 const hasHeroImage = existsSync('public/hero.webp');
 const description = 'Tietokirjojen ydinsanomat selkeinä tiivistelminä, suomeksi ja englanniksi.';
@@ -82,9 +85,36 @@ const description = 'Tietokirjojen ydinsanomat selkeinä tiivistelminä, suomeks
           </div>
         </div>
         <p class="result-count" aria-live="polite" data-count></p>
-        <section class="grid" data-grid>
-          {books.map((book) => <BookCard book={book} />)}
-        </section>
+        <!-- Shelves by topic. With a search or a tag filter the script moves the same cards into
+             the plain grid below and hides the shelves; clearing them brings the shelves back. -->
+        <div class="shelves" data-shelves>
+          {shelves.map((shelf) => (
+            <section class="shelf" data-hue={tags[shelf.hueTag].hue} aria-labelledby={`shelf-${shelf.id}`}>
+              <header class="shelf-head">
+                <h3 class="eyebrow" id={`shelf-${shelf.id}`}><T fi={shelf.fi} en={shelf.en} /></h3>
+                <p class="shelf-count"><T
+                  fi={shelf.books.length === 1 ? '1 kirja' : `${shelf.books.length} kirjaa`}
+                  en={shelf.books.length === 1 ? '1 book' : `${shelf.books.length} books`}
+                /></p>
+              </header>
+              <div class="shelf-frame" data-shelf-frame>
+                <span class="shelf-board" aria-hidden="true"></span>
+                <button type="button" class="shelf-arrow shelf-arrow-prev" data-shelf-prev hidden
+                  data-label-fi={`${shelf.fi}: edelliset kirjat`} data-label-en={`${shelf.en}: previous books`} aria-label={`${shelf.fi}: edelliset kirjat`}>
+                  <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 3 5.5 8l5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                </button>
+                <div class="shelf-track" data-shelf-track={shelf.index}>
+                  {shelf.books.map((book) => <BookCard book={book} />)}
+                </div>
+                <button type="button" class="shelf-arrow shelf-arrow-next" data-shelf-next hidden
+                  data-label-fi={`${shelf.fi}: seuraavat kirjat`} data-label-en={`${shelf.en}: next books`} aria-label={`${shelf.fi}: seuraavat kirjat`}>
+                  <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5.5 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                </button>
+              </div>
+            </section>
+          ))}
+        </div>
+        <section class="grid" data-grid hidden></section>
         <section class="state" data-no-results hidden>
           <h2><T fi="Ei tuloksia" en="No results" /></h2>
           <p><T fi="Kokeile toista hakusanaa tai poista suodattimet." en="Try another search term or clear the filters." /></p>
@@ -93,11 +123,17 @@ const description = 'Tietokirjojen ydinsanomat selkeinä tiivistelminä, suomeks
       </>
     )}
   </div>
+  <!-- A calm close after the last shelf: a hint of the desk and the lamp light, fading into navy. -->
+  <div class="home-end" aria-hidden="true"></div>
 
   {books.length > 0 && (
     <script is:inline type="module">
       const grid = document.querySelector('[data-grid]');
-      const cards = [...grid.querySelectorAll('[data-card]')];
+      const shelvesEl = document.querySelector('[data-shelves]');
+      const tracks = [...document.querySelectorAll('[data-shelf-track]')];
+      const trackFor = Object.fromEntries(tracks.map((t) => [t.dataset.shelfTrack, t]));
+      const cards = [...document.querySelectorAll('[data-card]')];
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const input = document.querySelector('#search-input');
       const sort = document.querySelector('[data-sort]');
       const count = document.querySelector('[data-count]');
@@ -111,28 +147,7 @@ const description = 'Tietokirjojen ydinsanomat selkeinä tiivistelminä, suomeks
       let pagefind = null;
 
       const visibleCards = () => cards.filter((c) => !c.hidden);
-
-      function render() {
-        for (const card of cards) {
-          const tagOk = !activeTag || card.dataset.tags.split(' ').includes(activeTag);
-          const searchOk = !searchHits || searchHits.has(card.dataset.url);
-          card.hidden = !(tagOk && searchOk);
-        }
-        const n = visibleCards().length;
-        noResults.hidden = n > 0 || searchError;
-        grid.hidden = n === 0;
-        count.replaceChildren();
-        const fi = document.createElement('span');
-        const en = document.createElement('span');
-        fi.className = en.className = 'i18n';
-        fi.lang = 'fi';
-        en.lang = 'en';
-        // The collection heading already shows the total, so the count appears only when filtered.
-        const filtered = Boolean(activeTag || searchHits);
-        fi.textContent = searchError ? 'Haku ei ole juuri nyt käytettävissä.' : !filtered ? '' : n === 1 ? '1 kirja' : n + ' kirjaa';
-        en.textContent = searchError ? 'Search is not available right now.' : !filtered ? '' : n === 1 ? '1 book' : n + ' books';
-        count.append(fi, en);
-      }
+      const isFiltered = () => Boolean(activeTag || searchHits);
 
       const comparators = {
         added: (a, b) => b.dataset.added.localeCompare(a.dataset.added),
@@ -140,13 +155,89 @@ const description = 'Tietokirjojen ydinsanomat selkeinä tiivistelminä, suomeks
         year: (a, b) => Number(b.dataset.year) - Number(a.dataset.year),
       };
 
-      // Featured books (data-featured="1") stay first in every order; the chosen order applies within each group.
-      const sortCards = (key) =>
-        [...cards]
-          .sort((a, b) => Number(b.dataset.featured) - Number(a.dataset.featured) || comparators[key](a, b))
-          .forEach((c) => grid.append(c));
+      // Shelves: each card on its own shelf in the chosen order. Filtered: one plain grid, in shelf
+      // order first (AI, psychology, the rest) and the chosen order within each shelf.
+      function arrange() {
+        const cmp = comparators[sort.value] || comparators.added;
+        if (isFiltered()) {
+          [...cards]
+            .sort((a, b) => Number(a.dataset.shelf) - Number(b.dataset.shelf) || cmp(a, b))
+            .forEach((c) => grid.append(c));
+        } else {
+          [...cards].sort(cmp).forEach((c) => trackFor[c.dataset.shelf].append(c));
+        }
+      }
 
-      sort.addEventListener('change', () => sortCards(sort.value));
+      // Brass arrows on wide screens, only towards the side that still has books to scroll to.
+      function updateArrows() {
+        for (const track of tracks) {
+          const frame = track.closest('[data-shelf-frame]');
+          const prev = frame.querySelector('[data-shelf-prev]');
+          const next = frame.querySelector('[data-shelf-next]');
+          const max = track.scrollWidth - track.clientWidth;
+          const showPrev = max > 2 && track.scrollLeft > 2;
+          const showNext = max > 2 && track.scrollLeft < max - 2;
+          // Show first, then move a keyboard user off an arrow that is about to disappear, then hide.
+          if (showPrev) prev.hidden = false;
+          if (showNext) next.hidden = false;
+          if (!showPrev && document.activeElement === prev && showNext) next.focus();
+          if (!showNext && document.activeElement === next && showPrev) prev.focus();
+          prev.hidden = !showPrev;
+          next.hidden = !showNext;
+        }
+      }
+      let arrowsPending = false;
+      const updateArrowsSoon = () => {
+        if (arrowsPending) return;
+        arrowsPending = true;
+        requestAnimationFrame(() => { arrowsPending = false; updateArrows(); });
+      };
+      for (const track of tracks) {
+        const frame = track.closest('[data-shelf-frame]');
+        track.addEventListener('scroll', updateArrowsSoon, { passive: true });
+        const step = (dir) => track.scrollBy({ left: dir * track.clientWidth * 0.85, behavior: reduceMotion ? 'auto' : 'smooth' });
+        frame.querySelector('[data-shelf-prev]').addEventListener('click', () => step(-1));
+        frame.querySelector('[data-shelf-next]').addEventListener('click', () => step(1));
+        // Keyboard: browsers leave a partly visible focused card where it is, so bring it fully in.
+        track.addEventListener('focusin', (e) => {
+          const card = e.target.closest('[data-card]');
+          if (!card) return;
+          const r = card.getBoundingClientRect();
+          const tr = track.getBoundingClientRect();
+          if (r.left < tr.left || r.right > tr.right) {
+            card.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' });
+          }
+        });
+      }
+      addEventListener('resize', updateArrowsSoon);
+      addEventListener('load', updateArrowsSoon);
+
+      function render() {
+        const filtered = isFiltered();
+        for (const card of cards) {
+          const tagOk = !activeTag || card.dataset.tags.split(' ').includes(activeTag);
+          const searchOk = !searchHits || searchHits.has(card.dataset.url);
+          card.hidden = filtered && !(tagOk && searchOk);
+        }
+        arrange();
+        const n = visibleCards().length;
+        shelvesEl.hidden = filtered;
+        noResults.hidden = !filtered || n > 0 || searchError;
+        grid.hidden = !filtered || n === 0;
+        count.replaceChildren();
+        const fi = document.createElement('span');
+        const en = document.createElement('span');
+        fi.className = en.className = 'i18n';
+        fi.lang = 'fi';
+        en.lang = 'en';
+        // The collection heading already shows the total, so the count appears only when filtered.
+        fi.textContent = searchError ? 'Haku ei ole juuri nyt käytettävissä.' : !filtered ? '' : n === 1 ? '1 kirja' : n + ' kirjaa';
+        en.textContent = searchError ? 'Search is not available right now.' : !filtered ? '' : n === 1 ? '1 book' : n + ' books';
+        count.append(fi, en);
+        updateArrowsSoon();
+      }
+
+      sort.addEventListener('change', () => { arrange(); updateArrowsSoon(); });
 
       function setTag(tag) {
         activeTag = tag;
@@ -200,23 +291,25 @@ const description = 'Tietokirjojen ydinsanomat selkeinä tiivistelminä, suomeks
         location.href = pool[Math.floor(Math.random() * pool.length)].dataset.url;
       });
 
-      // Keep the collection view (filter, sort, search, scroll position) in this history entry, so
-      // returning from a book page (the back button or the "Collection" link, which uses
-      // history.back()) restores it even when the browser reloads the page instead of using its
-      // back-forward cache. Writes are debounced: browsers limit how often replaceState may run.
+      // Keep the collection view (filter, sort, search, page and shelf scroll positions) in this
+      // history entry, so returning from a book page (the back button or the "Collection" link,
+      // which uses history.back()) restores it even when the browser reloads the page instead of
+      // using its back-forward cache. Writes are debounced: browsers limit how often replaceState may run.
       let saveTimer;
       const saveView = () => {
         try {
-          history.replaceState({ ...(history.state || {}), collection: { tag: activeTag, sort: sort.value, q: input.value, y: Math.round(scrollY) } }, '');
+          const shelfX = Object.fromEntries(tracks.map((t) => [t.dataset.shelfTrack, Math.round(t.scrollLeft)]));
+          history.replaceState({ ...(history.state || {}), collection: { tag: activeTag, sort: sort.value, q: input.value, y: Math.round(scrollY), shelfX } }, '');
         } catch (e) {}
       };
       const saveSoon = () => { clearTimeout(saveTimer); saveTimer = setTimeout(saveView, 250); };
       addEventListener('scroll', saveSoon, { passive: true });
+      tracks.forEach((t) => t.addEventListener('scroll', saveSoon, { passive: true }));
       [sort, input, ...chips].forEach((el) => el.addEventListener('change', saveSoon));
       chips.forEach((c) => c.addEventListener('click', saveSoon));
       input.addEventListener('input', saveSoon);
       addEventListener('pagehide', () => { clearTimeout(saveTimer); saveView(); });
-      grid.addEventListener('click', () => { clearTimeout(saveTimer); saveView(); }, true);
+      [grid, shelvesEl].forEach((el) => el.addEventListener('click', () => { clearTimeout(saveTimer); saveView(); }, true));
 
       render();
 
@@ -225,9 +318,13 @@ const description = 'Tietokirjojen ydinsanomat selkeinä tiivistelminä, suomeks
         if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
         if (saved.sort && comparators[saved.sort]) {
           sort.value = saved.sort;
-          sortCards(saved.sort);
+          arrange();
         }
         if (saved.tag && chips.some((c) => c.dataset.tagFilter === saved.tag)) setTag(saved.tag);
+        if (saved.shelfX) {
+          for (const t of tracks) t.scrollLeft = saved.shelfX[t.dataset.shelfTrack] || 0;
+          updateArrowsSoon();
+        }
         const restoreScroll = () => requestAnimationFrame(() => window.scrollTo({ top: saved.y || 0, behavior: 'instant' }));
         if (saved.q) {
           input.value = saved.q;
