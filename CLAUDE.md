@@ -241,6 +241,7 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
 
 - Vain `src/data/tags.ts`:n listalta, 1–3 per kirja.
 - Uutta tagia ei lisätä omin päin: ehdota sitä Raylle.
+- **Tekoäly- ja psykologia-tagit nostavat kirjan etusivun kärkeen** (ks. Etusivu → Järjestyssääntö). Anna niitä vain kirjoille, joiden aihe ne oikeasti ovat.
 - Jokaisella tagilla on väri (`hue` `tags.ts`:ssä) hero-paletista. Uudelle tagille valitaan väri samalla logiikalla:
   - messinki: raha ja työ
   - viini: ihmiset ajassa
@@ -402,6 +403,10 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
 - **Korttiruudukko,** jossa jokaisella kortilla on kansi, otsikko, kirjoittaja, vuosi, tagit ja `ydin`.
 - **Hillitty hover-efekti:** pieni nosto ja korostusväri, ei pomppimista.
 - **Toiminnot:** haku (Pagefind), tagisuodatus, järjestys (uusimmat / kirjoittaja / julkaisuvuosi) ja "satunnainen kirja".
+- **Järjestyssääntö:** kirjat, joilla on tagi `tekoaly` tai `psykologia`, näytetään aina ensimmäisinä kaikissa järjestysvaihtoehdoissa.
+  - Ryhmän sisällä ja muiden kirjojen kesken käytetään valittua järjestystä.
+  - Tagisuodatus, haku ja "satunnainen kirja" toimivat ennallaan.
+  - Kärkitagit ovat yhdessä paikassa: `FEATURED_TAGS` (`src/lib/book.ts`). Kortti saa `data-featured`-attribuutin, jota etusivun skripti käyttää.
 - **Tyhjä tila ja "ei tuloksia":** suunniteltu tila, ei tyhjä ruutu.
 
 ### Kirjasivu
