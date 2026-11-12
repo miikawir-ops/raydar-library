@@ -415,7 +415,7 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
   0. paluupainike "← Kokoelma" / "← Collection" sisällön vasemmassa yläkulmassa ennen kantta
   1. kansi ja perustiedot
   2. `ydin` korostettuna ja sen alla pieni rivi, joka linkittää "Lue koko kirja" -osioon: "Johdatus teokseen, ei korvaa kirjaa. Lue koko kirja ↓" / "An introduction, not a replacement. Read the full book ↓"
-  3. Kuuntele-ohjaimet (ks. alla)
+  3. Kuuntele-soitinkortti (ks. alla)
   4. sisällysluettelo ankkurilinkein
   5. yleiskuva, keskeiset viestit (ideat), käsitteet, kirjoittaja, kirjan suositukset (jos on), huomio (jos on, pienellä)
   6. oma huomio (jos täytetty)
@@ -446,18 +446,33 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
 - **Merkinnät:** varmuustaso pienenä merkintänä, ja arvioitu lukuaika valitulla kielellä.
 - **Lukuedistyminen** ohuena palkkina ylhäällä.
 - **Kuuntele** / **Listen** lukee tiivistelmän ääneen selaimen puhesynteesillä (Web Speech API). Ei riippuvuuksia eikä äänitiedostoja.
-  - **Ohjaimet** ovat tummalla kehyksellä `ydin`-laatikon alla, messinkisinä pillereinä kuten paluupainikkeet (`.listen-btn`, vähintään 44 px):
-    - toisto/tauko: `aria-pressed` kertoo, onko luenta käynnissä, ja kuvake vaihtuu
-    - pysäytys (näkyy vain luennan aikana)
-    - nopeus 0,9 / 1 / 1,2
+  - **Soitinkortti** (`.player`) on tummalla kehyksellä `ydin`-laatikon alla ja yhtä leveä. Visuaalinen kieli on sama kuin `ydin`-laatikossa: tumma lasipinta, messinkinen sävytys, kehys ja sisäviiva, ei kulmatähtiä.
+    - Vasemmalla pyöreä messinkinen toistopainike (52 px). Kuvake vaihtuu toiston ja tauon välillä, ja `aria-pressed` kertoo, onko luenta käynnissä.
+    - Vieressä teksti "Kuuntele tiivistelmä" / "Listen to the summary" ja arvioitu kuunteluaika ("noin X min" / "about X min").
+    - Oikealla nopeudet 0,9 / 1 / 1,2 tiiviinä segmented controlina. Jokainen segmentti on silti 44 px:n kosketuskohde.
+    - Pysäytys (pyöreä messinkiääriviiva, 44 px) näkyy vain luennan aikana tai tauolla.
+    - Toiston aikana:
+      - kortin alareunassa ohut messinkinen edistymispalkki (luetut merkit / kaikki merkit)
+      - kuunteluajan tilalla parhaillaan luettavan osion nimi ja järjestysnumero, esimerkiksi "Keskeiset viestit · 3/9". Numero laskee ideat, käsitteet ja suositukset, muissa osioissa kappaleet. Otsikko ja `ydin` ovat "Ydinsanoma".
+      - toistopainikkeen vieressä hillitty ääniaalto (neljä palkkia), jonka amplitudi skaalautuu `--motion`-muuttujan mukaan ja jonka reduced-motion pysäyttää
+    - `aria-live="polite"` (näkymätön) ilmoittaa vain uuden osion nimen, ei jokaista kappaletta.
+    - Mobiilissa (alle 560 px) nopeudet siirtyvät toiselle riville.
+  - **Kuunteluaika** = luettavan tekstin sanamäärä / (150 sanaa/min × valittu nopeus), pyöristettynä, vähintään 1 min. Se lasketaan selaimessa samasta lukujonosta, jonka puhesynteesi lukee, ja päivittyy nopeutta vaihdettaessa. Se on eri luku kuin otsikkoalueen lukuaika (200 sanaa/min).
+  - **Minisoitin** (`.mini-player`) näkyy, kun luenta on käynnissä tai tauolla ja soitinkortti on vieritetty pois näkyvistä (IntersectionObserver).
+    - Sisältö: toisto/tauko, osion nimi ja pysäytys.
+    - Sijainti: työpöydällä näytön alareunan keskellä (enintään 460 px), mobiilissa (alle 720 px) täysleveä alapalkki.
+    - Tausta on umpinainen, koska läpikuultavan taustan läpi paperin teksti näkyy.
+    - Minisoitin on `article`-elementin ulkopuolella, jotta mikään pinoamiskonteksti ei jätä sitä tekstin alle.
+    - Kun se näkyy, sivu saa alareunaan 88 px lisätilaa (`.listen-mini-on`), jotta se ei peitä viimeistä paluupainiketta.
+    - Se katoaa, kun luenta pysähtyy. Fokus siirtyy silloin kortin toistopainikkeeseen.
   - **Luettavat osiot** valitulla kielellä, tässä järjestyksessä: otsikko ja kirjoittaja, `ydin`, yleiskuva, keskeiset viestit (numero, otsikko ja selitys), käsitteet, kirjoittaja, suositukset ja huomio (jos on). Osioiden otsikot luetaan. Sisällysluetteloa, omaa huomiota, liittyviä kirjoja, "Lue koko kirja" -osiota, lähteitä, linkkejä tai painikkeita ei lueta.
   - **Äänen valinta:** vain sivun kielen ääni. Pisteytys:
     - +2, jos kieli on tarkalleen fi-FI (suomi) tai en-US/en-GB (englanti)
     - +4, jos äänen nimessä on Natural, Online tai Neural
 
-    Jos kielelle ei ole ääntä, painikkeen tilalla on ilmoitus "Laitteessasi ei ole suomenkielistä puheääntä." / "Your device has no English speech voice.". Jos selain ei tue Web Speech API:a, mitään ei näytetä.
+    Jos kielelle ei ole ääntä, kortissa on samalla tyylillä ilmoitus "Laitteessasi ei ole suomenkielistä puheääntä." / "Your device has no English speech voice.". Jos selain ei tue Web Speech API:a, mitään ei näytetä.
   - **Pilkkominen:** teksti puhutaan enintään 220 merkin lauseryhminä, koska Chrome katkaisee pitkät lausumat. Tauko peruu luennan ja toistaa nykyisen lauseryhmän alusta, koska `speechSynthesis.pause()` on epäluotettava.
-  - **Korostus:** parhaillaan luettava kappale korostetaan vain lukupalstalla hillityllä messinkisävyllä (`.is-speaking`). Kontrasti on mitattu pikseleistä, ja tiukin tulos on 4,71:1 (`--brass-ink`-käsite). Otsikkoa ja `ydin`-laatikkoa ei korosteta. Näkymä vieritetään vain, kun lukija seuraa luentaa (edellinen kappale oli näkyvissä) ja uusi kappale on poistumassa näkymästä.
+  - **Korostus:** parhaillaan luettava kappale korostetaan vain lukupalstalla hillityllä messinkisävyllä (`.is-speaking`). Kontrasti on mitattu pikseleistä, ja tiukin tulos on 4,71:1 (`--brass-ink`-käsite). Otsikkoa ja `ydin`-laatikkoa ei korosteta. Näkymä vieritetään vain, kun lukija seuraa luentaa (edellinen kappale oli näkyvissä) ja uusi kappale on poistumassa näkymästä tai jäämässä minisoittimen alle.
   - **Pysähtyminen:** kielen vaihto ja sivulta poistuminen (`pagehide`) pysäyttävät luennan.
 
 ### Yleistä
@@ -471,7 +486,7 @@ Lue valmis tiivistelmä vielä kerran läpi ja kysy jokaisen kohdan kohdalla:
   - osioiden välinen koristejakaja (ohut viiva ja pieni tähti)
   - käsitekorttien numerot
   - kokoelman yläotsikko "Kokoelma"
-  - kirjasivun paluupainikkeet, Kuuntele-ohjaimet ja luettavan kappaleen korostus sekä logon hover-tila
+  - kirjasivun paluupainikkeet, Kuuntele-soitinkortti ja minisoitin, luettavan kappaleen korostus sekä logon hover-tila
   - etusivun tunnuslause ja kuvauksen lopun suositus
   - "Lue koko kirja" -rivi `ydin`-laatikon alla sekä "Lue koko kirja" -osion yläreunus ja linkit
 - **Tausta:** sivun tausta on syvä navy (`--surface-0`) ja ympäristövalo. Hero-kuva näkyy vain etusivun hero-alueella. Muualla siitä on vain pieni sumea versio reunoilla, ja lukupalsta on aina umpinainen paperi.
